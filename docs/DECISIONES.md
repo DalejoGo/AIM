@@ -6,8 +6,8 @@ Registro de decisiones del proyecto. Cada una: contexto, decisión, alternativas
 
 ## DEC-001 — Nombre de marca
 
-- **Decisión (David, 2026-11-06):** la marca es **AIM · Desarrollo Web y Automatización**, con David como fundador. El sitio es de marca (sin foto personal): logo AIM y video de presentación.
-- **Consecuencia:** el nombre visible y todos los datos de contacto salen de `apps/web/src/content/site.json`.
+- **Decisión (David, 2026-11-06):** el nombre oficial es **AIM Desarrollo y Automatizaciones** (antes "AIM · Desarrollo Web y Automatización"), con David como fundador. Se escribe con AIM en mayúsculas y el resto normal; en textos cortos basta "AIM". El sitio es de marca (sin foto personal): logo AIM y video de presentación.
+- **Consecuencia:** el nombre visible (`brand.fullName`, `brand.name`, `brand.descriptor`) y todos los datos de contacto salen de `apps/web/src/content/site.json`.
 
 ## DEC-002 — Cadena de suministro: versiones exactas y 14 días
 

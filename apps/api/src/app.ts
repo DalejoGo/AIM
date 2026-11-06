@@ -63,7 +63,7 @@ export async function createApp(options: AppOptions = {}): Promise<NestExpressAp
     new DocumentBuilder()
       .setTitle('AIM API')
       .setDescription(
-        'API de AIM · Desarrollo Web y Automatización.\n\n' +
+        'API de AIM Desarrollo y Automatizaciones.\n\n' +
           '**Tareas** es una API REST de ejemplo para el API Playground del Lab. Cada visitante trabaja en su ' +
           `propio sandbox en memoria: envía la cabecera \`${SANDBOX_HEADER}\` con un UUID tuyo en cada ` +
           'petición. El sandbox arranca con 3 tareas de ejemplo, admite hasta 50 y se borra tras 30 minutos ' +

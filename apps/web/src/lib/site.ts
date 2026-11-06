@@ -12,6 +12,8 @@ import { whatsappLink } from './whatsapp'
 export const SiteConfig = z.object({
   brand: z.object({
     name: z.string().min(1),
+    /** Official name (DEC-001): page titles, structured data, e-mails. */
+    fullName: z.string().min(1),
     descriptor: z.string().min(1),
     tagline: z.string().min(1),
     description: z.string().min(1).max(200),

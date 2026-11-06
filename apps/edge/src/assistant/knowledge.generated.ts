@@ -3,7 +3,7 @@
 
 /** Everything the Lab assistant knows about AIM and David, in Spanish. */
 export const ASSISTANT_KNOWLEDGE = [
-  '# AIM · Desarrollo Web y Automatización',
+  '# AIM Desarrollo y Automatizaciones',
   'Lema: Ideas, código y resultados.',
   'Páginas web, aplicativos, automatizaciones y chatbots a la medida. Trabajo 100 % remoto, para cualquier lugar.',
   'Fundador: David Alejandro Gómez Ramírez (David), desarrollador backend y fundador de AIM.',

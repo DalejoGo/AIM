@@ -1,4 +1,4 @@
-# AIM · Desarrollo Web y Automatización
+# AIM Desarrollo y Automatizaciones
 
 Sitio de AIM (servicios) y portafolio de David Alejandro Gómez Ramírez. Monorepo TypeScript (pnpm + Turborepo).
 

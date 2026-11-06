@@ -125,7 +125,7 @@ function longDate(iso) {
 function brandSection(site) {
   const { brand, founder, contact, media } = site
   const lines = [
-    `# ${brand.name} · ${brand.descriptor}`,
+    `# ${brand.fullName}`,
     `Lema: ${sentence(brand.tagline)}`,
     sentence(brand.description),
     `Fundador: ${founder.name} (${founder.shortName}), ${founder.role.charAt(0).toLowerCase()}${founder.role.slice(1)}.`,

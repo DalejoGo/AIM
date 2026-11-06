@@ -18,8 +18,7 @@ interface Props {
 }
 
 const { title, description, jsonLd = [], private: isPrivate = false } = Astro.props
-const fullTitle =
-  title === site.brand.name ? `${site.brand.name}, ${site.brand.descriptor}` : `${title} | ${site.brand.name}`
+const fullTitle = title === site.brand.name ? site.brand.fullName : `${title} | ${site.brand.name}`
 const canonical = new URL(Astro.url.pathname, Astro.site)
 const origin = new URL('/', Astro.site).href
 
@@ -29,7 +28,8 @@ const graph: Graph = {
     {
       '@type': 'ProfessionalService',
       '@id': `${origin}#aim`,
-      name: `${site.brand.name}, ${site.brand.descriptor}`,
+      name: site.brand.fullName,
+      alternateName: site.brand.name,
       description: site.brand.description,
       url: origin,
       areaServed: 'Worldwide',

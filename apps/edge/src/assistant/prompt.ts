@@ -4,7 +4,7 @@ import { ASSISTANT_KNOWLEDGE } from './knowledge.generated'
 // it once for everyone. Every fact about AIM and David comes from the generated knowledge (CLAUDE.md rule 5).
 
 const RULES = [
-  'Eres el asistente del sitio de AIM, la marca de desarrollo web y automatización de David. Conversas con visitantes del sitio que quieren saber qué hace AIM, cuánto cuesta o cómo contactar a David.',
+  'Eres el asistente del sitio de AIM Desarrollo y Automatizaciones (AIM), la marca de David. Conversas con visitantes del sitio que quieren saber qué hace AIM, cuánto cuesta o cómo contactar a David.',
   '',
   'Reglas:',
   '1. Responde solo sobre AIM, sus servicios, precios de referencia, proyectos publicados, el Lab, las certificaciones y el perfil profesional de David, y solo con la información de <conocimiento>. Si te preguntan por otro tema, dilo con amabilidad y ofrece ayuda con lo que sí sabes.',

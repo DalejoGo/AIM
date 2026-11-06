@@ -1,4 +1,4 @@
-# PLAN.md — AIM · Desarrollo Web y Automatización
+# PLAN.md — AIM Desarrollo y Automatizaciones
 
 > Estado: **APROBADO (2026-11-06)**, con las recomendaciones de la sección 7 aceptadas. Las decisiones pendientes viven en [`DECISIONES.md`](DECISIONES.md); donde lo contradiga, manda ese archivo.
 > **Fase 1 (sitio público):** construida en local (2026-11-06): inicio, servicios, proyectos (agencia anónima y Marea), Lab con 3 demos en vivo (Cotizador, Migrador de datos, Auth Lab) y 5 próximamente, sobre mí con certificados, privacidad. Contenido editable en `apps/web/src/content` (ver `docs/CONTENIDO.md`). Publicada en https://aimweb-9hc.pages.dev (2026-11-06); pendiente conectar aimweb.dev.
