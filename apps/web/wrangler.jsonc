@@ -17,6 +17,8 @@
     "MAIL_FROM": "AIM <onboarding@resend.dev>",
     "NOTIFY_TO": "dacty2003@gmail.com",
     // About 150 assistant messages fit in the free 10,000 neurons a day; 120 leaves room.
-    "ASSISTANT_DAILY_LIMIT": "120"
+    "ASSISTANT_DAILY_LIMIT": "120",
+    // Each /api/lab/burst request takes ~1 s (new Neon connection), so a 10 s window never fills: 10 per minute does.
+    "LAB_BURST_WINDOW_SECONDS": "60"
   }
 }

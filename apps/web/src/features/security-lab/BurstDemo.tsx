@@ -182,8 +182,8 @@ export function BurstDemo() {
           Límite de tasa en vivo
         </h2>
         <p class="prose-measure">
-          La API de este sitio acepta hasta 10 peticiones cada 10 segundos desde una misma conexión. Envía 15,
-          una detrás de otra, y mira en qué momento te frena.
+          La API de este sitio acepta hasta 10 peticiones por minuto desde una misma conexión. Envía 15, una
+          detrás de otra, y mira en qué momento te frena.
         </p>
       </div>
 

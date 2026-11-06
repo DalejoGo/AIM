@@ -50,7 +50,7 @@ async function mockBurst(page: Page, { retryAfter = 30, gate, reply }: BurstOpti
     }
     const remaining = Math.max(0, LIMIT - n)
     const rateLimit = {
-      'RateLimit-Policy': `${LIMIT};w=10`,
+      'RateLimit-Policy': `${LIMIT};w=60`,
       'RateLimit-Limit': String(LIMIT),
       'RateLimit-Remaining': String(remaining),
     }
@@ -67,7 +67,7 @@ async function mockBurst(page: Page, { retryAfter = 30, gate, reply }: BurstOpti
       headers: { ...rateLimit, 'RateLimit-Reset': String(retryAfter), 'Retry-After': String(retryAfter) },
       json: {
         error: 'rate_limited',
-        message: `Llegaste al límite de 10 peticiones cada 10 segundos. Vuelve a intentarlo en ${retryAfter} segundos.`,
+        message: `Llegaste al límite de 10 peticiones cada 60 segundos. Vuelve a intentarlo en ${retryAfter} segundos.`,
       },
     })
   })
