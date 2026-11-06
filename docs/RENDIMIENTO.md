@@ -17,7 +17,30 @@ pnpm run audit https://aimweb-9hc.pages.dev --pages /,/contacto/ --devices mobil
 - `pnpm audit` a secas es la auditoría de dependencias de pnpm: hay que escribir `pnpm run audit`.
 - El script (`scripts/lighthouse.mjs`) usa Lighthouse 13 en Chrome sin ventana: `CHROME_PATH` si está definido o, si no, el Chromium que descargó Playwright. Móvil es la emulación por defecto de Lighthouse (Moto G Power, 4G lenta, CPU 4× más lenta); escritorio usa `--preset=desktop`.
 - Opciones: `--pages` (lista separada por comas), `--devices mobile,desktop`, `--runs N`, `--reports <carpeta>` (JSON completos; por defecto, una carpeta temporal), `--out <archivo>` y `--strict` (termina con error si algo queda por debajo de 95, para CI).
-- Reescribe solo el bloque entre `<!-- audit:start -->` y `<!-- audit:end -->` de este archivo; el resto se escribe a mano.
+- Reescribe solo el bloque entre `<!-- audit:start -->
+_Generado por `scripts/lighthouse.mjs` el 2026-11-06 17:10 contra `https://aimweb-9hc.pages.dev`. Lighthouse 13.5.0, 1 corrida(s) por página y dispositivo (se toma la mediana por rendimiento). En negrita, lo que queda por debajo de 95._
+
+| Página | Dispositivo | Rendimiento | Accesibilidad | Buenas prácticas | SEO | FCP | LCP | TBT | CLS |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `/` | Móvil | 99 | 100 | 100 | 100 | 1,2 s | 1,9 s | 0 ms | 0,000 |
+| `/` | Escritorio | 100 | 100 | 100 | 100 | 0,4 s | 0,5 s | 0 ms | 0,000 |
+| `/servicios/` | Móvil | 99 | 100 | 100 | 100 | 1,2 s | 1,9 s | 0 ms | 0,000 |
+| `/servicios/` | Escritorio | 100 | 100 | 100 | 100 | 0,3 s | 0,4 s | 0 ms | 0,000 |
+| `/proyectos/marea/` | Móvil | 99 | 100 | 100 | 100 | 1,3 s | 2,0 s | 0 ms | 0,000 |
+| `/proyectos/marea/` | Escritorio | 100 | 100 | 100 | 100 | 0,3 s | 0,4 s | 0 ms | 0,000 |
+| `/cotizar/` | Móvil | 99 | 100 | 100 | 100 | 1,2 s | 2,0 s | 24 ms | 0,000 |
+| `/cotizar/` | Escritorio | 100 | 100 | 100 | 100 | 0,4 s | 0,5 s | 0 ms | 0,000 |
+| `/lab/` | Móvil | 99 | 100 | 100 | 100 | 1,2 s | 1,9 s | 0 ms | 0,000 |
+| `/lab/` | Escritorio | 100 | 100 | 100 | 100 | 0,3 s | 0,4 s | 0 ms | 0,000 |
+| `/lab/migrador-de-datos/` | Móvil | 99 | 100 | 100 | 100 | 1,4 s | 2,0 s | 14 ms | 0,000 |
+| `/lab/migrador-de-datos/` | Escritorio | 100 | 100 | 100 | 100 | 0,4 s | 0,5 s | 0 ms | 0,000 |
+| `/sobre-mi/` | Móvil | 99 | 100 | 100 | 100 | 1,2 s | 2,2 s | 0 ms | 0,000 |
+| `/sobre-mi/` | Escritorio | 100 | 100 | 100 | 100 | 0,4 s | 0,5 s | 0 ms | 0,000 |
+| `/contacto/` | Móvil | 98 | 100 | 100 | 100 | 1,5 s | 2,1 s | 65 ms | 0,000 |
+| `/contacto/` | Escritorio | 100 | 100 | 100 | 100 | 0,4 s | 0,6 s | 0 ms | 0,000 |
+
+Todas las categorías están en 95 o más.
+<!-- audit:end -->` de este archivo; el resto se escribe a mano.
 - En local no hay compresión ni caché (el servidor de `e2e/serve.mjs` no las aplica); Cloudflare sí comprime (Brotli) y `public/_headers` deja `/_astro/*` en caché inmutable. Por eso los avisos de Lighthouse sobre caché y latencia del documento son propios del entorno local, y en producción los tiempos deberían ser iguales o mejores.
 
 ## Último resultado

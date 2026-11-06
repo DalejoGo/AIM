@@ -9,9 +9,11 @@ Punto de partida para seguir trabajando en AIM desde otro equipo (por ejemplo, e
 | Sitio público | https://aimweb-9hc.pages.dev (Cloudflare Pages, proyecto `aimweb`) | En vivo |
 | API del sitio (`/api/*`) | Misma URL: Pages Function con Hono (`apps/edge`) | En vivo: contactos, login del panel, asistente, demos |
 | Panel privado | https://aimweb-9hc.pages.dev/admin/ | Validado por David: código por correo y lista de contactos |
-| Base de datos | Neon, proyecto **AIM** (`aws-us-east-1`), base `neondb` | Migraciones 0000–0003 |
+| Base de datos | Neon, proyecto **AIM** (`aws-us-east-1`), base `neondb` | Migraciones 0000–0003 aplicadas |
 | API Playground (NestJS) | https://aimweb-api.onrender.com (Render, servicio `aimweb-api`, plan Free) | En vivo; se duerme sin uso |
-| Repositorio | https://github.com/DalejoGo/AIM (rama `main`, público) | CI en GitHub Actions |
+| Repositorio | https://github.com/DalejoGo/AIM (rama `main`, público) | CI en GitHub Actions: 841 pruebas unitarias + 195 E2E |
+| Calidad en producción | Lighthouse (`docs/RENDIMIENTO.md`) | Rendimiento 98–99 móvil / 100 escritorio; accesibilidad, buenas prácticas y SEO 100 |
+| Seguridad | CSP estricta (DEC-019) + cabeceras en `_headers` | Sin `unsafe-inline` ni `unsafe-eval` |
 | Dominio propio | `aimweb.dev` | Pendiente de compra (DEC-007) |
 
 ### Lab
@@ -20,8 +22,8 @@ Punto de partida para seguir trabajando en AIM desde otro equipo (por ejemplo, e
 |---|---|
 | Cotizador, Migrador de datos, Auth Lab | En vivo (corren en el navegador) |
 | Asistente IA | En vivo con Gemma 4 en Workers AI, gratis (DEC-018) |
-| Seguridad en acción | En vivo (límite de tasa real + cabeceras) |
-| API Playground | Consola en el sitio + API en Render |
+| Seguridad en acción | En vivo: 10 peticiones por minuto (la 11 da 429) + cabeceras explicadas |
+| API Playground | En vivo: consola en el sitio llamando a la API de Render (verificado desde producción) |
 | Automatización en vivo (n8n) | Próximamente (Fase 4) |
 | Revisor de código con IA | Próximamente |
 
@@ -109,6 +111,8 @@ El id del proyecto de Neon sale de `neon projects list`. Editar precios, textos,
 ### Deuda técnica conocida
 
 - `lab_hits`: las IP que no vuelven dejan hasta 10 filas; agregar una limpieza periódica si crece.
+- Cada petición a `/api` abre una conexión nueva a Neon (~1 s desde Colombia). Si se nota lenta, evaluar Hyperdrive de Cloudflare o el driver HTTP de Neon.
+- `/lab/asistente-ia/` y `/admin/` aún cargan Zod al inicio (no afecta los puntajes auditados).
 - Límites del login: si falla la escritura de auditoría, los límites no cuentan (fallan abiertos).
 - Render: tras más tráfico, confirmar que el límite por IP usa la IP del visitante (`trust proxy` en `apps/api/src/app.ts`).
 - El token de acceso del panel sigue válido hasta 15 min después de cerrar sesión (diseño de JWT corto).
