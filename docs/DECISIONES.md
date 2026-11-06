@@ -105,3 +105,8 @@ Registro de decisiones del proyecto. Cada una: contexto, decisión, alternativas
 - **Decisión (2026-11-06):** CSP nativa de Astro 7 como `<meta>` en cada página, con hashes de scripts y estilos y **sin** `'unsafe-inline'` ni `'unsafe-eval'`. Orígenes externos solo los necesarios: `https://challenges.cloudflare.com` (Turnstile, script e iframe) y el origen de `PUBLIC_PLAYGROUND_API_URL` en `connect-src` (API Playground en Render).
 - **Consecuencias:** Zod corre en modo `jitless` (`src/lib/boot.ts`); nada de `style=` en las islas; fuentes siempre como archivos; resaltado de código con Prism. `e2e/csp.e2e.ts` falla si alguna página o demo provoca una violación. `frame-ancestors` no cabe en `<meta>`: lo cubre `X-Frame-Options: DENY` en `_headers`.
 - **Rendimiento (Lighthouse, local, mediana de 3):** 98–100 en las cuatro categorías, móvil y escritorio (`docs/RENDIMIENTO.md`).
+
+## DEC-020 — Analítica sin cookies
+
+- **Decisión (2026-11-06):** **Cloudflare Web Analytics** (gratis, sin cookies ni huella digital, sin aviso de consentimiento) para contar visitas por página, país, navegador y dispositivo. Sitio `aimweb-9hc.pages.dev` creado con `cf rum site-info create`; el token es público y va en el HTML.
+- **Consecuencias:** el beacon (`static.cloudflareinsights.com`) solo se carga en builds de producción (`APP_ENV=production` + `PUBLIC_CF_ANALYTICS_TOKEN`, por defecto en `scripts/deploy-web.sh`); la CSP lo permite solo entonces (script-src y connect-src a `cloudflareinsights.com`). Las pruebas locales y la CI no lo cargan. Los datos se ven en el panel de Cloudflare → Analytics & Logs → Web Analytics. Al conectar `aimweb.dev` hay que crear otro sitio de Web Analytics o actualizar el host.

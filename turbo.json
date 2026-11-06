@@ -8,7 +8,8 @@
         "PUBLIC_BASE_URL",
         "PUBLIC_WHATSAPP_NUMBER",
         "PUBLIC_TURNSTILE_SITE_KEY",
-        "PUBLIC_PLAYGROUND_API_URL"
+        "PUBLIC_PLAYGROUND_API_URL",
+        "PUBLIC_CF_ANALYTICS_TOKEN"
       ],
       "outputs": ["dist/**"]
     },

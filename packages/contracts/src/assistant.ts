@@ -1,7 +1,13 @@
 import { z } from 'zod'
-import { ASSISTANT_MAX_MESSAGE_LENGTH, ASSISTANT_MAX_MESSAGES } from './limits'
+import {
+  ASSISTANT_MAX_MESSAGE_LENGTH,
+  ASSISTANT_MAX_MESSAGES,
+  CODE_REVIEW_LANGUAGES,
+  CODE_REVIEW_MAX_LENGTH,
+} from './limits'
 
-// Lab assistant (DEC-011): body of POST /api/assistant/messages and the payloads of its SSE events.
+// Lab assistant and code reviewer (DEC-011): the bodies of /api/assistant/* and the payloads of their SSE
+// events. Both share the session, the limits and the events.
 
 // \p{Cc} = control characters. Line breaks and tabs stay; the rest only hide content.
 const CONTROL_BUT_LINE_BREAKS = /[^\P{Cc}\n\t]/gu
@@ -38,6 +44,45 @@ export const ChatRequest = z.object({
     }),
 })
 export type ChatRequest = z.infer<typeof ChatRequest>
+
+/** GET /api/assistant/session: the cookie is HttpOnly, so the page asks whether it still holds a session. */
+export const AssistantSessionStatus = z.object({
+  active: z.boolean(),
+  /** Seconds left; 0 when there is no session. */
+  expiresIn: z.number().int().nonnegative(),
+})
+export type AssistantSessionStatus = z.infer<typeof AssistantSessionStatus>
+
+export const CodeReviewLanguage = z.enum(CODE_REVIEW_LANGUAGES, {
+  error: 'Elige el lenguaje del código: TypeScript, JavaScript, Python, SQL u otro.',
+})
+export type CodeReviewLanguage = z.infer<typeof CodeReviewLanguage>
+
+// Blank lines before the code say nothing; the indentation of its first line does, so it stays.
+const LEADING_BLANK_LINES = /^(?:[ \t]*\n)+/
+
+/** The fragment as the model sees it: CRLF as LF, no control characters but tabs, no blank edges. */
+const code = z
+  .string({ error: 'Pega el código como texto.' })
+  .transform((value) =>
+    value
+      .replace(/\r\n?/g, '\n')
+      .replace(CONTROL_BUT_LINE_BREAKS, '')
+      .replace(LEADING_BLANK_LINES, '')
+      .trimEnd(),
+  )
+  .pipe(
+    z
+      .string()
+      .min(1, { error: 'Pega el código que quieres revisar.' })
+      .max(CODE_REVIEW_MAX_LENGTH, {
+        error: `El código puede tener hasta ${CODE_REVIEW_MAX_LENGTH} caracteres. Pega solo la parte que quieres revisar.`,
+      }),
+  )
+
+/** Body of POST /api/assistant/review: one fragment, reviewed on its own (there is no conversation). */
+export const CodeReviewRequest = z.object({ language: CodeReviewLanguage, code })
+export type CodeReviewRequest = z.infer<typeof CodeReviewRequest>
 
 /** SSE `delta`: the next piece of the answer. */
 export const AssistantDelta = z.object({ text: z.string() })

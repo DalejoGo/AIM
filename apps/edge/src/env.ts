@@ -31,6 +31,8 @@ export const EdgeEnv = z.object({
   ASSISTANT_MODEL: z.string().min(1).default('claude-haiku-5-5'),
   /** Output cap per answer (a few short paragraphs). */
   ASSISTANT_MAX_TOKENS: z.coerce.number().int().min(64).max(4096).default(500),
+  /** Output cap per code review: four short sections and maybe a small fix, so more room than a chat answer. */
+  ASSISTANT_REVIEW_MAX_TOKENS: z.coerce.number().int().min(64).max(4096).default(800),
   /** Messages per visitor (IP hash) in a rolling hour. */
   ASSISTANT_MESSAGES_PER_HOUR: z.coerce.number().int().positive().default(15),
   /** Messages for everyone in a rolling 24 hours: the hard ceiling of the API bill. */

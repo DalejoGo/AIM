@@ -204,14 +204,18 @@ test('"Detener" stops the answer and keeps the chat usable', async ({ page }) =>
   const never = new Promise<void>((resolve) => {
     release = resolve
   })
-  await mockAssistant(page, { messages: () => ({ wait: never, sse: answer('Tarde') }) })
+  const calls = await mockAssistant(page, { messages: () => ({ wait: never, sse: answer('Tarde') }) })
   await startChat(page)
   await question(page).fill('Hola')
   await question(page).press('Enter')
+  // The next question, typed while the answer is on its way, is not sent by "Detener".
+  await question(page).fill('Otra pregunta')
   await page.getByRole('button', { name: 'Detener' }).click()
 
   await expect(log(page).getByText('Detuviste la respuesta.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Enviar' })).toBeFocused()
+  await expect(question(page)).toHaveValue('Otra pregunta')
+  expect(calls.messages).toHaveLength(1)
   release()
 })
 

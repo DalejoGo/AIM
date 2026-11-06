@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { type Inline, parseInline, parseRichText, safeHref } from './richText'
+import { type Block, type Inline, parseInline, parseRichText, safeHref } from './richText'
 
 const text = (value: string, strong = false): Inline => ({ type: 'text', text: value, strong })
 const link = (value: string, href: string, strong = false): Inline => ({
@@ -9,6 +9,7 @@ const link = (value: string, href: string, strong = false): Inline => ({
   strong,
 })
 const paragraph = (...lines: Inline[][]) => ({ type: 'paragraph' as const, lines })
+const code = (value: string, strong = false): Inline => ({ type: 'code', text: value, strong })
 
 const WHATSAPP = 'https://wa.me/573027015524'
 
@@ -262,5 +263,89 @@ describe('parseRichText', () => {
         link(WHATSAPP, WHATSAPP),
       ]),
     )
+  })
+})
+
+describe('code and headings (the code reviewer)', () => {
+  const review = { code: true, headings: true }
+
+  it('keeps inline code as code, with nothing parsed inside it', () => {
+    expect(parseInline('Usa `pool.query(sql, [email])` en vez de concatenar.', review)).toEqual([
+      text('Usa '),
+      code('pool.query(sql, [email])'),
+      text(' en vez de concatenar.'),
+    ])
+    expect(parseInline('`/cotizar/` y `**no es negrita**` y `https://wa.me/1`', review)).toEqual([
+      code('/cotizar/'),
+      text(' y '),
+      code('**no es negrita**'),
+      text(' y '),
+      code('https://wa.me/1'),
+    ])
+  })
+
+  it('keeps bold around inline code and shows an unpaired backtick as typed', () => {
+    expect(parseInline('**Inyección en `findUser`**: usa parámetros', review)).toEqual([
+      text('Inyección en ', true),
+      code('findUser', true),
+      text(': usa parámetros'),
+    ])
+    expect(parseInline('un ` suelto', review)).toEqual([text('un ` suelto')])
+  })
+
+  it('turns "## Title" lines into headings, with inline code inside', () => {
+    expect(parseRichText('## Resumen\nBusca un usuario.\n\n### Riesgos en `query`', review)).toEqual([
+      { type: 'heading', text: [text('Resumen')] },
+      paragraph([text('Busca un usuario.')]),
+      { type: 'heading', text: [text('Riesgos en '), code('query')] },
+    ])
+  })
+
+  it('keeps the lines of a fenced block verbatim, markup and indentation included', () => {
+    const answer = [
+      'Cámbialo así:',
+      '```python',
+      'if not orders:',
+      '    raise ValueError("**sin** pedidos")',
+      '',
+      'return total / len(orders)  # <b>ok</b>',
+      '```',
+      'Listo.',
+    ].join('\n')
+    expect(parseRichText(answer, review)).toEqual<Block[]>([
+      paragraph([text('Cámbialo así:')]),
+      {
+        type: 'code',
+        text: 'if not orders:\n    raise ValueError("**sin** pedidos")\n\nreturn total / len(orders)  # <b>ok</b>',
+      },
+      paragraph([text('Listo.')]),
+    ])
+  })
+
+  it('removes the indentation of a fence opened inside a list item', () => {
+    const answer = [
+      '- Usa parámetros:',
+      '  ```ts',
+      "  pool.query('SELECT 1 WHERE a = $1', [a])",
+      '  ```',
+    ].join('\n')
+    expect(parseRichText(answer, review)).toEqual<Block[]>([
+      { type: 'list', ordered: false, start: 1, items: [[text('Usa parámetros:')]] },
+      { type: 'code', text: "pool.query('SELECT 1 WHERE a = $1', [a])" },
+    ])
+  })
+
+  it('shows an unclosed fence (a review still streaming) as code up to the end', () => {
+    expect(parseRichText('Así:\n```js\nfor (const user of users) {\n  await', review)).toEqual<Block[]>([
+      paragraph([text('Así:')]),
+      { type: 'code', text: 'for (const user of users) {\n  await' },
+    ])
+  })
+
+  it('leaves the assistant as it was: no code, no headings', () => {
+    expect(parseRichText('## Resumen\nUsa `x`.\n```\ncode\n```')).toEqual([
+      paragraph([text('Resumen', true)]),
+      paragraph([text('Usa x.')], [text('code')]),
+    ])
   })
 })

@@ -1,5 +1,5 @@
 import { type Signal, useSignal } from '@preact/signals'
-import { CircleAlert, CirclePause, Info, Mail, MessageCircle, RotateCcw, Send, Square } from 'lucide-preact'
+import { CircleAlert, Info, MessageCircle, RotateCcw, Send, Square } from 'lucide-preact'
 import type { RefObject } from 'preact'
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'preact/hooks'
 import { focusSoon, inputClass, Spinner } from '../forms/fields'
@@ -8,6 +8,7 @@ import { type AssistantChat as Chat, type ChatMessage, createAssistantChat } fro
 import { assistantClient } from './client'
 import { PAUSED_TITLE } from './errors'
 import { MAX_MESSAGE_LENGTH } from './history'
+import { ContactExits, PausedNotice, TypingDots } from './parts'
 import { RichText } from './RichText'
 
 export interface AssistantChatProps {
@@ -22,8 +23,6 @@ export const SUGGESTIONS = [
   '¿Cómo es el proceso de trabajo?',
   '¿Trabajas con clientes fuera de Colombia?',
 ]
-
-const NEW_TAB = <span class="sr-only"> (se abre en otra pestaña)</span>
 
 /** Lab demo: the AIM assistant. First the presentation and the verification, then the conversation. */
 export function AssistantChat({ turnstileSiteKey, whatsappUrl }: AssistantChatProps) {
@@ -333,15 +332,7 @@ function Pending({ text }: { text: string }) {
     >
       {text && <RichText text={text} interactive={false} />}
       <p class={`flex items-center gap-2 text-step--1 text-muted ${text ? 'mt-2' : ''}`}>
-        <span class="flex gap-1">
-          {/* Staggered with classes, not inline styles (the CSP blocks style attributes). */}
-          {['[animation-delay:0ms]', '[animation-delay:150ms]', '[animation-delay:300ms]'].map((delay) => (
-            <span
-              key={delay}
-              class={`size-1.5 animate-pulse rounded-full bg-current motion-reduce:animate-none ${delay}`}
-            />
-          ))}
-        </span>
+        <TypingDots />
         Escribiendo…
       </p>
     </div>
@@ -397,9 +388,18 @@ function Composer({ chat, draft, inputRef, onSend }: ComposerProps) {
           aria-describedby="assistant-question-hint assistant-question-count"
           class={`${inputClass} max-h-48 min-h-[3.25rem] resize-none [field-sizing:content]`}
         />
-        {/* One button that changes role, so the focus stays on it when the answer starts or ends. */}
+        {/* One button that changes role, so the focus stays on it when the answer starts or ends. Stopping
+            turns it back into the submit button before the click finishes: preventDefault keeps that click
+            from sending the draft. */}
         {busy ? (
-          <button type="button" class="btn btn-quiet" onClick={() => chat.stop()}>
+          <button
+            type="button"
+            class="btn btn-quiet"
+            onClick={(event) => {
+              event.preventDefault()
+              chat.stop()
+            }}
+          >
             <Square size={14} fill="currentColor" aria-hidden="true" />
             Detener
           </button>
@@ -440,34 +440,7 @@ function ProblemAlert({ chat, whatsappUrl, alertRef, retry = true }: ProblemAler
 
   let content = null
   if (problem?.kind === 'paused') {
-    content = (
-      <div class="grid gap-3 rounded-xl border border-line bg-ink p-4">
-        <h3 class="flex items-center gap-2 text-step-1 font-semibold">
-          <CirclePause size={22} class="shrink-0 text-brand" aria-hidden="true" />
-          {PAUSED_TITLE}
-        </h3>
-        <p>
-          Mientras vuelve, escríbele a David por WhatsApp o desde el formulario de contacto. Te responde
-          personalmente.
-        </p>
-        <div class="flex flex-wrap gap-3">
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-            <MessageCircle size={18} aria-hidden="true" />
-            Escribir por WhatsApp
-            {NEW_TAB}
-          </a>
-          <a href="/contacto/" class="btn btn-quiet">
-            <Mail size={18} aria-hidden="true" />
-            Ir al formulario de contacto
-          </a>
-        </div>
-        <div>
-          <button type="button" class="link text-step--1 font-semibold" onClick={() => chat.retry()}>
-            Intentar de nuevo
-          </button>
-        </div>
-      </div>
-    )
+    content = <PausedNotice title={PAUSED_TITLE} whatsappUrl={whatsappUrl} onRetry={() => chat.retry()} />
   } else if (problem) {
     const notice = problem.kind === 'session'
     content = (
@@ -497,22 +470,5 @@ function ProblemAlert({ chat, whatsappUrl, alertRef, retry = true }: ProblemAler
     <div ref={alertRef} role="alert" tabIndex={-1} class={problem ? 'min-w-0' : 'hidden'}>
       {content}
     </div>
-  )
-}
-
-function ContactExits({ whatsappUrl }: { whatsappUrl: string }) {
-  return (
-    <p class="text-step--1 text-muted">
-      ¿Prefieres hablar con David?{' '}
-      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" class="link font-semibold">
-        Escribir por WhatsApp
-        {NEW_TAB}
-      </a>{' '}
-      o{' '}
-      <a href="/contacto/" class="link font-semibold">
-        usar el formulario de contacto
-      </a>
-      .
-    </p>
   )
 }

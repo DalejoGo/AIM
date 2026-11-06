@@ -50,7 +50,25 @@ export const INVALID_STREAM = 'invalid_response'
 
 export const PAUSED_TITLE = 'El asistente está en pausa'
 
-const MESSAGES = {
+/**
+ * The messages the browser writes itself (the API's own messages arrive in the error). Each feature that
+ * talks to /api/assistant (the chat, the code reviewer) has its own, in its own voice.
+ */
+export interface ProblemTexts {
+  session: string
+  cookies: string
+  paused: string
+  network: string
+  connectionLost: string
+  interrupted: string
+  invalid: string
+  failed: string
+  unknown: string
+  /** 429 whose body was not the API's (it says how long to wait when the header did). */
+  rateLimited: (wait: string | null) => string
+}
+
+export const ASSISTANT_TEXTS: ProblemTexts = {
   session:
     'Tu sesión con el asistente venció. Completa de nuevo la verificación de seguridad para seguir conversando.',
   cookies:
@@ -64,7 +82,11 @@ const MESSAGES = {
     'La respuesta del asistente llegó con un formato inesperado. Recarga la página e inténtalo de nuevo.',
   failed: 'El asistente no pudo terminar la respuesta. Inténtalo de nuevo.',
   unknown: 'Algo falló al hablar con el asistente. Inténtalo de nuevo en unos minutos.',
-} as const
+  rateLimited: (wait) =>
+    wait === null
+      ? 'Enviaste muchos mensajes seguidos. Espera unos minutos y vuelve a intentarlo.'
+      : `Enviaste muchos mensajes seguidos. Vuelve a intentarlo en ${wait}.`,
+}
 
 /** "5 minutos", "1 hora": the same rounding as the API's own messages. */
 export function waitText(seconds: number): string {
@@ -72,12 +94,6 @@ export function waitText(seconds: number): string {
   if (minutes < 60) return `${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`
   const hours = Math.ceil(minutes / 60)
   return `${hours} ${hours === 1 ? 'hora' : 'horas'}`
-}
-
-function rateLimitMessage(retryAfter: number | null): string {
-  return retryAfter === null
-    ? 'Enviaste muchos mensajes seguidos. Espera unos minutos y vuelve a intentarlo.'
-    : `Enviaste muchos mensajes seguidos. Vuelve a intentarlo en ${waitText(retryAfter)}.`
 }
 
 const problem = (
@@ -93,47 +109,49 @@ const problem = (
 })
 
 /** The session was renewed and still refused: a second verification would not help. */
-export const cookiesProblem = (): Problem => problem('cookies', MESSAGES.cookies, false)
+export const cookiesProblem = (texts: ProblemTexts = ASSISTANT_TEXTS): Problem =>
+  problem('cookies', texts.cookies, false)
 
 /** True when the body was not the API's own error (a proxy page, an old deploy): its message is generic. */
 const genericBody = (error: ApiRequestError) => error.code.startsWith('http_')
 
-function streamProblem(error: AssistantStreamError): Problem {
+function streamProblem(error: AssistantStreamError, texts: ProblemTexts): Problem {
   switch (error.code) {
     case CONNECTION_LOST:
-      return problem('network', MESSAGES.connectionLost, true)
+      return problem('network', texts.connectionLost, true)
     case STREAM_INTERRUPTED:
-      return problem('interrupted', MESSAGES.interrupted, true)
+      return problem('interrupted', texts.interrupted, true)
     case INVALID_STREAM:
-      return problem('server', MESSAGES.invalid, true)
+      return problem('server', texts.invalid, true)
     case 'assistant_refusal':
-      return problem('answer', error.message || MESSAGES.failed, false)
+      return problem('answer', error.message || texts.failed, false)
     default:
-      return problem('answer', error.message || MESSAGES.failed, true)
+      return problem('answer', error.message || texts.failed, true)
   }
 }
 
-function httpProblem(error: ApiRequestError): Problem {
+function httpProblem(error: ApiRequestError, texts: ProblemTexts): Problem {
   const { status, code } = error
-  if (status === 0) return problem('network', MESSAGES.network, true)
-  if (status === 401) return problem('session', MESSAGES.session, true)
+  if (status === 0) return problem('network', texts.network, true)
+  if (status === 401) return problem('session', texts.session, true)
   if (status === 429) {
-    const message = genericBody(error) ? rateLimitMessage(error.retryAfter) : error.message
+    const wait = error.retryAfter === null ? null : waitText(error.retryAfter)
+    const message = genericBody(error) ? texts.rateLimited(wait) : error.message
     return problem('rate_limited', message, false, error.retryAfter)
   }
   // 404: this deploy has no assistant behind /api. Either way the visitor needs the other channels.
   if ((status === 503 && code !== 'captcha_unavailable') || status === 404) {
-    return problem('paused', MESSAGES.paused, false)
+    return problem('paused', texts.paused, false)
   }
-  if (code === 'invalid_response') return problem('server', MESSAGES.invalid, true)
+  if (code === 'invalid_response') return problem('server', texts.invalid, true)
   if (status >= 500)
     return problem('server', genericBody(error) ? messageForStatus(status) : error.message, true)
   return problem('request', error.message, false)
 }
 
-/** Maps whatever a session or a question threw to the problem the island shows. */
-export function toProblem(error: unknown): Problem {
-  if (error instanceof AssistantStreamError) return streamProblem(error)
-  if (error instanceof ApiRequestError) return httpProblem(error)
-  return problem('server', MESSAGES.unknown, true)
+/** Maps whatever a session or a request threw to the problem the island shows, in that island's voice. */
+export function toProblem(error: unknown, texts: ProblemTexts = ASSISTANT_TEXTS): Problem {
+  if (error instanceof AssistantStreamError) return streamProblem(error, texts)
+  if (error instanceof ApiRequestError) return httpProblem(error, texts)
+  return problem('server', texts.unknown, true)
 }

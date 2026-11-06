@@ -1,16 +1,30 @@
 /**
  * The assistant's answers as data the island renders with plain elements (never innerHTML): paragraphs,
  * simple lists and bold text. Links are kept only for pages of this site ("/cotizar/") and WhatsApp
- * ("https://wa.me/…"); any other address stays as text.
+ * ("https://wa.me/…"); any other address stays as text. The code reviewer also asks for code and headings
+ * (RichTextOptions).
  */
 
 export type Inline =
   | { type: 'text'; text: string; strong: boolean }
   | { type: 'link'; text: string; href: string; strong: boolean }
+  /** `inline code`, shown as typed: no links or bold inside. */
+  | { type: 'code'; text: string; strong: boolean }
 
 export type Block =
   | { type: 'paragraph'; lines: Inline[][] }
   | { type: 'list'; ordered: boolean; start: number; items: Inline[][] }
+  /** A "## Title" line, with `headings`. */
+  | { type: 'heading'; text: Inline[] }
+  /** The lines between ``` fences, verbatim, with `code`. */
+  | { type: 'code'; text: string }
+
+export interface RichTextOptions {
+  /** Keep `inline code` and ``` blocks as code (the reviewer). Off, the marks are dropped (the assistant). */
+  code?: boolean
+  /** "## Title" lines become headings (the reviewer's sections). Off, they are bold lines. */
+  headings?: boolean
+}
 
 const WHATSAPP_PREFIX = 'https://wa.me/'
 // A path of this site: one slash, then no second slash or backslash (both would point to another host),
@@ -40,21 +54,22 @@ export function safeHref(raw: string): string | null {
 
 // One pass over a line: bold markers, Markdown links, bare addresses and bare site paths. A bare path must
 // follow a space or an opening sign, so "24/7" or "y/o" stay as text.
-const INLINE = new RegExp(
-  [
-    String.raw`(?<bold>\*\*)`,
-    String.raw`\[(?<label>[^\]\n]+)\]\((?<href>[^()\s]*)\)`,
-    String.raw`(?<url>https?:\/\/[^\s<>()[\]"'*«»“”‘’]+)`,
-    String.raw`(?<path>(?<![\w/.:@\-])\/[A-Za-z0-9][\w\-.~/?=&%#+]*)`,
-  ].join('|'),
-  'g',
-)
+const INLINE_PARTS = [
+  String.raw`(?<bold>\*\*)`,
+  String.raw`\[(?<label>[^\]\n]+)\]\((?<href>[^()\s]*)\)`,
+  String.raw`(?<url>https?:\/\/[^\s<>()[\]"'*«»“”‘’]+)`,
+  String.raw`(?<path>(?<![\w/.:@\-])\/[A-Za-z0-9][\w\-.~/?=&%#+]*)`,
+]
+const INLINE = new RegExp(INLINE_PARTS.join('|'), 'g')
+// With code, a span between backticks is matched first, so nothing inside it is read as a link or as bold.
+const INLINE_WITH_CODE = new RegExp([String.raw`\x60(?<code>[^\x60\n]+)\x60`, ...INLINE_PARTS].join('|'), 'g')
 const TRAILING_PUNCTUATION = /[.,;:!?]+$/
 
 type Token =
   | { kind: 'marker' }
   | { kind: 'text'; text: string }
   | { kind: 'link'; text: string; href: string }
+  | { kind: 'code'; text: string }
 
 /** A bare address or path: the closing punctuation of the sentence is not part of it. */
 function bare(match: string, accept: (candidate: string) => boolean): Token[] {
@@ -71,6 +86,7 @@ const looksLikePage = (path: string) => path.indexOf('/', 1) !== -1
 
 function classify(match: RegExpMatchArray): Token[] {
   const groups = match.groups ?? {}
+  if (groups.code !== undefined) return [{ kind: 'code', text: groups.code }]
   if (groups.bold) return [{ kind: 'marker' }]
   if (groups.label !== undefined) {
     const label = groups.label.replaceAll('**', '').trim()
@@ -86,12 +102,12 @@ function classify(match: RegExpMatchArray): Token[] {
 }
 
 /** One line of text as inline pieces. An unpaired "**" is shown as typed. */
-export function parseInline(line: string): Inline[] {
-  // Inline code marks (`/cotizar/`) are dropped: the answers are plain text, not code.
-  const source = line.replace(/`([^`\n]+)`/g, '$1')
+export function parseInline(line: string, { code = false }: RichTextOptions = {}): Inline[] {
+  // Without `code`, inline code marks (`/cotizar/`) are dropped: the assistant's answers are plain text.
+  const source = code ? line : line.replace(/`([^`\n]+)`/g, '$1')
   const tokens: Token[] = []
   let last = 0
-  for (const match of source.matchAll(INLINE)) {
+  for (const match of source.matchAll(code ? INLINE_WITH_CODE : INLINE)) {
     const index = match.index ?? 0
     if (index > last) tokens.push({ kind: 'text', text: source.slice(last, index) })
     tokens.push(...classify(match))
@@ -116,18 +132,20 @@ export function parseInline(line: string): Inline[] {
       else strong = !strong
     } else if (token.kind === 'text') {
       pushText(token.text)
+    } else if (token.kind === 'code') {
+      out.push({ type: 'code', text: token.text, strong })
     } else {
       out.push({ type: 'link', text: token.text, href: token.href, strong })
     }
   }
-  return out.filter((piece) => piece.type === 'link' || piece.text !== '')
+  return out.filter((piece) => piece.type !== 'text' || piece.text !== '')
 }
 
 const BULLET = /^\s*[-*•]\s+(.*)$/
 const NUMBERED = /^\s*(\d{1,4})[.)]\s+(.*)$/
 const HEADING = /^\s{0,3}#{1,6}\s+(.*?)[\s#]*$/
 const RULE = /^\s*([-*_])(\s*\1){2,}\s*$/
-const FENCE = /^\s*```/
+const FENCE = /^(\s*)```/
 const INDENTED = /^\s{2,}\S/
 
 interface OpenList {
@@ -136,31 +154,56 @@ interface OpenList {
   items: string[]
 }
 
+/** Removes up to `indent` leading spaces: a fence opened inside a list item indents its code too. */
+const dedent = (line: string, indent: number) => line.replace(new RegExp(`^ {0,${indent}}`), '')
+
 /**
  * Splits an answer into blocks. Lines inside a paragraph keep their breaks; "-", "*" or "1." start list
  * items (a blank line between items keeps the list together); a heading becomes a bold line, since the
- * answers have no headings of their own.
+ * assistant's answers have no headings of their own (with `headings`, a heading block). Fence lines are
+ * dropped; with `code`, the lines between them are a code block, which an unclosed fence (an answer still
+ * streaming) runs to the end.
  */
-export function parseRichText(text: string): Block[] {
+export function parseRichText(text: string, options: RichTextOptions = {}): Block[] {
   const blocks: Block[] = []
   let paragraph: Inline[][] = []
   let list: OpenList | null = null
   let blankAfterList = false
+  let fence: { indent: number; lines: string[] } | null = null
 
+  const inline = (line: string) => parseInline(line, options)
   const closeParagraph = () => {
     if (paragraph.length > 0) blocks.push({ type: 'paragraph', lines: paragraph })
     paragraph = []
   }
   const closeList = () => {
-    const items = list?.items.map((item) => parseInline(item.trim())).filter((item) => item.length > 0) ?? []
+    const items = list?.items.map((item) => inline(item.trim())).filter((item) => item.length > 0) ?? []
     if (list && items.length > 0)
       blocks.push({ type: 'list', ordered: list.ordered, start: list.start, items })
     list = null
     blankAfterList = false
   }
+  const closeFence = () => {
+    const code = fence?.lines.join('\n').replace(/^\n+|\s+$/g, '') ?? ''
+    if (code) blocks.push({ type: 'code', text: code })
+    fence = null
+  }
 
   for (const raw of text.split(/\r\n|\r|\n/)) {
-    if (FENCE.test(raw)) continue
+    const fenceLine = raw.match(FENCE)
+    if (fence) {
+      if (fenceLine) closeFence()
+      else fence.lines.push(dedent(raw, fence.indent))
+      continue
+    }
+    if (fenceLine) {
+      if (options.code) {
+        closeParagraph()
+        closeList()
+        fence = { indent: fenceLine[1]?.length ?? 0, lines: [] }
+      }
+      continue
+    }
     if (raw.trim() === '' || RULE.test(raw)) {
       closeParagraph()
       if (list) blankAfterList = true
@@ -186,13 +229,16 @@ export function parseRichText(text: string): Block[] {
     const heading = raw.match(HEADING)
     if (heading) {
       closeParagraph()
-      const line = parseInline(heading[1] ?? '').map((piece) => ({ ...piece, strong: true }))
-      if (line.length > 0) blocks.push({ type: 'paragraph', lines: [line] })
+      const line = inline(heading[1] ?? '')
+      if (line.length === 0) continue
+      if (options.headings) blocks.push({ type: 'heading', text: line })
+      else blocks.push({ type: 'paragraph', lines: [line.map((piece) => ({ ...piece, strong: true }))] })
       continue
     }
-    const line = parseInline(raw.trim())
+    const line = inline(raw.trim())
     if (line.length > 0) paragraph.push(line)
   }
+  closeFence()
   closeParagraph()
   closeList()
   return blocks

@@ -16,6 +16,7 @@ const pages = [
   '/lab/auth-lab/',
   '/lab/seguridad-en-accion/',
   '/lab/api-playground/',
+  '/lab/revisor-de-codigo/',
   '/sobre-mi/',
   '/privacidad/',
   '/contacto/',

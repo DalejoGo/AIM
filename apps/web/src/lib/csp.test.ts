@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { CSP_SCRIPT_RESOURCES, cspDirectives, cspHash, cspOrigin, TURNSTILE_ORIGIN } from './csp'
+import {
+  CF_ANALYTICS_ORIGIN,
+  CF_ANALYTICS_REPORT_ORIGIN,
+  CSP_SCRIPT_RESOURCES,
+  cspDirectives,
+  cspHash,
+  cspOrigin,
+  cspScriptResources,
+  TURNSTILE_ORIGIN,
+} from './csp'
 
 const directive = (directives: string[], name: string) =>
   directives
@@ -38,6 +47,13 @@ describe('cspDirectives', () => {
       connectTo: ['https://aim-api.example.com/v1/', undefined, '  ', 'https://aim-api.example.com/health'],
     })
     expect(directive(directives, 'connect-src')).toEqual(["'self'", 'https://aim-api.example.com'])
+  })
+
+  it('lets the Web Analytics beacon load and report only when analytics is on', () => {
+    expect(directive(cspDirectives(), 'connect-src')).not.toContain(CF_ANALYTICS_REPORT_ORIGIN)
+    expect(cspScriptResources()).not.toContain(CF_ANALYTICS_ORIGIN)
+    expect(directive(cspDirectives({ analytics: true }), 'connect-src')).toContain(CF_ANALYTICS_REPORT_ORIGIN)
+    expect(cspScriptResources({ analytics: true })).toEqual([...CSP_SCRIPT_RESOURCES, CF_ANALYTICS_ORIGIN])
   })
 })
 

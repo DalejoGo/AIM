@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CreateLead, Project, QuoteConfig } from './index'
+import { CODE_REVIEW_MAX_LENGTH, CodeReviewRequest, CreateLead, Project, QuoteConfig } from './index'
 
 const lead = {
   name: 'Ana Pérez',
@@ -74,5 +74,27 @@ describe('QuoteConfig', () => {
   it('rejects a service configured twice', () => {
     const twice = { ...config, services: [...config.services, ...config.services] }
     expect(QuoteConfig.safeParse(twice).success).toBe(false)
+  })
+})
+
+describe('CodeReviewRequest', () => {
+  it('keeps the indentation and tabs, and drops CRLF, control characters and blank edges', () => {
+    const parsed = CodeReviewRequest.parse({
+      language: 'python',
+      code: '\r\n  \r\n    def f(x):\r\n\treturn x\u0007 / 2   \n\n',
+    })
+    expect(parsed).toEqual({ language: 'python', code: '    def f(x):\n\treturn x / 2' })
+  })
+
+  it('counts the limit after cleaning the fragment', () => {
+    const fits = `${'a'.repeat(CODE_REVIEW_MAX_LENGTH)}\n\n`
+    expect(CodeReviewRequest.safeParse({ language: 'otro', code: fits }).success).toBe(true)
+    const long = 'a'.repeat(CODE_REVIEW_MAX_LENGTH + 1)
+    expect(CodeReviewRequest.safeParse({ language: 'otro', code: long }).success).toBe(false)
+  })
+
+  it('refuses an unknown language and a blank fragment', () => {
+    expect(CodeReviewRequest.safeParse({ language: 'rust', code: 'fn main() {}' }).success).toBe(false)
+    expect(CodeReviewRequest.safeParse({ language: 'sql', code: ' \n\t\n ' }).success).toBe(false)
   })
 })

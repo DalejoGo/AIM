@@ -12,7 +12,15 @@ import { ADMIN_SCOPES, issueAccessToken } from '../src/auth/tokens'
 import { assistantUsage } from '../src/db/schema'
 import { LlmError } from '../src/deps'
 import { resolveRuntimeDeps } from '../src/runtime'
-import { createTestContext, type TestContext, type TestOverrides, testEnv } from './helpers'
+import {
+  createTestContext,
+  parseSse,
+  assistantCookie as sessionCookie,
+  startAssistantSession as startSession,
+  type TestContext,
+  type TestOverrides,
+  testEnv,
+} from './helpers'
 
 const ROOT = join(import.meta.dirname, '../../..')
 const CONTENT = join(ROOT, 'apps/web/src/content')
@@ -29,19 +37,6 @@ async function assistantContext(reply?: ScriptedReply, overrides: TestOverrides 
   return { t, llm }
 }
 
-function startSession(t: TestContext, body: unknown = { turnstileToken: 'turnstile-token' }) {
-  return t.request('/api/assistant/session', { method: 'POST', body: JSON.stringify(body) })
-}
-
-/** The `name=value` part of the session cookie, as the browser would send it back. */
-async function sessionCookie(t: TestContext): Promise<string> {
-  const res = await startSession(t)
-  expect(res.status).toBe(200)
-  const cookie = res.headers.get('set-cookie')?.split(';')[0]
-  if (!cookie) throw new Error('no session cookie')
-  return cookie
-}
-
 function ask(t: TestContext, cookie: string | null, messages: unknown, ip?: string) {
   return t.request('/api/assistant/messages', {
     method: 'POST',
@@ -49,25 +44,6 @@ function ask(t: TestContext, cookie: string | null, messages: unknown, ip?: stri
     body: JSON.stringify({ messages }),
     ...(ip ? { ip } : {}),
   })
-}
-
-interface SseEvent {
-  event: string | undefined
-  data: Record<string, unknown>
-}
-
-function parseSse(text: string): SseEvent[] {
-  return text
-    .split('\n\n')
-    .filter((block) => block.trim())
-    .map((block) => {
-      const lines = block.split('\n')
-      const data = lines
-        .filter((l) => l.startsWith('data: '))
-        .map((l) => l.slice(6))
-        .join('\n')
-      return { event: lines.find((l) => l.startsWith('event: '))?.slice(7), data: JSON.parse(data) }
-    })
 }
 
 const usageRows = (t: TestContext) => t.db.select().from(assistantUsage)
@@ -129,6 +105,50 @@ describe('POST /api/assistant/session', () => {
     expect(res.status).toBe(400)
     const body = (await res.json()) as { fields: Record<string, string[]> }
     expect(body.fields.turnstileToken?.[0]).toContain('verificación de seguridad')
+  })
+})
+
+describe('GET /api/assistant/session', () => {
+  const status = (t: TestContext, cookie?: string) =>
+    t.request('/api/assistant/session', cookie ? { headers: { cookie } } : {})
+
+  it('says there is no session without the cookie, without touching the database', async () => {
+    const { t } = await assistantContext()
+    const res = await status(t)
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('cache-control')).toBe('no-store')
+    expect(await res.json()).toEqual({ active: false, expiresIn: 0 })
+    expect(await usageRows(t)).toEqual([])
+  })
+
+  it('reports the seconds left of a session, and none once it expires', async () => {
+    const { t } = await assistantContext()
+    const cookie = await sessionCookie(t)
+    expect(await (await status(t, cookie)).json()).toEqual({ active: true, expiresIn: 1800 })
+
+    t.clock.now = new Date(t.clock.now.getTime() + 20 * 60_000)
+    expect(await (await status(t, cookie)).json()).toEqual({ active: true, expiresIn: 600 })
+
+    t.clock.now = new Date(t.clock.now.getTime() + 11 * 60_000)
+    expect(await (await status(t, cookie)).json()).toEqual({ active: false, expiresIn: 0 })
+  })
+
+  it('does not take a forged session or an admin token as a session', async () => {
+    const { t } = await assistantContext()
+    const forged = await issueAssistantSession('another-secret-another-secret-another!', t.clock.now)
+    const { token: admin } = await issueAccessToken(
+      testEnv.JWT_SECRET,
+      'admin@aim.test',
+      ADMIN_SCOPES,
+      t.clock.now,
+    )
+    for (const token of [forged, admin, 'not-a-jwt']) {
+      expect(await (await status(t, `${ASSISTANT_COOKIE}=${token}`)).json()).toEqual({
+        active: false,
+        expiresIn: 0,
+      })
+    }
   })
 })
 
@@ -399,17 +419,20 @@ describe('POST /api/assistant/messages', () => {
 })
 
 describe('without ANTHROPIC_API_KEY', () => {
-  it('answers 503 on /api/assistant/* and keeps the rest of the API working', async () => {
+  it('answers 503 on /api/assistant/* (the reviewer too) and keeps the rest of the API working', async () => {
     const t = await createTestContext()
 
-    for (const path of ['/api/assistant/session', '/api/assistant/messages']) {
+    for (const path of ['/api/assistant/session', '/api/assistant/messages', '/api/assistant/review']) {
       const res = await t.request(path, { method: 'POST', body: JSON.stringify({ turnstileToken: 'x' }) })
       expect(res.status).toBe(503)
       expect(await res.json()).toEqual({
         error: 'assistant_unavailable',
-        message: expect.stringContaining('WhatsApp'),
+        message: expect.stringMatching(
+          path.endsWith('/review') ? /^El revisor de código.*WhatsApp/ : /^El asistente.*WhatsApp/,
+        ),
       })
     }
+    expect((await t.request('/api/assistant/session')).status).toBe(503)
     expect((await t.request('/api/health')).status).toBe(200)
   })
 
@@ -429,6 +452,7 @@ describe('without ANTHROPIC_API_KEY', () => {
     expect(without.env).toMatchObject({
       ASSISTANT_MODEL: 'claude-haiku-5-5',
       ASSISTANT_MAX_TOKENS: 500,
+      ASSISTANT_REVIEW_MAX_TOKENS: 800,
       ASSISTANT_MESSAGES_PER_HOUR: 15,
       ASSISTANT_DAILY_LIMIT: 300,
     })

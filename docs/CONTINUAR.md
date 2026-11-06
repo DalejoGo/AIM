@@ -11,9 +11,10 @@ Punto de partida para seguir trabajando en AIM desde otro equipo (por ejemplo, e
 | Panel privado | https://aimweb-9hc.pages.dev/admin/ | Validado por David: código por correo y lista de contactos |
 | Base de datos | Neon, proyecto **AIM** (`aws-us-east-1`), base `neondb` | Migraciones 0000–0003 aplicadas |
 | API Playground (NestJS) | https://aimweb-api.onrender.com (Render, servicio `aimweb-api`, plan Free) | En vivo; se duerme sin uso |
-| Repositorio | https://github.com/DalejoGo/AIM (rama `main`, público) | CI en GitHub Actions: 841 pruebas unitarias + 195 E2E |
+| Repositorio | https://github.com/DalejoGo/AIM (rama `main`, público) | CI en GitHub Actions: 914 pruebas unitarias + 215 E2E |
 | Calidad en producción | Lighthouse (`docs/RENDIMIENTO.md`) | Rendimiento 98–99 móvil / 100 escritorio; accesibilidad, buenas prácticas y SEO 100 |
 | Seguridad | CSP estricta (DEC-019) + cabeceras en `_headers` | Sin `unsafe-inline` ni `unsafe-eval` |
+| Visitas | Cloudflare Web Analytics, sin cookies (DEC-020) | Panel de Cloudflare → Analytics & Logs → Web Analytics → `aimweb-9hc.pages.dev` |
 | Dominio propio | `aimweb.dev` | Pendiente de compra (DEC-007) |
 
 ### Lab
@@ -25,7 +26,7 @@ Punto de partida para seguir trabajando en AIM desde otro equipo (por ejemplo, e
 | Seguridad en acción | En vivo: 10 peticiones por minuto (la 11 da 429) + cabeceras explicadas |
 | API Playground | En vivo: consola en el sitio llamando a la API de Render (verificado desde producción) |
 | Automatización en vivo (n8n) | Próximamente (Fase 4) |
-| Revisor de código con IA | Próximamente |
+| Revisor de código con IA | En vivo con Gemma 4 (comparte sesión, límites y cupo con el asistente) |
 
 ## 2. Servicios y cuentas (todas personales de David, DEC-009)
 
@@ -103,16 +104,17 @@ El id del proyecto de Neon sale de `neon projects list`. Editar precios, textos,
 
 ### Desarrollo (siguiente fase)
 
-- [ ] **Revisor de código con IA** (Lab): ya se puede hacer gratis con Workers AI, reutilizando el adaptador del asistente.
 - [ ] **Automatización en vivo** (Fase 4): decidir dónde corre n8n (local con túnel, Render o servidor propio) y versionar el flujo en `automations/`.
 - [ ] **Migrador en Python** (Fase 4): versión FastAPI en `services/py-lab` para archivos grandes y Excel.
-- [ ] **Fase 5:** blog, versión en inglés, analítica respetuosa con la privacidad (Cloudflare Web Analytics) y testimonios reales.
+- [ ] **Fase 5:** blog, versión en inglés y testimonios reales (la analítica sin cookies ya está activa, DEC-020).
 
 ### Deuda técnica conocida
 
 - `lab_hits`: las IP que no vuelven dejan hasta 10 filas; agregar una limpieza periódica si crece.
 - Cada petición a `/api` abre una conexión nueva a Neon (~1 s desde Colombia). Si se nota lenta, evaluar Hyperdrive de Cloudflare o el driver HTTP de Neon.
 - `/lab/asistente-ia/` y `/admin/` aún cargan Zod al inicio (no afecta los puntajes auditados).
+- Medir en vivo cuántos neurons gasta una revisión de código (comparte el cupo diario con el asistente; si se agota seguido, bajar `ASSISTANT_REVIEW_MAX_TOKENS`).
+- Opcional: que el asistente use `GET /api/assistant/session` para no pedir Turnstile si ya hay sesión del revisor.
 - Límites del login: si falla la escritura de auditoría, los límites no cuentan (fallan abiertos).
 - Render: tras más tráfico, confirmar que el límite por IP usa la IP del visitante (`trust proxy` en `apps/api/src/app.ts`).
 - El token de acceso del panel sigue válido hasta 15 min después de cerrar sesión (diseño de JWT corto).

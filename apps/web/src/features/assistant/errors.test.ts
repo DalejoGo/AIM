@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { ApiRequestError } from '../../lib/api'
 import {
+  ASSISTANT_TEXTS,
   AssistantStreamError,
   CONNECTION_LOST,
   cookiesProblem,
   INVALID_STREAM,
   PAUSED_TITLE,
+  type ProblemTexts,
   STREAM_INTERRUPTED,
   toProblem,
   waitText,
@@ -158,5 +160,39 @@ describe('toProblem', () => {
   it('explains a session the browser does not keep', () => {
     expect(cookiesProblem()).toMatchObject({ kind: 'cookies', retryable: false })
     expect(cookiesProblem().message).toMatch(/cookies/)
+  })
+})
+
+describe('texts of another feature (the code reviewer)', () => {
+  const texts: ProblemTexts = {
+    ...ASSISTANT_TEXTS,
+    session: 'Sesión del revisor.',
+    paused: 'Revisor en pausa.',
+    connectionLost: 'Se cortó la revisión.',
+    cookies: 'Cookies del revisor.',
+    rateLimited: (wait) => `Muchas revisiones${wait ? ` (${wait})` : ''}.`,
+  }
+
+  it("uses the feature's own words for what the browser detects", () => {
+    expect(toProblem(http(401, 'assistant_session_required'), texts).message).toBe('Sesión del revisor.')
+    expect(toProblem(http(503, 'assistant_unavailable'), texts)).toMatchObject({
+      kind: 'paused',
+      message: 'Revisor en pausa.',
+    })
+    expect(toProblem(new AssistantStreamError(CONNECTION_LOST, 'x'), texts).message).toBe(
+      'Se cortó la revisión.',
+    )
+    expect(cookiesProblem(texts).message).toBe('Cookies del revisor.')
+    expect(toProblem(http(429, 'http_429', 'x', 700), texts).message).toBe('Muchas revisiones (12 minutos).')
+    expect(toProblem(http(429, 'http_429'), texts).message).toBe('Muchas revisiones.')
+  })
+
+  it("keeps the API's own messages", () => {
+    expect(toProblem(http(429, 'rate_limited', 'Comparten el límite.', 700), texts).message).toBe(
+      'Comparten el límite.',
+    )
+    expect(
+      toProblem(new AssistantStreamError('assistant_busy', 'El revisor está ocupado.'), texts).message,
+    ).toBe('El revisor está ocupado.')
   })
 })

@@ -41,8 +41,8 @@ const pages = [
   ]),
 ]
 
-/** Pages whose form shows the Turnstile widget as soon as the island hydrates. */
-const TURNSTILE_PAGES = new Set(['/contacto/', '/admin/', '/lab/asistente-ia/'])
+/** Pages whose form shows the Turnstile widget as soon as the island hydrates (the reviewer: without a session). */
+const TURNSTILE_PAGES = new Set(['/contacto/', '/admin/', '/lab/asistente-ia/', '/lab/revisor-de-codigo/'])
 
 /** Collects CSP violations of the page (not of Cloudflare's own iframe, which has its own policy). */
 async function watchCsp(page: Page): Promise<string[]> {

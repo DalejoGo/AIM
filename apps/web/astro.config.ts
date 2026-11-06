@@ -3,10 +3,13 @@ import sitemap from '@astrojs/sitemap'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
 import { BOOT_SCRIPT } from './src/lib/boot'
-import { CSP_SCRIPT_RESOURCES, CSP_STYLE_RESOURCES, cspDirectives, cspHash } from './src/lib/csp'
+import { CSP_STYLE_RESOURCES, cspDirectives, cspHash, cspScriptResources } from './src/lib/csp'
 
 // No host is hard-coded (DEC-007): the public URL comes from the environment.
 const site = process.env.PUBLIC_BASE_URL ?? 'http://localhost:4321'
+
+/** Cloudflare Web Analytics only in production builds (src/lib/site.ts → analyticsToken). */
+const analytics = process.env.APP_ENV === 'production' && Boolean(process.env.PUBLIC_CF_ANALYTICS_TOKEN)
 
 /** Private pages stay out of the sitemap (they also carry noindex). */
 const PRIVATE_PATHS = ['/admin/']
@@ -21,8 +24,8 @@ export default defineConfig({
   security: {
     csp: {
       algorithm: 'SHA-256',
-      directives: cspDirectives({ connectTo: [process.env.PUBLIC_PLAYGROUND_API_URL] }),
-      scriptDirective: { resources: CSP_SCRIPT_RESOURCES, hashes: [cspHash(BOOT_SCRIPT)] },
+      directives: cspDirectives({ connectTo: [process.env.PUBLIC_PLAYGROUND_API_URL], analytics }),
+      scriptDirective: { resources: cspScriptResources({ analytics }), hashes: [cspHash(BOOT_SCRIPT)] },
       styleDirective: { resources: CSP_STYLE_RESOURCES },
     },
   },

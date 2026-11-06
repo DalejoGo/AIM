@@ -15,7 +15,8 @@ import Footer from '../components/Footer.astro'
 import Header from '../components/Header.astro'
 import { es } from '../i18n/es'
 import { BOOT_SCRIPT } from '../lib/boot'
-import { site, whatsapp } from '../lib/site'
+import { CF_ANALYTICS_SCRIPT } from '../lib/csp'
+import { analyticsToken, site, whatsapp } from '../lib/site'
 
 interface Props {
   title: string
@@ -59,6 +60,7 @@ const graph: Graph = {
     ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd]),
   ],
 }
+const cfAnalytics = analyticsToken()
 ---
 
 <!doctype html>
@@ -121,5 +123,11 @@ const graph: Graph = {
       </svg>
     </a>
     )}
+    {
+      /* Cloudflare Web Analytics (DEC-020): cookieless page-view counts, production builds only. */
+      cfAnalytics && (
+        <script is:inline defer src={CF_ANALYTICS_SCRIPT} data-cf-beacon={JSON.stringify({ token: cfAnalytics })} />
+      )
+    }
   </body>
 </html>

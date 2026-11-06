@@ -77,6 +77,7 @@ La demo del Lab (DEC-011) responde con **Cloudflare Workers AI, modelo Gemma 4**
 - `POST /api/assistant/messages` con `{ messages }` (forma y límites en `@aim/contracts`): responde en streaming SSE con `delta`, y al final `done` o `error` (mensaje en español para mostrar). Sin sesión: 401; límites agotados: 429 con `Retry-After`; cupo de Workers AI agotado o sin capacidad: evento `error` "ocupado".
 - Lo que sabe sale de `apps/web/src/content`. Después de cambiar ese contenido: `pnpm knowledge` (las pruebas fallan si se olvida).
 - Cada mensaje queda en `assistant_usage` (hash de la IP, modelo y tokens) para los límites.
+- El **Revisor de código** (`POST /api/assistant/review` con `{ language, code }`, misma forma SSE) vive bajo `/api/assistant` para **compartir la cookie de sesión** (una sola verificación de Turnstile para los dos; la página consulta `GET /api/assistant/session` antes de pedirla), **los mismos límites** por IP y diario (cada revisión es una fila más de `assistant_usage`) y, por tanto, **el mismo cupo gratis** de Workers AI: la entrada de una revisión es más corta que la de un mensaje del chat (sus reglas y hasta 4000 caracteres de código, sin el conocimiento del sitio), aunque su tope de salida es mayor (`ASSISTANT_REVIEW_MAX_TOKENS`); falta medir sus neurons en vivo.
 
 ### Configuración
 
@@ -85,6 +86,7 @@ La demo del Lab (DEC-011) responde con **Cloudflare Workers AI, modelo Gemma 4**
 | `AI` (binding en `wrangler.jsonc`) | Workers AI | Modelo gratuito por defecto. |
 | `ASSISTANT_MODEL` | Gemma 4 en Workers AI; `claude-haiku-5-5` con Anthropic | Cambia el modelo del proveedor activo (un id `@cf/…` para Workers AI). |
 | `ASSISTANT_MAX_TOKENS` | `500` | Tope de cada respuesta. |
+| `ASSISTANT_REVIEW_MAX_TOKENS` | `800` | Tope de cada revisión de código (cuatro secciones y quizá un arreglo corto). |
 | `ASSISTANT_MESSAGES_PER_HOUR` | `15` | Mensajes por visitante (IP) en una hora. |
 | `ASSISTANT_DAILY_LIMIT` | `120` (en `wrangler.jsonc`) | Mensajes de todos en 24 horas, para no pasar el cupo gratis. |
 | `ANTHROPIC_API_KEY` | (secreto opcional) | Si existe, el asistente usa Claude. |

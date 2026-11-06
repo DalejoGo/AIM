@@ -125,3 +125,37 @@ export async function createTestContext(overrides: TestOverrides = {}): Promise<
     },
   }
 }
+
+/** POST /api/assistant/session with a Turnstile token (the fake captcha decides whether it passes). */
+export function startAssistantSession(t: TestContext, body: unknown = { turnstileToken: 'turnstile-token' }) {
+  return t.request('/api/assistant/session', { method: 'POST', body: JSON.stringify(body) })
+}
+
+/** The `name=value` part of the assistant's session cookie, as the browser would send it back. */
+export async function assistantCookie(t: TestContext): Promise<string> {
+  const res = await startAssistantSession(t)
+  if (res.status !== 200) throw new Error(`the session was refused with ${res.status}`)
+  const cookie = res.headers.get('set-cookie')?.split(';')[0]
+  if (!cookie) throw new Error('no session cookie')
+  return cookie
+}
+
+export interface SseEvent {
+  event: string | undefined
+  data: Record<string, unknown>
+}
+
+/** The events of a Server-Sent Events body, with their JSON data parsed. */
+export function parseSse(text: string): SseEvent[] {
+  return text
+    .split('\n\n')
+    .filter((block) => block.trim())
+    .map((block) => {
+      const lines = block.split('\n')
+      const data = lines
+        .filter((l) => l.startsWith('data: '))
+        .map((l) => l.slice(6))
+        .join('\n')
+      return { event: lines.find((l) => l.startsWith('event: '))?.slice(7), data: JSON.parse(data) }
+    })
+}

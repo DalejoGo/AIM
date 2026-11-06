@@ -67,3 +67,7 @@ export const whatsapp = (message: string = site.contact.whatsappMessage) =>
 /** Turnstile site key for this build (build time only: APP_ENV is not exposed to the browser). */
 export const turnstileSiteKey = () =>
   resolveSiteKey({ siteKey: import.meta.env.PUBLIC_TURNSTILE_SITE_KEY, appEnv: process.env.APP_ENV })
+
+/** Cloudflare Web Analytics token (public, cookieless). Only production builds load the beacon. */
+export const analyticsToken = (): string | undefined =>
+  process.env.APP_ENV === 'production' ? import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN || undefined : undefined

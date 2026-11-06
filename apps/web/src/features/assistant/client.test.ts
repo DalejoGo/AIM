@@ -216,3 +216,80 @@ describe('answer', () => {
     expect((second as Error).name).toBe('AbortError')
   })
 })
+
+describe('hasSession', () => {
+  it('asks GET /api/assistant/session with the cookies of the site', async () => {
+    const { client, calls } = setup(() => json(200, { active: true, expiresIn: 900 }))
+    expect(await client.hasSession()).toBe(true)
+    expect(calls[0]?.path).toBe('/api/assistant/session')
+    expect(calls[0]?.init).toMatchObject({ method: 'GET', credentials: 'same-origin' })
+    expect(calls[0]?.init.body).toBeUndefined()
+  })
+
+  it('is false when the API says so, and on 401', async () => {
+    expect(await setup(() => json(200, { active: false, expiresIn: 0 })).client.hasSession()).toBe(false)
+    const unauthorized = setup(() => json(401, { error: 'unauthorized', message: 'Tu sesión venció.' }))
+    expect(await unauthorized.client.hasSession()).toBe(false)
+  })
+
+  it('fails with the API error on 503 and with invalid_response on an unexpected body', async () => {
+    const paused = setup(() => json(503, { error: 'assistant_unavailable', message: 'No disponible.' }))
+    expect(await failure(paused.client.hasSession())).toMatchObject({
+      status: 503,
+      code: 'assistant_unavailable',
+    })
+    const odd = setup(() => json(200, { active: 'yes' }))
+    expect(await failure(odd.client.hasSession())).toMatchObject({ code: 'invalid_response' })
+  })
+
+  it('fails as a network error when no response arrives', async () => {
+    const { client } = setup(() => Promise.reject(new TypeError('Failed to fetch')))
+    expect(await failure(client.hasSession())).toMatchObject({ status: 0, code: 'network_error' })
+  })
+})
+
+describe('review', () => {
+  const REQUEST = { language: 'python' as const, code: 'print(1 / 0)' }
+
+  it('posts the fragment and streams the review until done, like an answer', async () => {
+    const { client, calls } = setup(() =>
+      eventStream([
+        sse('delta', { text: '## Resumen\n' }),
+        sse('delta', { text: 'Divide por cero.' }),
+        sse('done', { reason: 'max_tokens' }),
+      ]),
+    )
+    const deltas: string[] = []
+    const result = await client.review(REQUEST, {
+      signal: new AbortController().signal,
+      onDelta: (text) => deltas.push(text),
+    })
+
+    expect(deltas).toEqual(['## Resumen\n', 'Divide por cero.'])
+    expect(result).toEqual({ reason: 'max_tokens' })
+    expect(calls[0]?.path).toBe('/api/assistant/review')
+    expect(calls[0]?.init).toMatchObject({ method: 'POST', credentials: 'same-origin' })
+    const headers = calls[0]?.init.headers as Record<string, string> | undefined
+    expect(headers?.accept).toBe('text/event-stream')
+    expect(JSON.parse(String(calls[0]?.init.body))).toEqual(REQUEST)
+  })
+
+  it('fails with the API error before the stream, and with the error event inside it', async () => {
+    const limited = setup(() =>
+      json(429, { error: 'rate_limited', message: 'Vuelve en 12 minutos.' }, { 'Retry-After': '700' }),
+    )
+    const options = { signal: new AbortController().signal, onDelta: () => {} }
+    expect(await failure(limited.client.review(REQUEST, options))).toMatchObject({
+      status: 429,
+      code: 'rate_limited',
+      retryAfter: 700,
+    })
+
+    const failed = setup(() =>
+      eventStream([
+        sse('error', { error: 'assistant_busy', message: 'El revisor está recibiendo muchas solicitudes.' }),
+      ]),
+    )
+    expect(await failure(failed.client.review(REQUEST, options))).toMatchObject({ code: 'assistant_busy' })
+  })
+})
