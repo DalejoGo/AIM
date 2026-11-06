@@ -35,6 +35,10 @@ export const EdgeEnv = z.object({
   ASSISTANT_MESSAGES_PER_HOUR: z.coerce.number().int().positive().default(15),
   /** Messages for everyone in a rolling 24 hours: the hard ceiling of the API bill. */
   ASSISTANT_DAILY_LIMIT: z.coerce.number().int().positive().default(300),
+  /** Lab "Seguridad en acción": requests per visitor (IP hash) that GET /api/lab/burst accepts in each window. */
+  LAB_BURST_LIMIT: z.coerce.number().int().min(1).max(1000).default(10),
+  /** Length of that sliding window, in seconds. */
+  LAB_BURST_WINDOW_SECONDS: z.coerce.number().int().min(1).max(3600).default(10),
 })
 export type EdgeEnv = z.infer<typeof EdgeEnv>
 export type EdgeBindings = z.input<typeof EdgeEnv>

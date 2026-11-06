@@ -69,64 +69,41 @@ En local, Turnstile usa las claves de prueba de Cloudflare (siempre pasan) y los
 
 ## Asistente IA
 
-La demo del Lab (DEC-011) usa Claude desde la misma API (`apps/edge`, rutas `/api/assistant/*`). Sin la llave, esas rutas responden 503 `assistant_unavailable` con un mensaje amable y el resto de la API sigue igual.
+La demo del Lab (DEC-011) responde con **Cloudflare Workers AI, modelo Gemma 4** (`@cf/google/gemma-4-26b-a4b-it`), gratis y sin API key: usa el binding `AI` del proyecto de Pages (DEC-018). Si algún día se carga `ANTHROPIC_API_KEY`, el asistente pasa a usar Claude sin cambiar código. Sin ningún modelo disponible, `/api/assistant/*` responde 503 y el resto de la API sigue igual.
 
 ### Cómo funciona
 
-- `POST /api/assistant/session` con `{ turnstileToken }`: verifica Turnstile y deja una cookie de sesión de 30 minutos (`HttpOnly`, `Secure`, `SameSite=Strict`, solo para `/api/assistant`). El visitante resuelve Turnstile una vez, no por mensaje.
-- `POST /api/assistant/messages` con `{ messages: [{ role: 'user' | 'assistant', content }] }` (hasta 10 mensajes de 1000 caracteres, el último del visitante): responde en streaming SSE con eventos `delta` (`{ text }`), y al final `done` (`{ reason }`) o `error` (`{ error, message }`, mensaje en español para mostrar). Sin sesión válida: 401; con límites agotados: 429 con `Retry-After`.
-- Lo que sabe sale de `apps/web/src/content` (servicios, precios "desde", cotizador, preguntas frecuentes, proyectos públicos, Lab, certificados y perfil). Después de cambiar ese contenido hay que regenerarlo; las pruebas fallan si se olvida:
-  ```bash
-  node scripts/build-assistant-knowledge.mjs          # o --check para solo comprobar
-  ```
-- Cada mensaje queda en la tabla `assistant_usage` (hash de la IP, modelo y tokens reales) para los límites y el costo.
+- `POST /api/assistant/session` con `{ turnstileToken }`: verifica Turnstile y deja una cookie de sesión de 30 minutos (`HttpOnly`, `Secure`, `SameSite=Strict`, solo para `/api/assistant`).
+- `POST /api/assistant/messages` con `{ messages }` (forma y límites en `@aim/contracts`): responde en streaming SSE con `delta`, y al final `done` o `error` (mensaje en español para mostrar). Sin sesión: 401; límites agotados: 429 con `Retry-After`; cupo de Workers AI agotado o sin capacidad: evento `error` "ocupado".
+- Lo que sabe sale de `apps/web/src/content`. Después de cambiar ese contenido: `pnpm knowledge` (las pruebas fallan si se olvida).
+- Cada mensaje queda en `assistant_usage` (hash de la IP, modelo y tokens) para los límites.
 
 ### Configuración
 
-| Variable | Por defecto | Para qué |
+| Variable o binding | Valor | Para qué |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | (secreto, sin valor) | Llave de la API de Claude. Sin ella el asistente responde 503. |
-| `ASSISTANT_MODEL` | `claude-haiku-5-5` | Modelo pequeño y barato: responde a partir de un texto corto. |
-| `ASSISTANT_MAX_TOKENS` | `500` | Tope de cada respuesta (unas pocas frases). |
+| `AI` (binding en `wrangler.jsonc`) | Workers AI | Modelo gratuito por defecto. |
+| `ASSISTANT_MODEL` | Gemma 4 en Workers AI; `claude-haiku-5-5` con Anthropic | Cambia el modelo del proveedor activo (un id `@cf/…` para Workers AI). |
+| `ASSISTANT_MAX_TOKENS` | `500` | Tope de cada respuesta. |
 | `ASSISTANT_MESSAGES_PER_HOUR` | `15` | Mensajes por visitante (IP) en una hora. |
-| `ASSISTANT_DAILY_LIMIT` | `300` | Mensajes de todos en 24 horas: el techo de la factura. |
+| `ASSISTANT_DAILY_LIMIT` | `120` (en `wrangler.jsonc`) | Mensajes de todos en 24 horas, para no pasar el cupo gratis. |
+| `ANTHROPIC_API_KEY` | (secreto opcional) | Si existe, el asistente usa Claude. |
 
-Las cuatro últimas son opcionales; para cambiarlas se agregan a `vars` en `apps/web/wrangler.jsonc`.
+### Cupo gratuito
 
-### Lo que hace David (una vez)
+Workers AI regala **10.000 neurons al día** en el plan gratuito. Medido en local (2026-11-06): un mensaje usa unos 5.400 tokens de entrada (reglas + conocimiento) y menos de 500 de salida, unos 50–65 neurons, es decir **unos 150–190 mensajes al día gratis**. Por eso el límite diario es 120. Si el cupo se agota, el asistente avisa que está ocupado hasta el día siguiente (UTC) y ofrece WhatsApp y `/contacto/`.
 
-1. **Crear la llave:** entra a https://console.anthropic.com con tu cuenta personal (DEC-009).
-   - En **Settings → Billing** compra créditos prepagados (el mínimo alcanza para meses de uso de esta demo).
-   - En **Settings → Limits** pon un límite de gasto mensual bajo, por ejemplo USD 5: es el freno final si algo se sale de control.
-   - En **API Keys → Create Key** crea una llave llamada `aimweb-asistente` y cópiala; la consola la muestra una sola vez.
-2. **Cargarla en Pages** (el comando te pide el valor; pégalo tú, nunca en el chat ni en un archivo):
-   ```bash
-   cd apps/web
-   pnpm exec wrangler pages secret put ANTHROPIC_API_KEY --project-name aimweb
-   ```
-3. **Aplicar la migración** `0002_assistant_usage` a Neon con la cadena **directa**:
-   ```bash
-   DATABASE_URL='<cadena directa de Neon>' pnpm db:migrate
-   ```
-4. Publicar de nuevo (`pnpm deploy:web`). Para probar en local, agrega `ANTHROPIC_API_KEY=...` a tu `apps/web/.dev.vars` (no se versiona).
+### Pasar a Claude (opcional, de pago)
 
-Si la llave se filtra, revócala en **API Keys** y carga una nueva con el mismo comando.
-
-### Costo estimado
-
-Precios de Claude Haiku 5.5: USD 0,10 por millón de tokens de entrada y USD 0,50 por millón de salida; lo que se lee de la caché cuesta la décima parte y escribirla, 1,25 veces la entrada. El prompt de sistema (reglas + conocimiento, unos 6.000 tokens) se guarda en caché y se reutiliza entre visitantes.
-
-- Por mensaje: entre USD 0,0003 (caché caliente) y unos USD 0,0013 (caché fría, conversación larga y respuesta de 500 tokens).
-- Techo con los límites por defecto (300 mensajes al día, todos en el peor caso): unos USD 0,40 al día, cerca de USD 12 al mes.
-- Uso realista de un portafolio (decenas de mensajes al día): menos de USD 1 al mes.
-
-El uso real queda en `assistant_usage` (`input_tokens`, `output_tokens`, `cache_read_tokens`, `cache_write_tokens`).
+1. En https://console.anthropic.com crea la cuenta, compra créditos, pon un límite de gasto (p. ej. USD 5) y crea una API key `aimweb-asistente`.
+2. Cárgala tú: `cd apps/web && pnpm exec wrangler pages secret put ANTHROPIC_API_KEY --project-name aimweb` (nunca en el chat).
+3. Republica (`pnpm deploy:web`): en Pages los secretos nuevos aplican desde la siguiente publicación.
 
 ## API Playground (NestJS en Render)
 
-La API de ejemplo **Tareas** (`apps/api`) corre en un contenedor Docker en **Render, plan gratuito** (DEC-014). La consola del Lab la llamará desde el sitio, por eso usa CORS. Todo está descrito en `render.yaml` (Blueprint) y `apps/api/Dockerfile`.
+La API de ejemplo **Tareas** (`apps/api`) corre en un contenedor Docker en **Render, plan gratuito** (DEC-014). La consola del Lab (`/lab/api-playground/`) la llama desde el sitio, por eso usa CORS. Todo está descrito en `render.yaml` (Blueprint) y `apps/api/Dockerfile`.
 
-- **URL esperada:** https://aimweb-api.onrender.com. Render arma la URL con el nombre del servicio; si `aimweb-api` ya está tomado, le agrega un sufijo (por ejemplo `aimweb-api-x1y2.onrender.com`). La URL real aparece en el panel del servicio.
+- **URL:** https://aimweb-api.onrender.com (servicio `aimweb-api`, creado por David desde el Blueprint `AIMWEB` el 2026-11-06; verificado: health, `/docs`, CORS del sitio, límite de tasa y sandbox).
 - **Documentación:** `<URL>/docs` (Swagger UI) y `<URL>/docs-json` (OpenAPI). **Salud:** `<URL>/api/v1/health`.
 - **Plan gratuito:** el servicio se duerme tras unos 15 minutos sin tráfico y tarda alrededor de un minuto en despertar (aceptado en DEC-014). Al dormirse o redesplegarse se pierden los sandboxes, porque viven en memoria.
 

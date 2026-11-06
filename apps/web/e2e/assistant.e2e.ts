@@ -89,7 +89,7 @@ test('presents the assistant, warns it is an AI and starts after the verificatio
   await page.goto('/lab/asistente-ia/')
   await expect(page.getByRole('heading', { name: 'Pregúntale al asistente' })).toBeVisible()
   await expect(page.getByText('Es una inteligencia artificial y puede equivocarse.')).toBeVisible()
-  await expect(page.getByText(/Tus mensajes se procesan con Anthropic/)).toBeVisible()
+  await expect(page.getByText(/Tus mensajes se procesan en Cloudflare Workers AI/)).toBeVisible()
   await expect(page.getByRole('link', { name: /Escribir por WhatsApp/ }).first()).toHaveAttribute(
     'href',
     /^https:\/\/wa\.me\//,

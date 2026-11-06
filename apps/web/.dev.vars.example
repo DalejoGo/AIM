@@ -11,10 +11,14 @@ MAILPIT_URL=http://127.0.0.1:8026
 MAIL_FROM=AIM <avisos@aim.local>
 NOTIFY_TO=dacty2003@gmail.com
 
-# --- Asistente IA (optional; without the key /api/assistant/* answers 503) ---
-# Local: a key with a low spending limit. Production: `wrangler pages secret put ANTHROPIC_API_KEY`.
+# --- Asistente IA (DEC-018): free Workers AI (Gemma 4) through the AI binding in wrangler.jsonc ---
+# Optional: with an Anthropic key the assistant switches to Claude. Set it with `wrangler pages secret put`.
 # ANTHROPIC_API_KEY=
-ASSISTANT_MODEL=claude-haiku-5-5
+# ASSISTANT_MODEL=@cf/google/gemma-4-26b-a4b-it
 ASSISTANT_MAX_TOKENS=500
 ASSISTANT_MESSAGES_PER_HOUR=15
 ASSISTANT_DAILY_LIMIT=300
+
+# --- Lab "Seguridad en acción" (rate-limit demo, GET /api/lab/burst) ---
+LAB_BURST_LIMIT=10
+LAB_BURST_WINDOW_SECONDS=10

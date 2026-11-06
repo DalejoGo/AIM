@@ -12,7 +12,7 @@ Sitio de AIM (servicios) + portafolio y hoja de vida de David Gómez. Plan en `d
 6. Los contratos (`packages/contracts`) son la única fuente de verdad de las formas de datos entre web y API.
 7. Código e identificadores en inglés; textos visibles en español (inglés en Fase 5).
 8. Decisiones que cambien estas reglas o la arquitectura se registran en `docs/DECISIONES.md` antes de aplicarse.
-9. Conventional Commits. No hacer commit ni push sin que David lo pida.
+9. Conventional Commits. David autorizó (2026-11-06) hacer commit, push, publicación en Cloudflare y migraciones en Neon **sin pedir confirmación**, siempre con `bash scripts/ci/all.sh` en verde y verificando en vivo después. Crear cuentas, pagar o manejar llaves sigue siendo de David.
 
 ## Comandos
 

@@ -14,6 +14,8 @@ const pages = [
   '/cotizar/',
   '/lab/migrador-de-datos/',
   '/lab/auth-lab/',
+  '/lab/seguridad-en-accion/',
+  '/lab/api-playground/',
   '/sobre-mi/',
   '/privacidad/',
   '/contacto/',

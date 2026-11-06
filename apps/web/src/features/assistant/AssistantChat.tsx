@@ -93,8 +93,9 @@ function Notice() {
           decidir, confirma precios y plazos con David.
         </p>
         <p>
-          Tus mensajes se procesan con Anthropic, la empresa que creó el modelo Claude, para escribir cada
-          respuesta. Este sitio no guarda la conversación; aun así, evita escribir datos personales.{' '}
+          Tus mensajes se procesan en Cloudflare Workers AI, con el modelo abierto Gemma de Google, para
+          escribir cada respuesta. Este sitio no guarda la conversación; aun así, evita escribir datos
+          personales.{' '}
           <a href="/privacidad/" class="link">
             Lee la política de privacidad
           </a>
@@ -333,11 +334,11 @@ function Pending({ text }: { text: string }) {
       {text && <RichText text={text} interactive={false} />}
       <p class={`flex items-center gap-2 text-step--1 text-muted ${text ? 'mt-2' : ''}`}>
         <span class="flex gap-1">
-          {[0, 150, 300].map((delay) => (
+          {/* Staggered with classes, not inline styles (the CSP blocks style attributes). */}
+          {['[animation-delay:0ms]', '[animation-delay:150ms]', '[animation-delay:300ms]'].map((delay) => (
             <span
               key={delay}
-              class="size-1.5 animate-pulse rounded-full bg-current motion-reduce:animate-none"
-              style={{ animationDelay: `${delay}ms` }}
+              class={`size-1.5 animate-pulse rounded-full bg-current motion-reduce:animate-none ${delay}`}
             />
           ))}
         </span>

@@ -1,14 +1,7 @@
 import { useSignal } from '@preact/signals'
 import { CircleCheck, Send } from 'lucide-preact'
 import { useEffect, useRef } from 'preact/hooks'
-import { ApiRequestError, api, messageForStatus } from '../../lib/api'
-import {
-  firstLeadError,
-  type LeadErrors,
-  type LeadField,
-  leadServerProblem,
-  validateLead,
-} from '../../lib/lead'
+import type { LeadErrors, LeadField } from '../../lib/lead'
 import { a11yProps, Field, FormAlert, focusSoon, inputClass, Spinner } from '../forms/fields'
 import { ConsentField, ReachFields } from '../forms/LeadFields'
 import { Turnstile } from '../turnstile/Turnstile'
@@ -37,6 +30,26 @@ const fieldId = (field: LeadField) =>
 
 type Phase = 'editing' | 'sending' | 'sent'
 
+type Sending = [typeof import('../../lib/lead'), typeof import('../../lib/api')]
+
+/**
+ * Checking and sending need Zod (through @aim/contracts), so they load when the visitor first focuses the form
+ * or sends it, not with the page. A failed load is retried on the next attempt.
+ */
+let sendingModules: Promise<Sending> | null = null
+function loadSending(): Promise<Sending> {
+  sendingModules ??= Promise.all([import('../../lib/lead'), import('../../lib/api')]).catch(
+    (error: unknown) => {
+      sendingModules = null
+      throw error
+    },
+  )
+  return sendingModules
+}
+
+/** messageForStatus(0) of lib/api.ts, which cannot be imported up front without bringing Zod along. */
+const NO_CONNECTION = 'No hay conexión con el servidor. Revisa tu internet e inténtalo de nuevo.'
+
 export default function ContactForm({ services, turnstileSiteKey, whatsappUrl }: ContactFormProps) {
   const values = useSignal<Values>(EMPTY)
   const errors = useSignal<LeadErrors>({})
@@ -46,6 +59,8 @@ export default function ContactForm({ services, turnstileSiteKey, whatsappUrl }:
   const resetKey = useSignal(0)
   const alertRef = useRef<HTMLDivElement>(null)
   const doneRef = useRef<HTMLHeadingElement>(null)
+  /** True while the checking code loads, so a second click does not send twice. */
+  const loadingCode = useRef(false)
 
   useEffect(() => {
     if (phase.value === 'sent') doneRef.current?.focus()
@@ -70,8 +85,21 @@ export default function ContactForm({ services, turnstileSiteKey, whatsappUrl }:
 
   async function submit(event: Event) {
     event.preventDefault()
-    if (phase.value === 'sending') return
+    if (phase.value === 'sending' || loadingCode.current) return
     formError.value = null
+    let modules: Sending
+    loadingCode.current = true
+    try {
+      modules = await loadSending()
+    } catch {
+      formError.value = NO_CONNECTION
+      alertRef.current?.focus()
+      return
+    } finally {
+      loadingCode.current = false
+    }
+    const [{ firstLeadError, leadServerProblem, validateLead }, { ApiRequestError, api, messageForStatus }] =
+      modules
     const result = validateLead({ ...values.value, turnstileToken: token.value })
     if (!result.ok) {
       errors.value = result.errors
@@ -149,6 +177,7 @@ export default function ContactForm({ services, turnstileSiteKey, whatsappUrl }:
     <form
       noValidate
       onSubmit={submit}
+      onFocusIn={() => void loadSending().catch(() => {})}
       aria-label="Formulario de contacto"
       class="grid min-w-0 gap-6 rounded-2xl border border-line bg-raised p-5 sm:p-8"
     >

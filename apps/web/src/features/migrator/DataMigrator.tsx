@@ -1,20 +1,36 @@
 import { useSignal } from '@preact/signals'
 import { CircleAlert, FileSpreadsheet, LoaderCircle, ShieldCheck } from 'lucide-preact'
 import { useId } from 'preact/hooks'
-import { BeforeAfter } from './BeforeAfter'
-import { Downloads } from './Downloads'
 import { DropZone } from './DropZone'
 import { checkFile, decodeCsv } from './file'
 import { summarySentence } from './format'
 import { PipelineSteps, type Source } from './PipelineSteps'
-import { PreviewTabs } from './PreviewTabs'
-import { runMigration } from './pipeline'
 import { ScrollRegion } from './ScrollTable'
 import { SAMPLE_CSV, SAMPLE_NAME } from './sample'
 import type { MigrationResult } from './types'
 
 const READ_ERROR =
   'No se pudo leer el archivo. Vuelve a elegirlo; si sigue fallando, ábrelo y guárdalo de nuevo como CSV.'
+const LOAD_ERROR = 'No se pudo cargar el procesador. Revisa tu conexión y vuelve a intentarlo.'
+
+type ResultsModule = typeof import('./Results')
+
+/** The pipeline and the result panels (./Results) load with the first file, not with the page. */
+let resultsModule: ResultsModule | null = null
+let loading: Promise<ResultsModule> | null = null
+const loadResults = () => {
+  loading ??= import('./Results').then(
+    (module) => {
+      resultsModule = module
+      return module
+    },
+    (error: unknown) => {
+      loading = null // a failed load (offline, new deploy) can be retried with the next file
+      throw error
+    },
+  )
+  return loading
+}
 
 /**
  * Lets the "processing" message paint before the synchronous pipeline takes the main thread. Browsers pause
@@ -51,7 +67,14 @@ export function DataMigrator() {
     error.value = null
     status.value = `Procesando «${name}»…`
     await nextPaint()
-    const outcome = runMigration(text)
+    let engine: ResultsModule
+    try {
+      engine = await loadResults()
+    } catch {
+      fail(LOAD_ERROR)
+      return
+    }
+    const outcome = engine.runMigration(text)
     if (!outcome.ok) {
       fail(outcome.error)
       return
@@ -166,18 +189,15 @@ export function DataMigrator() {
         <PipelineSteps result={current} source={currentSource} />
       </section>
 
-      {current && currentSource && (
-        <>
-          <BeforeAfter result={current} />
-          <PreviewTabs key={run.value} result={current} />
-          <Downloads
-            result={current}
-            sourceName={currentSource.name}
-            onDownloaded={(fileName) => {
-              status.value = `Se descargó «${fileName}».`
-            }}
-          />
-        </>
+      {current && currentSource && resultsModule && (
+        <resultsModule.Results
+          result={current}
+          sourceName={currentSource.name}
+          run={run.value}
+          onDownloaded={(fileName) => {
+            status.value = `Se descargó «${fileName}».`
+          }}
+        />
       )}
     </div>
   )

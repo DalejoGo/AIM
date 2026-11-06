@@ -96,3 +96,17 @@ export const assistantUsage = pgTable(
   },
   (t) => [index('assistant_usage_at_idx').on(t.at), index('assistant_usage_ip_hash_idx').on(t.ipHash, t.at)],
 )
+
+/**
+ * Requests accepted by the Lab's rate-limit demo (GET /api/lab/burst), one row each: a sliding window per IP
+ * hash. Every hit deletes that IP's rows older than the window, so an IP never keeps more than the limit.
+ */
+export const labHits = pgTable(
+  'lab_hits',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
+    ipHash: text('ip_hash').notNull(),
+  },
+  (t) => [index('lab_hits_ip_hash_at_idx').on(t.ipHash, t.at)],
+)

@@ -1,10 +1,12 @@
 /**
  * What the browser sends to POST /api/assistant/messages. The conversation lives only in memory: each question
- * goes with the latest turns. The limits mirror ChatRequest in apps/edge/src/assistant/chat.ts.
+ * goes with the latest turns. The limits come from @aim/contracts (ChatRequest).
  */
 
-export const MAX_MESSAGES = 10
-export const MAX_MESSAGE_LENGTH = 1000
+import { ASSISTANT_MAX_MESSAGE_LENGTH, ASSISTANT_MAX_MESSAGES } from '@aim/contracts/limits'
+
+export const MAX_MESSAGES = ASSISTANT_MAX_MESSAGES
+export const MAX_MESSAGE_LENGTH = ASSISTANT_MAX_MESSAGE_LENGTH
 
 export type Role = 'user' | 'assistant'
 

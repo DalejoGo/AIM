@@ -120,3 +120,11 @@ export type AuditEntry = z.infer<typeof AuditEntry>
 /** GET /api/admin/audit */
 export const AuditPage = z.object({ items: z.array(AuditEntry), nextCursor: z.string().nullable() })
 export type AuditPage = z.infer<typeof AuditPage>
+
+/** 200 answer of GET /api/lab/burst (Lab "Seguridad en acción"); a 429 is an ApiError with Retry-After. */
+export const LabBurstResult = z.object({
+  ok: z.literal(true),
+  remaining: z.number().int().nonnegative(),
+  resetInSeconds: z.number().int().nonnegative(),
+})
+export type LabBurstResult = z.infer<typeof LabBurstResult>

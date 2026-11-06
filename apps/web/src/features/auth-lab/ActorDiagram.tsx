@@ -11,49 +11,59 @@ const icons: Record<ActorId, LucideIcon> = {
 
 const labelClass = 'text-[0.75rem] leading-snug sm:text-step--1'
 
-/** Centre of the first column of a span of `columns`, as a percentage of the span's width. */
-const firstCentre = (columns: number) => `${50 / columns}%`
+// Positions are static class names, never inline style attributes: the CSP (src/lib/csp.ts) blocks those.
+const COL_START = ['col-start-1', 'col-start-2', 'col-start-3', 'col-start-4']
+const COL_SPAN = ['', 'col-span-1', 'col-span-2', 'col-span-3', 'col-span-4']
+/** The centre of the first column of a span of n columns sits at 50/n % of the span's width (index: n). */
+const DOT_LEFT = ['', 'left-[50%]', 'left-[25%]', 'left-[16.6667%]', 'left-[12.5%]']
+const LABEL_INDENT = [
+  '',
+  'pl-[calc(50%_+_0.75rem)]',
+  'pl-[calc(25%_+_0.75rem)]',
+  'pl-[calc(16.6667%_+_0.75rem)]',
+  'pl-[calc(12.5%_+_0.75rem)]',
+]
+const ARROW_INSET = ['', 'inset-x-[50%]', 'inset-x-[25%]', 'inset-x-[16.6667%]', 'inset-x-[12.5%]']
+/** Each actor's lifeline, at the centre of its column. */
+const LIFELINE_LEFT = ['left-[12.5%]', 'left-[37.5%]', 'left-[62.5%]', 'left-[87.5%]']
 
-/** One arrow between two lifelines, or a dot when an actor works on its own. */
-function MessageRow({ message, row }: { message: Message; row: number }) {
+/** One arrow between two lifelines, or a dot when an actor works on its own. Each message is its own row. */
+function MessageRow({ message }: { message: Message }) {
   const from = ACTORS.indexOf(message.from)
   const to = ACTORS.indexOf(message.to)
 
   if (from === to) {
     const columns = ACTORS.length - from
     return (
-      <div class="relative" style={{ gridColumn: `${from + 1} / -1`, gridRow: row }}>
-        <span
-          class="absolute top-1 size-3 -translate-x-1/2 rounded-full border-2 border-raised bg-brand"
-          style={{ left: firstCentre(columns) }}
-        />
-        <p class={labelClass} style={{ paddingLeft: `calc(${firstCentre(columns)} + 0.75rem)` }}>
-          {message.label}
-        </p>
+      <div class="grid grid-cols-4">
+        <div class={`relative ${COL_START[from]} ${COL_SPAN[columns]}`}>
+          <span
+            class={`absolute top-1 size-3 -translate-x-1/2 rounded-full border-2 border-raised bg-brand ${DOT_LEFT[columns]}`}
+          />
+          <p class={`${labelClass} ${LABEL_INDENT[columns]}`}>{message.label}</p>
+        </div>
       </div>
     )
   }
 
   const columns = Math.abs(to - from) + 1
-  const inset = firstCentre(columns)
   const rightwards = to > from
   return (
-    <div
-      class="relative pb-3"
-      style={{ gridColumn: `${Math.min(from, to) + 1} / span ${columns}`, gridRow: row }}
-    >
-      <p class={`px-1 text-center ${labelClass}`}>
-        <span class="bg-raised box-decoration-clone px-1">{message.label}</span>
-      </p>
-      <span class="absolute bottom-0 h-0.5 bg-brand" style={{ left: inset, right: inset }}>
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 10 10"
-          class={`absolute -top-1 size-2.5 text-brand ${rightwards ? '-right-0.5' : '-left-0.5 rotate-180'}`}
-        >
-          <path d="M0 0 10 5 0 10Z" fill="currentColor" />
-        </svg>
-      </span>
+    <div class="grid grid-cols-4">
+      <div class={`relative pb-3 ${COL_START[Math.min(from, to)]} ${COL_SPAN[columns]}`}>
+        <p class={`px-1 text-center ${labelClass}`}>
+          <span class="bg-raised box-decoration-clone px-1">{message.label}</span>
+        </p>
+        <span class={`absolute bottom-0 h-0.5 bg-brand ${ARROW_INSET[columns]}`}>
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 10 10"
+            class={`absolute -top-1 size-2.5 text-brand ${rightwards ? '-right-0.5' : '-left-0.5 rotate-180'}`}
+          >
+            <path d="M0 0 10 5 0 10Z" fill="currentColor" />
+          </svg>
+        </span>
+      </div>
     </div>
   )
 }
@@ -89,16 +99,15 @@ export function ActorDiagram({ step }: { step: Step }) {
           })}
         </div>
 
-        <div class="relative grid grid-cols-4 gap-y-5 py-2">
+        <div class="relative grid gap-y-5 py-2">
           {ACTORS.map((actor, index) => (
             <span
               key={actor}
-              class={`absolute inset-y-0 w-px ${involved.has(actor) ? 'bg-brand' : 'bg-line'}`}
-              style={{ left: `${12.5 + 25 * index}%` }}
+              class={`absolute inset-y-0 w-px ${LIFELINE_LEFT[index]} ${involved.has(actor) ? 'bg-brand' : 'bg-line'}`}
             />
           ))}
           {messages.map((message, index) => (
-            <MessageRow key={`${step}-${index}`} message={message} row={index + 1} />
+            <MessageRow key={`${step}-${index}`} message={message} />
           ))}
         </div>
       </div>

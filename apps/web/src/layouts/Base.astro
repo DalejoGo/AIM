@@ -1,11 +1,20 @@
 ---
+// All fonts go in the one site stylesheet: a separate CSS file per font would be one more render-blocking
+// request. An @font-face costs nothing until its glyphs are drawn (JetBrains Mono only in code blocks).
 import '@fontsource-variable/instrument-sans'
+import '@fontsource-variable/jetbrains-mono'
 import '@fontsource-variable/unbounded'
 import '../styles/global.css'
+// The latin files of the headline and text fonts, preloaded: every page paints with both above the fold, and
+// fetching them with the stylesheet (not after it) lets the first paint use them instead of swapping later,
+// which moved the text (layout shift).
+import textFont from '@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url'
+import headlineFont from '@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2?url'
 import type { Graph } from 'schema-dts'
 import Footer from '../components/Footer.astro'
 import Header from '../components/Header.astro'
 import { es } from '../i18n/es'
+import { BOOT_SCRIPT } from '../lib/boot'
 import { site, whatsapp } from '../lib/site'
 
 interface Props {
@@ -60,6 +69,8 @@ const graph: Graph = {
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {isPrivate && <meta name="robots" content="noindex" />}
+    <link rel="preload" href={headlineFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={textFont} as="font" type="font/woff2" crossorigin />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png" />
@@ -77,23 +88,15 @@ const graph: Graph = {
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={`Logo de ${site.brand.name}`} />
     <meta name="twitter:card" content="summary_large_image" />
+    {/* A data block, not executed: the CSP does not apply to it. */}
     <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />
-    <script is:inline>
-      // Applies saved preferences before paint (src/lib/preferences.ts is the runtime API).
-      ;(() => {
-        const root = document.documentElement
-        let theme
-        let currency
-        try {
-          theme = localStorage.getItem('aim-theme')
-          currency = localStorage.getItem('aim-currency')
-        } catch {}
-        root.dataset.theme = theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        root.dataset.currency = currency || (/-CO$/i.test(navigator.language) ? 'COP' : 'USD')
-      })()
-    </script>
   </head>
   <body class="min-h-dvh">
+    {/*
+      Zod without eval and the saved preferences, before the first paint (src/lib/boot.ts). First thing in
+      <body> and not in <head>, so the CSP <meta> that Astro adds at the end of <head> already covers it (by hash).
+    */}
+    <script is:inline set:html={BOOT_SCRIPT} />
     <a
       href="#contenido"
       class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-brand focus:px-4 focus:py-2 focus:text-brand-contrast"

@@ -80,6 +80,12 @@ for (const [theme, l] of [
     render(l.canvas, l.box, Math.round(512 * (l.box.w / l.box.h)), 512),
     'image/webp',
   )
+  // Header logo at 2x of its 32 px height (srcset in Logo.astro).
+  save(
+    `aim-logo-${theme}-64.webp`,
+    render(l.canvas, l.box, Math.round(64 * (l.box.w / l.box.h)), 64),
+    'image/webp',
+  )
 }
 // Icons: the neon version on the brand's ink colour, so they read on any browser tab or home screen.
 for (const [name, size, fit] of [

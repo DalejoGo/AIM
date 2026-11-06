@@ -11,12 +11,27 @@ interface Props {
 // Decorative here: the brand name next to it is the accessible text.
 const { size = 36, descriptor = false } = Astro.props
 const width = Math.round(size * 0.9)
+// The logo is drawn at 28-36 px: the 64 px tall file covers screens up to 2x, the 128 px one sharper screens.
+const files = (theme: 'light' | 'dark', width64: number, width128: number) =>
+  `/brand/aim-logo-${theme}-64.webp ${width64}w, /brand/aim-logo-${theme}.webp ${width128}w`
+const sizes = `${width}px`
 ---
 
 <span class:list={['inline-flex items-center', descriptor ? 'gap-2' : 'gap-2.5']}>
-  <img src="/brand/aim-logo-light.webp" alt="" width={width} height={size} class="shrink-0 dark:hidden" decoding="async" />
   <img
-    src="/brand/aim-logo-dark.webp"
+    src="/brand/aim-logo-light-64.webp"
+    srcset={files('light', 57, 114)}
+    sizes={sizes}
+    alt=""
+    width={width}
+    height={size}
+    class="shrink-0 dark:hidden"
+    decoding="async"
+  />
+  <img
+    src="/brand/aim-logo-dark-64.webp"
+    srcset={files('dark', 60, 119)}
+    sizes={sizes}
     alt=""
     width={width}
     height={size}

@@ -41,6 +41,7 @@ Registro de decisiones del proyecto. Cada una: contexto, decisión, alternativas
 
 - **Decisión (David, 2026-11-06):** `aim.dev` está registrado por otra persona; David eligió **aimweb.dev** y lo comprará él. Mientras tanto el sitio está en Cloudflare Pages: https://aimweb-9hc.pages.dev.
 - **Descartado:** la URL de Workers (`*.subdominio-de-la-cuenta.workers.dev`), porque el subdominio de la cuenta deja ver el nombre del cliente de la agencia (DEC-008).
+- **Actualización (David, 2026-11-06):** por ahora se queda el subdominio gratuito `aimweb-9hc.pages.dev`; `aimweb.dev` se compra más adelante.
 - **Consecuencia:** ningún host escrito en el código; todo sale de `PUBLIC_BASE_URL`. Pasos en `docs/DESPLIEGUE.md`.
 
 ## DEC-008 — Proyectos públicos
@@ -91,3 +92,16 @@ Registro de decisiones del proyecto. Cada una: contexto, decisión, alternativas
 - **Middleware estilo OAuth 2.0 (seguridad media):** endpoint de token con concesiones `urn:aim:grant-type:email-otp` y `refresh_token`; token de acceso JWT (HS256, 15 min) con `scope` (`leads:read`, `leads:write`, `audit:read`); token de renovación opaco (7 días) con **rotación y detección de reutilización** por familia; ambos en cookies `HttpOnly`, `Secure`, `SameSite=Strict`. El middleware también acepta `Authorization: Bearer` (RFC 6750) para clientes de API. Peticiones que cambian estado exigen `Origin` del propio sitio.
 - **Protecciones:** sin enumeración de usuarios (la respuesta a "pedir código" es siempre igual), límites de intentos por correo e IP, códigos y tokens guardados solo como HMAC-SHA-256, registro de auditoría de accesos.
 - **Alternativas descartadas:** usuario + contraseña (el hash seguro no cabe en la CPU gratuita de Workers) y login con GitHub (David prefirió un login propio).
+
+## DEC-018 — Modelo gratuito para el Asistente IA
+
+- **Contexto:** David no quiere pagar créditos de Anthropic por ahora.
+- **Decisión (David, 2026-11-06):** el asistente usa **Cloudflare Workers AI con Gemma 4** (`@cf/google/gemma-4-26b-a4b-it`) mediante el binding `AI` del proyecto de Pages: gratis (10.000 neurons diarios), sin API key ni tarjeta. Límite diario de 120 mensajes para no pasar el cupo.
+- **Alternativas:** Qwen3 30B en Workers AI (más mensajes, a veces razona de más); Gemini con plan gratuito (requiere key y Google puede usar las conversaciones).
+- **Consecuencia:** el adaptador de Claude se conserva: si existe `ANTHROPIC_API_KEY`, se usa Claude automáticamente (`apps/edge/src/runtime.ts`).
+
+## DEC-019 — Content Security Policy estricta
+
+- **Decisión (2026-11-06):** CSP nativa de Astro 7 como `<meta>` en cada página, con hashes de scripts y estilos y **sin** `'unsafe-inline'` ni `'unsafe-eval'`. Orígenes externos solo los necesarios: `https://challenges.cloudflare.com` (Turnstile, script e iframe) y el origen de `PUBLIC_PLAYGROUND_API_URL` en `connect-src` (API Playground en Render).
+- **Consecuencias:** Zod corre en modo `jitless` (`src/lib/boot.ts`); nada de `style=` en las islas; fuentes siempre como archivos; resaltado de código con Prism. `e2e/csp.e2e.ts` falla si alguna página o demo provoca una violación. `frame-ancestors` no cabe en `<meta>`: lo cubre `X-Frame-Options: DENY` en `_headers`.
+- **Rendimiento (Lighthouse, local, mediana de 3):** 98–100 en las cuatro categorías, móvil y escritorio (`docs/RENDIMIENTO.md`).

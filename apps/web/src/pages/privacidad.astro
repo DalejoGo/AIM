@@ -27,10 +27,9 @@ const updated = '6 de noviembre de 2026'
     <h2>Con quién se procesan</h2>
     <p>Para que el sitio funcione uso estos proveedores, que tratan los datos solo para prestar su servicio:</p>
     <ul>
-      <li><strong>Cloudflare</strong>: aloja el sitio y verifica con Turnstile que quien envía el formulario o usa el asistente del Lab es una persona y no un programa automático.</li>
+      <li><strong>Cloudflare</strong>: aloja el sitio, verifica con Turnstile que quien envía el formulario o usa el asistente del Lab es una persona y no un programa automático, y genera las respuestas del asistente con Workers AI (modelo Gemma de Google ejecutado por Cloudflare). Recibe los mensajes de la conversación para responderlos; este sitio no los guarda.</li>
       <li><strong>Neon</strong>: base de datos donde se guardan los mensajes que envías por el formulario.</li>
       <li><strong>Resend</strong>: envía el aviso por correo cuando llega un mensaje nuevo.</li>
-      <li><strong>Anthropic</strong>: genera las respuestas del asistente del Lab. Recibe los mensajes de la conversación para responderlos; este sitio no los guarda.</li>
     </ul>
     <p>Estos proveedores pueden almacenar los datos en servidores fuera de Colombia, principalmente en Estados Unidos. Al enviar el formulario o usar el asistente autorizas esa transferencia para los fines descritos aquí.</p>
 

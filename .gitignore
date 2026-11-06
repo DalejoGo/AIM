@@ -15,3 +15,5 @@ test-results
 playwright-report
 .dev.vars
 .wrangler
+# Chrome profiles that Lighthouse leaves under WSL (scripts/lighthouse.mjs runs it in a temp folder now)
+/C:*

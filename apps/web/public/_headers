@@ -1,7 +1,11 @@
-# Security headers for Cloudflare static assets (OWASP A05). The CSP is emitted per page by Astro with script hashes.
+# Security headers for Cloudflare static assets (OWASP A05). The CSP is a <meta> that Astro writes on every page with
+# the hashes of its scripts and styles (astro.config.ts, src/lib/csp.ts). A <meta> cannot carry frame-ancestors:
+# X-Frame-Options: DENY refuses framing instead. CORP same-origin: no other site embeds these files (the Open Graph
+# image is fetched by crawlers, server to server, where CORP does not apply).
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
+  Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   Cross-Origin-Opener-Policy: same-origin

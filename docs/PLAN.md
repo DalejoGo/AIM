@@ -93,3 +93,15 @@ Cada fase cierra con lint + tipos + pruebas + build en verde y un resumen.
 ## 7. Decisiones del arranque
 
 Registradas en [`DECISIONES.md`](DECISIONES.md): nombre de marca (DEC-001), dominio (DEC-007), hosting de NestJS (DEC-005), precios (DEC-006), proyectos públicos (DEC-008).
+
+## 8. Revisión final (con David, al terminar las fases)
+
+David pidió revisar estos textos al final, todos juntos:
+
+- Precios "desde" y del cotizador (propuestos por Claude, DEC-006): `apps/web/src/content/services/*.json` y `quote.json`.
+- Tiempos de entrega de cada servicio.
+- Preguntas frecuentes (`faq.json`): forma de pago, periodo de ajustes, acompañamiento.
+- Política de privacidad (`/privacidad/`): proveedores, transferencia internacional, conservación.
+- Texto del Asistente IA en el Lab (ya no ofrece tomar datos del visitante).
+
+Validado en vivo por David (2026-11-06): formulario de contacto con aviso por correo y login del panel `/admin/` con código.

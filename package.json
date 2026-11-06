@@ -17,10 +17,12 @@
     "deploy:web": "bash scripts/deploy-web.sh",
     "db:migrate": "pnpm --filter @aim/edge db:migrate",
     "dev:full": "pnpm --filter @aim/web build && pnpm --filter @aim/web exec wrangler pages dev --ip 127.0.0.1 --port 8789",
-    "knowledge": "node scripts/build-assistant-knowledge.mjs"
+    "knowledge": "node scripts/build-assistant-knowledge.mjs",
+    "audit": "node scripts/lighthouse.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
+    "lighthouse": "13.5.0",
     "turbo": "2.11.7",
     "typescript": "5.9.3"
   }
