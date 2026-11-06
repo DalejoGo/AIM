@@ -8,6 +8,7 @@ minimumReleaseAge: 20160
 
 onlyBuiltDependencies:
   - esbuild
+  - workerd
   - sharp
   - '@biomejs/biome'
   - '@swc/core'

@@ -39,8 +39,9 @@ Registro de decisiones del proyecto. Cada una: contexto, decisión, alternativas
 
 ## DEC-007 — Dominio
 
-- **Decisión (David, 2026-11-06):** aún no hay dominio. Se despliega en el subdominio gratuito de Cloudflare y el dominio se conecta después.
-- **Consecuencia:** ningún host escrito en el código; todo sale de `PUBLIC_BASE_URL`.
+- **Decisión (David, 2026-11-06):** `aim.dev` está registrado por otra persona; David eligió **aimweb.dev** y lo comprará él. Mientras tanto el sitio está en Cloudflare Pages: https://aimweb-9hc.pages.dev.
+- **Descartado:** la URL de Workers (`*.subdominio-de-la-cuenta.workers.dev`), porque el subdominio de la cuenta deja ver el nombre del cliente de la agencia (DEC-008).
+- **Consecuencia:** ningún host escrito en el código; todo sale de `PUBLIC_BASE_URL`. Pasos en `docs/DESPLIEGUE.md`.
 
 ## DEC-008 — Proyectos públicos
 

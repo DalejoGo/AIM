@@ -2,7 +2,9 @@
 
 Sitio de AIM (servicios) y portafolio de David Alejandro Gómez Ramírez. Monorepo TypeScript (pnpm + Turborepo).
 
+- Sitio en vivo: https://aimweb-9hc.pages.dev
 - Plan: [`docs/PLAN.md`](docs/PLAN.md)
+- Despliegue: [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md)
 - Decisiones: [`docs/DECISIONES.md`](docs/DECISIONES.md)
 - Diseño: [`docs/DISENO.md`](docs/DISENO.md)
 - **Editar precios, contactos, proyectos y demos:** [`docs/CONTENIDO.md`](docs/CONTENIDO.md)
