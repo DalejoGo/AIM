@@ -1,0 +1,92 @@
+[
+  {
+    "id": "oauth2-openid-connect",
+    "title": "OAuth 2.0 y OpenID Connect: flujos de autenticación y casos de estudio",
+    "issuer": "Platzi",
+    "issuedOn": "2026-07-06",
+    "hours": 13,
+    "file": "/certificados/oauth2-y-openid-connect.pdf",
+    "demo": "auth-lab"
+  },
+  {
+    "id": "python-avanzado",
+    "title": "Python avanzado para arquitectura de proyectos y PyPI",
+    "issuer": "Platzi",
+    "issuedOn": "2026-02-26",
+    "hours": 10,
+    "file": "/certificados/diploma-python-avanzado.pdf",
+    "demo": "migrador-de-datos"
+  },
+  {
+    "id": "chatbots-openai",
+    "title": "Desarrollo de chatbots con OpenAI",
+    "issuer": "Platzi",
+    "issuedOn": "2026-08-08",
+    "hours": 10,
+    "file": "/certificados/desarrollo-de-chat-bots-con-openai.pdf",
+    "demo": "asistente-ia"
+  },
+  {
+    "id": "claude-cowork",
+    "title": "Claude Cowork",
+    "issuer": "Platzi",
+    "issuedOn": "2026-11-04",
+    "hours": 10,
+    "file": "/certificados/claude-cowork.pdf",
+    "demo": "asistente-ia"
+  },
+  {
+    "id": "nestjs-modular",
+    "title": "NestJS: programación modular",
+    "issuer": "Platzi",
+    "issuedOn": "2026-05-20",
+    "hours": 12,
+    "file": "/certificados/diploma-nestjs-modular.pdf",
+    "demo": "api-playground"
+  },
+  {
+    "id": "e2e-testing-apis-node",
+    "title": "End to end testing para APIs REST con Node.js",
+    "issuer": "Platzi",
+    "issuedOn": "2026-08-26",
+    "hours": 17,
+    "file": "/certificados/prueba-e2e-api-rest-con-node.pdf",
+    "demo": "api-playground"
+  },
+  {
+    "id": "owasp-top-10",
+    "title": "OWASP Top 10: riesgos en aplicaciones",
+    "issuer": "Platzi",
+    "issuedOn": "2026-02-11",
+    "hours": 8,
+    "file": "/certificados/certificado-owasp-top-10.pdf",
+    "demo": "seguridad-en-accion"
+  },
+  {
+    "id": "n8n-low-code",
+    "title": "Automatizaciones low-code con n8n",
+    "issuer": "Platzi",
+    "issuedOn": "2026-08-27",
+    "hours": 7,
+    "file": "/certificados/automatizaciones-low-code-con-n8n.pdf",
+    "demo": "automatizacion-en-vivo"
+  },
+  {
+    "id": "testing-code-review-ia",
+    "title": "Testing y code review con IA",
+    "issuer": "Platzi",
+    "issuedOn": "2026-10-19",
+    "hours": 12,
+    "file": "/certificados/testing-y-code-review-con-ia.pdf",
+    "demo": "revisor-de-codigo"
+  },
+  {
+    "id": "claude-code",
+    "title": "Claude Code",
+    "issuer": "Platzi",
+    "issuedOn": "2026-05-08",
+    "hours": 8,
+    "file": "/certificados/diploma-claude-code.pdf",
+    "demo": "revisor-de-codigo"
+  }
+]

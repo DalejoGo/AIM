@@ -1,0 +1,35 @@
+---
+import { es } from '../i18n/es'
+import { site, whatsapp } from '../lib/site'
+import Logo from './Logo.astro'
+
+const year = new Date().getFullYear()
+const channels = [
+  { label: 'WhatsApp', href: whatsapp() },
+  site.contact.email && { label: site.contact.email, href: `mailto:${site.contact.email}` },
+  site.contact.linkedin && { label: 'LinkedIn', href: site.contact.linkedin },
+  site.contact.github && { label: 'GitHub', href: site.contact.github },
+].filter((c): c is { label: string; href: string } => Boolean(c))
+---
+
+<footer class="mt-24 border-t border-line py-12 text-step--1 text-muted">
+  <div class="wrap grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+    <div class="grid gap-3">
+      <Logo size={28} />
+      <p class="max-w-md">{site.brand.descriptor}. {es.footer.remote}</p>
+    </div>
+    <ul class="flex flex-wrap gap-x-6 gap-y-2">
+      {
+        channels.map((c) => (
+          <li>
+            <a href={c.href} class="hover:text-text" rel={c.href.startsWith('http') ? 'noopener' : undefined}>
+              {c.label}
+            </a>
+          </li>
+        ))
+      }
+      <li><a href="/privacidad/" class="hover:text-text">{es.footer.privacy}</a></li>
+    </ul>
+    <p class="md:col-span-2">© {year} {site.brand.name}. {site.founder.name}.</p>
+  </div>
+</footer>

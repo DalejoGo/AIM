@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CreateLead, Project } from './index'
+import { CreateLead, Project, QuoteConfig } from './index'
 
 const lead = {
   name: 'Ana Pérez',
@@ -56,5 +56,23 @@ describe('Project', () => {
 
   it('rejects slugs that are not kebab-case', () => {
     expect(Project.safeParse({ ...project, slug: 'Agencia Viajes' }).success).toBe(false)
+  })
+})
+
+describe('QuoteConfig', () => {
+  const price = { COP: 100, USD: 1 }
+  const config = {
+    services: [{ service: 'web', base: price, options: [] }],
+    timelines: [{ id: 'normal', label: 'Normal', multiplier: 1 }],
+    spread: 0.3,
+  }
+
+  it('accepts a valid configuration', () => {
+    expect(QuoteConfig.safeParse(config).success).toBe(true)
+  })
+
+  it('rejects a service configured twice', () => {
+    const twice = { ...config, services: [...config.services, ...config.services] }
+    expect(QuoteConfig.safeParse(twice).success).toBe(false)
   })
 })

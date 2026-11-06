@@ -1,0 +1,157 @@
+---
+import '@fontsource-variable/jetbrains-mono'
+import { es } from '../i18n/es'
+import { site, whatsapp } from '../lib/site'
+
+// The card's "Ideas / Código / Resultados" as the hero's one interactive moment (docs/DISENO.md).
+const steps = [
+  { id: 'idea', label: 'Idea' },
+  { id: 'codigo', label: 'Código' },
+  { id: 'resultado', label: 'Resultado' },
+] as const
+
+const snippet = {
+  comment: '// Cada mensaje nuevo se vuelve una fila',
+  code: [
+    'const order = parseOrder(message.text)',
+    '',
+    'await sheet.append({',
+    '  fecha: order.date,',
+    '  cliente: order.customer,',
+    '  total: order.total,',
+    '})',
+    '',
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: sample code shown as text, not evaluated
+    'await notify(`Pedido de ${order.customer} registrado`)',
+  ].join('\n'),
+}
+
+const orders = [
+  { date: '06/11', customer: 'Laura M.', total: '$ 84.000' },
+  { date: '06/11', customer: 'Tienda Sur', total: '$ 312.500' },
+  { date: '06/11', customer: 'Andrés P.', total: '$ 47.900' },
+]
+---
+
+<section class="wrap grid gap-10 pt-12 pb-20 md:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-x-16">
+  <h1 class="text-[clamp(1.6rem,7.6vw,4rem)] font-semibold lg:col-span-2">
+    Webs y automatizaciones que trabajan por tu negocio
+  </h1>
+  <div class="grid content-start gap-6">
+    <p class="prose-measure text-step-1 text-muted">
+      Soy {site.founder.shortName}, desarrollador backend y fundador de {site.brand.name}. Convierto lo que hoy haces a
+      mano en sistemas que funcionan solos, para negocios de cualquier tamaño y de cualquier país.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a href={whatsapp()} rel="noopener" class="btn btn-primary">{es.cta.whatsapp}</a>
+      <a href="/cotizar/" class="btn btn-quiet">{es.cta.quote}</a>
+    </div>
+  </div>
+
+  <div class="grid gap-4" data-triad>
+    <div role="tablist" aria-label="Cómo trabajo, con un ejemplo" class="flex items-center gap-2">
+      {
+        steps.map((s, i) => (
+          <>
+            {i > 0 && (
+              <span class="h-px flex-1 bg-line" aria-hidden="true" />
+            )}
+            <button
+              type="button"
+              role="tab"
+              id={`tab-${s.id}`}
+              aria-controls={`panel-${s.id}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+              class="rounded-lg px-2 py-1 font-display text-step-1 font-semibold text-muted transition-colors aria-selected:text-brand md:text-step-2"
+            >
+              {s.label}
+            </button>
+          </>
+        ))
+      }
+    </div>
+
+    <div class="min-h-[17rem] rounded-2xl border border-line bg-raised p-6">
+      <div role="tabpanel" id="panel-idea" aria-labelledby="tab-idea" class="grid gap-4">
+        <p class="text-step--1 text-muted">Lo que me cuentan muchos negocios:</p>
+        <p class="max-w-[30ch] rounded-2xl rounded-tl-sm bg-ink px-4 py-3 text-step-1">
+          “Cada pedido que llega por WhatsApp lo copio a mano en Excel. Se me pierden y me toma horas.”
+        </p>
+      </div>
+
+      <div role="tabpanel" id="panel-codigo" aria-labelledby="tab-codigo" hidden class="grid gap-4">
+        <p class="text-step--1 text-muted">Un flujo que lee cada mensaje y lo registra:</p>
+        <pre class="overflow-x-auto rounded-xl bg-ink p-4 font-mono text-[0.8rem] leading-relaxed"><code><span class="text-muted">{snippet.comment}</span>{'\n'}{snippet.code}</code></pre>
+      </div>
+
+      <div role="tabpanel" id="panel-resultado" aria-labelledby="tab-resultado" hidden class="grid gap-4">
+        <p class="text-step--1 text-muted">Los pedidos llegan solos a tu hoja de cálculo:</p>
+        <table class="w-full text-left text-step--1">
+          <caption class="sr-only">Ejemplo de pedidos registrados automáticamente</caption>
+          <thead class="text-muted">
+            <tr><th scope="col" class="pb-2 font-medium">Fecha</th><th scope="col" class="pb-2 font-medium">Cliente</th><th scope="col" class="pb-2 text-right font-medium">Total</th></tr>
+          </thead>
+          <tbody>
+            {
+              orders.map((o) => (
+                <tr class="border-t border-line">
+                  <td class="py-2">{o.date}</td>
+                  <td class="py-2">{o.customer}</td>
+                  <td class="py-2 text-right tabular-nums">{o.total}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+        <p class="flex items-center gap-2 text-step--1 text-live">
+          <span class="size-2 rounded-full bg-live" aria-hidden="true"></span>
+          Y te avisa cada vez que entra uno.
+        </p>
+      </div>
+    </div>
+    <p class="text-step--1 text-muted">Ejemplo ilustrativo de una automatización.</p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-triad]')
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')]
+    const select = (index: number, focus = false) => {
+      tabs.forEach((tab, i) => {
+        const selected = i === index
+        tab.setAttribute('aria-selected', String(selected))
+        tab.tabIndex = selected ? 0 : -1
+        const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '')
+        if (panel) panel.hidden = !selected
+      })
+      if (focus) tabs[index]?.focus()
+    }
+
+    let touched = false
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => {
+        touched = true
+        select(i)
+      })
+      tab.addEventListener('keydown', (e) => {
+        const next = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : null
+        if (next === null) return
+        e.preventDefault()
+        touched = true
+        select((next + tabs.length) % tabs.length, true)
+      })
+    })
+
+    // One orchestrated moment: walk the sequence once, then only respond to the visitor.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let step = 0
+      const timer = setInterval(() => {
+        step += 1
+        if (touched || step >= tabs.length) return clearInterval(timer)
+        select(step)
+      }, 3200)
+    }
+  }
+</script>

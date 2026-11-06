@@ -1,0 +1,52 @@
+{
+  "summary": "Soy desarrollador backend con más de dos años de experiencia en JavaScript, TypeScript, NestJS, Node.js y Python. Me especializo en automatizar tareas, integrar sistemas y manejar bases de datos, y he liderado proyectos web de front-end y back-end con Scrum y Git Flow.",
+  "experience": [
+    {
+      "company": "SAEM Colombia S.A.S.",
+      "role": "Desarrollador backend",
+      "current": true,
+      "description": "Implemento y mantengo integraciones web con Node.js, TypeScript, CMS y bases de datos; refactorizo módulos para escalar; diseño APIs REST seguras y automatizaciones en Python que mejoran la interoperabilidad entre aplicativos."
+    },
+    {
+      "company": "Mario Hernández S.A.S.",
+      "role": "Analista de integraciones",
+      "current": false,
+      "description": "Lideré aplicativos web con Laravel, JavaScript, Bootstrap y SQL Server; diseñé APIs; migré datos con Python; automaticé procesos de diseño y producción, y creé consultas y vistas para ventas, comercial y contaduría."
+    },
+    {
+      "company": "Mario Hernández S.A.S.",
+      "role": "Practicante de desarrollo",
+      "current": false,
+      "description": "Integré y automaticé procesos administrativos con Python y optimicé código Node.js y APIs para migrar datos de Microsoft Dynamics a SQL Server."
+    }
+  ],
+  "education": [
+    { "title": "Ingeniería en Sistemas y Desarrollo de Software", "institution": null, "period": "En curso" },
+    { "title": "Tecnología en Desarrollo de Software", "institution": null, "period": "2024 – 2027" },
+    {
+      "title": "Técnico Profesional en Computación",
+      "institution": "Escuela Tecnológica Instituto Técnico Central",
+      "period": "2021 – 2023"
+    },
+    { "title": "Técnico en Asistencia Administrativa", "institution": "SENA", "period": null }
+  ],
+  "skills": [
+    { "group": "Lenguajes", "items": ["Python", "JavaScript", "TypeScript"] },
+    { "group": "Backend", "items": ["NestJS", "Express", "FastAPI", "Flask", "Hono"] },
+    {
+      "group": "Datos y mensajería",
+      "items": ["PostgreSQL", "MySQL", "SQL Server", "Redis", "Kafka", "Temporal"]
+    },
+    {
+      "group": "Frontend y móvil",
+      "items": ["Astro", "React", "Preact", "Angular", "Ionic", "Tailwind CSS"]
+    },
+    { "group": "CMS", "items": ["WordPress", "Strapi", "Joomla"] },
+    { "group": "IA y agentes", "items": ["Claude", "Claude Code", "MCP", "LangChain", "LangGraph", "n8n"] },
+    {
+      "group": "Calidad y nube",
+      "items": ["Vitest", "Playwright", "Docker", "Cloudflare", "GitHub Actions"]
+    },
+    { "group": "Gestión", "items": ["Scrum", "Jira", "Planner", "GitLab", "Git Flow"] }
+  ]
+}

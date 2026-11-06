@@ -17,6 +17,8 @@ export const Project = z
     challenge: z.string().min(1),
     solution: z.string().min(1),
     results: z.array(z.string().min(1)).default([]),
+    highlights: z.array(z.string().min(1)).default([]),
+    order: z.number().int().nonnegative().default(100),
     featured: z.boolean().default(false),
     // A project stays unlisted until David confirms it can be shown (DEC-008).
     public: z.boolean().default(false),

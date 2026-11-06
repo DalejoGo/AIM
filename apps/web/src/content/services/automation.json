@@ -1,0 +1,22 @@
+{
+  "id": "automation",
+  "slug": "automatizaciones",
+  "order": 2,
+  "title": "Automatizaciones",
+  "tagline": "Que las tareas repetitivas se hagan solas.",
+  "summary": "Conecto tus herramientas para que los datos viajen sin copiar y pegar: pedidos que llegan a tu hoja de cálculo, reportes que se envían solos, avisos cuando algo pasa.",
+  "includes": [
+    "Revisión del proceso actual y propuesta de flujo",
+    "Flujos en n8n o scripts en Python y Node.js",
+    "Integración con correo, WhatsApp, hojas de cálculo y APIs",
+    "Registro de errores y avisos si algo falla"
+  ],
+  "deliverables": ["Flujo funcionando", "Documentación del flujo", "Capacitación de 1 sesión"],
+  "technologies": ["n8n", "Python", "Node.js", "APIs REST"],
+  "idealFor": "Equipos que pierden horas en tareas manuales o en pasar datos entre sistemas.",
+  "timeline": "3 días a 2 semanas",
+  "priceFrom": {
+    "COP": 600000,
+    "USD": 170
+  }
+}

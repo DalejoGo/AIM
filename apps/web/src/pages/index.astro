@@ -1,44 +1,104 @@
 ---
+import ContactCta from '../components/ContactCta.astro'
+import Hero from '../components/Hero.astro'
+import LabList from '../components/LabList.astro'
+import ProjectList from '../components/ProjectList.astro'
+import ServiceList from '../components/ServiceList.astro'
 import Base from '../layouts/Base.astro'
-import { whatsappLink } from '../lib/whatsapp'
+import { faq, site } from '../lib/site'
 
-const whatsapp = whatsappLink(import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573027015524')
+const process = [
+  {
+    title: 'Conversamos',
+    text: 'Me cuentas qué quieres lograr. Pregunto lo necesario para entender tu negocio, sin compromiso.',
+  },
+  {
+    title: 'Propuesta por escrito',
+    text: 'Recibes alcance, fechas y valor antes de empezar. Sin letra pequeña.',
+  },
+  { title: 'Construcción por etapas', text: 'Te muestro avances para que opines a tiempo, no al final.' },
+  {
+    title: 'Entrega y acompañamiento',
+    text: 'Publicamos, te explico cómo usarlo y quedo disponible para ajustes.',
+  },
+]
 ---
 
-<Base title="AIM · Desarrollo Web y Automatización" description="Sitio en construcción.">
-  <main>
-    <p class="eyebrow">En construcción</p>
-    <h1>AIM · Desarrollo Web y Automatización</h1>
-    <p>Ideas · Código · Resultados</p>
-    <a href={whatsapp} rel="noopener">Escríbeme por WhatsApp</a>
-  </main>
-</Base>
+<Base
+  title={site.brand.name}
+  description={site.brand.description}
+  jsonLd={[
+    {
+      '@type': 'FAQPage',
+      mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    },
+  ]}
+>
+  <Hero />
 
-<style>
-  main {
-    min-height: 100dvh;
-    display: grid;
-    place-content: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    text-align: center;
-  }
-  .eyebrow {
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-size: 0.8rem;
-  }
-  h1 {
-    margin: 0;
-    font-size: clamp(1.8rem, 5vw, 3rem);
-  }
-  p {
-    margin: 0;
-    color: var(--muted);
-  }
-  a {
-    color: var(--accent);
-    font-weight: 600;
-  }
-</style>
+  <section class="wrap py-16" aria-labelledby="servicios">
+    <div class="mb-10 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+      <h2 id="servicios" class="text-step-3 font-semibold md:text-step-4">Lo que puedo construir para ti</h2>
+      <p class="text-step--1 text-muted">Precios de arranque. Toca un servicio para ver qué incluye.</p>
+    </div>
+    <ServiceList />
+  </section>
+
+  <section class="wrap py-16" aria-labelledby="proyectos">
+    <div class="mb-10 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+      <h2 id="proyectos" class="text-step-3 font-semibold md:text-step-4">Proyectos recientes</h2>
+      <a href="/proyectos/" class="link text-step--1">Ver todos los proyectos</a>
+    </div>
+    <ProjectList featuredOnly />
+  </section>
+
+  <section class="wrap py-16" aria-labelledby="lab">
+    <div class="mb-10 grid gap-4 md:grid-cols-[1fr_minmax(0,28rem)] md:items-end">
+      <h2 id="lab" class="text-step-3 font-semibold md:text-step-4">El Lab: mi stack, en vivo</h2>
+      <p class="text-muted">
+        Cada certificación que tengo se convierte en una demo que puedes usar. Las que dicen “en vivo” funcionan ya mismo
+        en tu navegador.
+      </p>
+    </div>
+    <LabList limit={6} />
+    <a href="/lab/" class="link mt-6 inline-block text-step--1">Ver todo el Lab</a>
+  </section>
+
+  <section class="wrap py-16" aria-labelledby="proceso">
+    <h2 id="proceso" class="mb-10 text-step-3 font-semibold md:text-step-4">Así trabajamos</h2>
+    <ol class="grid gap-8 md:grid-cols-4">
+      {
+        process.map((p, i) => (
+          <li class="grid content-start gap-2 border-t-2 border-brand pt-4">
+            <span class="font-display text-step-2 font-semibold text-brand">{i + 1}</span>
+            <h3 class="text-step-1 font-semibold">{p.title}</h3>
+            <p class="text-step--1 text-muted">{p.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap py-16" aria-labelledby="preguntas">
+    <div class="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+      <h2 id="preguntas" class="text-step-3 font-semibold md:text-step-4">Preguntas frecuentes</h2>
+      <div class="border-t border-line">
+        {
+          faq.map((f) => (
+            <details class="group border-b border-line">
+              <summary class="flex cursor-pointer list-none items-start justify-between gap-6 py-5 font-semibold [&::-webkit-details-marker]:hidden">
+                {f.q}
+                <span class="text-step-1 leading-none text-brand transition-transform group-open:rotate-45" aria-hidden="true">
+                  +
+                </span>
+              </summary>
+              <p class="prose-measure pb-6 text-muted">{f.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <ContactCta />
+</Base>

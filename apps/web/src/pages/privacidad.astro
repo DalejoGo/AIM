@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro'
+import { site } from '../lib/site'
+
+const updated = '6 de noviembre de 2026'
+---
+
+<Base title="Privacidad" description="Cómo trato tus datos personales cuando me contactas.">
+  <article class="wrap prose-measure pt-12 md:pt-16 [&_h2]:mt-10 [&_h2]:text-step-2 [&_h2]:font-semibold [&_p]:mt-3 [&_li]:mt-1 [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">
+    <h1 class="text-step-4 font-semibold">Privacidad</h1>
+    <p class="text-muted">Última actualización: {updated}.</p>
+
+    <h2>Quién es responsable</h2>
+    <p>{site.founder.name}, a través de {site.brand.name}. Puedes escribirme a {site.contact.email ?? 'mi WhatsApp'}.</p>
+
+    <h2>Qué datos recibo</h2>
+    <p>Solo los que tú decides enviarme cuando me escribes por WhatsApp, correo o el cotizador: tu nombre, tu forma de contacto y lo que me cuentes de tu proyecto.</p>
+
+    <h2>Para qué los uso</h2>
+    <ul>
+      <li>Responder tu mensaje y preparar una propuesta.</li>
+      <li>Coordinar el proyecto si decidimos trabajar juntos.</li>
+    </ul>
+    <p>No vendo ni comparto tus datos con terceros para publicidad.</p>
+
+    <h2>Lo que guarda este sitio en tu navegador</h2>
+    <p>Solo tus preferencias de tema (claro u oscuro) y de moneda, para recordarlas en tu próxima visita. No uso cookies de seguimiento. Las demos del Lab procesan tus archivos dentro de tu navegador y no los envían a ningún servidor.</p>
+
+    <h2>Tus derechos</h2>
+    <p>De acuerdo con la Ley 1581 de 2012 de Colombia, puedes conocer, actualizar, rectificar y pedir que se eliminen tus datos, y revocar la autorización en cualquier momento. Escríbeme por cualquiera de los canales de contacto y te respondo.</p>
+  </article>
+</Base>

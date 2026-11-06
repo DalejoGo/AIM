@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content'
+import LabShell from '../../components/LabShell.astro'
+import { whatsapp } from '../../lib/site'
+
+// Demos that are not live yet get a detail page; live demos have their own page in this folder.
+export async function getStaticPaths() {
+  const demos = await getCollection('lab', (d) => d.data.status === 'soon')
+  return demos.map((d) => ({ params: { slug: d.data.slug }, props: { title: d.data.title } }))
+}
+
+const { slug } = Astro.params
+const { title } = Astro.props
+---
+
+<LabShell slug={slug}>
+  <div class="grid gap-4 rounded-2xl border border-dashed border-line p-8 text-center">
+    <p class="font-display text-step-2 font-semibold">En construcción</p>
+    <p class="mx-auto prose-measure text-muted">
+      Esta demo necesita la API de AIM y llega en una próxima fase. Si quieres algo así para tu negocio, no tienes que
+      esperar.
+    </p>
+    <p>
+      <a href={whatsapp(`Hola David, me interesa algo como la demo «${title}».`)} rel="noopener" class="btn btn-primary"
+        >Hablar de esta idea</a
+      >
+    </p>
+  </div>
+</LabShell>

@@ -1,4 +1,5 @@
 export * from './certificates'
 export * from './leads'
 export * from './projects'
+export * from './quote'
 export * from './services'

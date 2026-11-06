@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content'
+import ContactCta from '../../components/ContactCta.astro'
+import Price from '../../components/Price.astro'
+import { es } from '../../i18n/es'
+import Base from '../../layouts/Base.astro'
+import { site, whatsapp } from '../../lib/site'
+
+export async function getStaticPaths() {
+  const services = await getCollection('services')
+  return services.map((s) => ({ params: { slug: s.data.slug }, props: { service: s.data } }))
+}
+
+const { service: s } = Astro.props
+const message = `Hola ${site.founder.shortName}, me interesa el servicio de ${s.title.toLowerCase()}.`
+---
+
+<Base
+  title={s.title}
+  description={`${s.tagline} ${s.summary}`.slice(0, 160)}
+  jsonLd={[
+    {
+      '@type': 'Service',
+      name: s.title,
+      description: s.summary,
+      provider: { '@id': `${new URL('/', Astro.site).href}#aim` },
+      areaServed: 'Worldwide',
+      ...(s.priceFrom
+        ? {
+            offers: {
+              '@type': 'Offer',
+              priceSpecification: { '@type': 'PriceSpecification', minPrice: s.priceFrom.COP, priceCurrency: 'COP' },
+            },
+          }
+        : {}),
+    },
+  ]}
+>
+  <article class="wrap pt-12 md:pt-16">
+    <nav aria-label="Migas de pan" class="text-step--1 text-muted">
+      <a href="/servicios/" class="hover:text-text">{es.nav.services}</a>
+    </nav>
+    <header class="mt-4 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+      <div class="grid gap-4">
+        <h1 class="text-step-4 font-semibold md:text-step-5">{s.title}</h1>
+        <p class="text-step-2 text-muted">{s.tagline}</p>
+      </div>
+      <p class="text-step-2"><Price price={s.priceFrom} /></p>
+    </header>
+
+    <div class="mt-12 grid gap-12 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div class="grid content-start gap-8">
+        <p class="prose-measure text-step-1">{s.summary}</p>
+        <p class="prose-measure text-muted"><strong class="font-semibold text-text">Ideal para:</strong> {s.idealFor}</p>
+        <div class="flex flex-wrap gap-3">
+          <a href={`/cotizar/?servicio=${s.id}`} class="btn btn-primary">Cotizar {s.title.toLowerCase()}</a>
+          <a href={whatsapp(message)} rel="noopener" class="btn btn-quiet">{es.cta.whatsapp}</a>
+        </div>
+      </div>
+      <dl class="grid content-start gap-6">
+        <div>
+          <dt class="font-semibold">Incluye</dt>
+          <dd>
+            <ul class="mt-2 list-disc space-y-1.5 pl-5 text-muted marker:text-brand">
+              {s.includes.map((i) => <li>{i}</li>)}
+            </ul>
+          </dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Recibes</dt>
+          <dd>
+            <ul class="mt-2 list-disc space-y-1.5 pl-5 text-muted marker:text-brand">
+              {s.deliverables.map((d) => <li>{d}</li>)}
+            </ul>
+          </dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Tiempo de referencia</dt>
+          <dd class="mt-1 text-muted">{s.timeline}</dd>
+        </div>
+        <div>
+          <dt class="font-semibold">Tecnologías habituales</dt>
+          <dd class="mt-1 text-muted">{s.technologies.join(', ')}</dd>
+        </div>
+      </dl>
+    </div>
+  </article>
+  <ContactCta />
+</Base>

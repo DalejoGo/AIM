@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <title>AIM</title>
+  <style>
+    .hex { stroke: #5b3fe0 } .mark { stroke: #1a1633 }
+    @media (prefers-color-scheme: dark) { .hex { stroke: #8b6cff } .mark { stroke: #ece9f8 } }
+  </style>
+  <path class="hex" d="M20 2.5 35.2 11.25v17.5L20 37.5 4.8 28.75v-17.5Z" fill="none" stroke-width="2.4" stroke-linejoin="round"/>
+  <path class="mark" d="M11.5 28 18 12h4l6.5 16M14.2 22.5h11.6" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

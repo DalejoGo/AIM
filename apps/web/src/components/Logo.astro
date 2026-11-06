@@ -1,0 +1,29 @@
+---
+import { site } from '../lib/site'
+
+interface Props {
+  size?: number
+}
+
+const { size = 36 } = Astro.props
+---
+
+<span class="inline-flex items-center gap-2.5">
+  <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" class="shrink-0">
+    <path
+      d="M20 2.5 35.2 11.25v17.5L20 37.5 4.8 28.75v-17.5Z"
+      fill="none"
+      stroke="var(--color-brand)"
+      stroke-width="2.4"
+      stroke-linejoin="round"
+    ></path>
+    <path
+      d="M11.5 28 18 12h4l6.5 16M14.2 22.5h11.6"
+      fill="none"
+      stroke="var(--color-text)"
+      stroke-width="2.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"></path>
+  </svg>
+  <span class="font-display text-[1.15rem] font-semibold tracking-tight">{site.brand.name}</span>
+</span>

@@ -1,0 +1,19 @@
+---
+import ContactCta from '../../components/ContactCta.astro'
+import ProjectList from '../../components/ProjectList.astro'
+import Base from '../../layouts/Base.astro'
+---
+
+<Base title="Proyectos" description="Casos de estudio con el reto, la solución y resultados verificables de cada proyecto.">
+  <section class="wrap pt-12 md:pt-16">
+    <h1 class="text-step-4 font-semibold md:text-step-5">Proyectos</h1>
+    <p class="prose-measure mt-4 text-step-1 text-muted">
+      Cada caso cuenta el reto, cómo lo resolví y solo resultados que se pueden verificar en el código. Para ver mi stack
+      funcionando ahora mismo, visita el <a href="/lab/" class="link">Lab</a>.
+    </p>
+    <div class="mt-12">
+      <ProjectList />
+    </div>
+  </section>
+  <ContactCta />
+</Base>

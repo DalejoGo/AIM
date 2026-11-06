@@ -1,0 +1,10 @@
+{
+  // Static site on Cloudflare Workers assets (DEC-007: free subdomain until there is a domain).
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "aim-web",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

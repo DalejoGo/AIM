@@ -1,7 +1,8 @@
 # PLAN.md — AIM · Desarrollo Web y Automatización
 
 > Estado: **APROBADO (2026-11-06)**, con las recomendaciones de la sección 7 aceptadas. Las decisiones pendientes viven en [`DECISIONES.md`](DECISIONES.md); donde lo contradiga, manda ese archivo.
-> **Fase 0 (base):** completada en local (2026-11-06). `scripts/ci/all.sh` en verde (13 pruebas); `docker compose up -d` levanta Postgres :54321, Valkey :6381 y Mailpit :8026. Sin commit ni repo remoto todavía.
+> **Fase 1 (sitio público):** construida en local (2026-11-06): inicio, servicios, proyectos (agencia anónima y Marea), Lab con 3 demos en vivo (Cotizador, Migrador de datos, Auth Lab) y 5 próximamente, sobre mí con certificados, privacidad. Contenido editable en `apps/web/src/content` (ver `docs/CONTENIDO.md`). Pendiente: despliegue en Cloudflare.
+> **Fase 0 (base):** completada (2026-11-06). `scripts/ci/all.sh` en verde (13 pruebas); `docker compose up -d` levanta Postgres :54321, Valkey :6381 y Mailpit :8026. Publicada en GitHub (DalejoGo/AIM).
 
 ---
 

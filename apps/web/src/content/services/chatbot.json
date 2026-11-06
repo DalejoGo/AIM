@@ -1,0 +1,26 @@
+{
+  "id": "chatbot",
+  "slug": "chatbots",
+  "order": 4,
+  "title": "Chatbots",
+  "tagline": "Atención a cualquier hora.",
+  "summary": "Asistentes con inteligencia artificial que responden preguntas frecuentes con la información de tu negocio, toman datos de interesados y pasan la conversación a una persona cuando hace falta.",
+  "includes": [
+    "Entrenamiento con la información de tu negocio",
+    "Integración en tu sitio web o WhatsApp",
+    "Captura de datos de contacto",
+    "Límites de uso para controlar costos"
+  ],
+  "deliverables": [
+    "Chatbot publicado",
+    "Panel o reporte de conversaciones",
+    "Guía para actualizar sus respuestas"
+  ],
+  "technologies": ["Claude", "OpenAI", "Node.js", "n8n"],
+  "idealFor": "Negocios que reciben las mismas preguntas todos los días.",
+  "timeline": "1 a 3 semanas",
+  "priceFrom": {
+    "COP": 1000000,
+    "USD": 280
+  }
+}

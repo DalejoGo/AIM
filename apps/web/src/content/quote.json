@@ -1,0 +1,136 @@
+{
+  "spread": 0.35,
+  "timelines": [
+    { "id": "normal", "label": "Sin afán", "multiplier": 1 },
+    { "id": "prioritario", "label": "Lo necesito pronto", "multiplier": 1.2 },
+    { "id": "urgente", "label": "Es urgente", "multiplier": 1.45 }
+  ],
+  "services": [
+    {
+      "service": "web",
+      "base": { "COP": 900000, "USD": 250 },
+      "options": [
+        {
+          "id": "paginas-extra",
+          "label": "Hasta 5 secciones más",
+          "description": "Servicios, equipo, galería, preguntas frecuentes…",
+          "price": { "COP": 400000, "USD": 110 }
+        },
+        {
+          "id": "blog",
+          "label": "Blog",
+          "description": "Publica noticias o artículos tú mismo.",
+          "price": { "COP": 500000, "USD": 140 }
+        },
+        {
+          "id": "catalogo",
+          "label": "Catálogo con pedido por WhatsApp",
+          "description": "Productos con fotos y precios; el pedido llega a tu WhatsApp.",
+          "price": { "COP": 900000, "USD": 250 }
+        },
+        {
+          "id": "bilingue",
+          "label": "Sitio en dos idiomas",
+          "description": "Español e inglés con selector de idioma.",
+          "price": { "COP": 600000, "USD": 170 }
+        }
+      ]
+    },
+    {
+      "service": "automation",
+      "base": { "COP": 600000, "USD": 170 },
+      "options": [
+        {
+          "id": "integracion-extra",
+          "label": "Cada sistema adicional",
+          "description": "Otra herramienta conectada al flujo (CRM, ERP, tienda…).",
+          "price": { "COP": 350000, "USD": 100 }
+        },
+        {
+          "id": "reportes",
+          "label": "Reportes automáticos",
+          "description": "Un resumen que llega por correo o WhatsApp cada día o semana.",
+          "price": { "COP": 400000, "USD": 110 }
+        },
+        {
+          "id": "migracion",
+          "label": "Migración de datos",
+          "description": "Limpiar y pasar datos de un sistema a otro.",
+          "price": { "COP": 700000, "USD": 190 }
+        }
+      ]
+    },
+    {
+      "service": "app",
+      "base": { "COP": 3500000, "USD": 950 },
+      "options": [
+        {
+          "id": "roles",
+          "label": "Usuarios y roles",
+          "description": "Diferentes permisos para administradores, empleados y clientes.",
+          "price": { "COP": 900000, "USD": 250 }
+        },
+        {
+          "id": "pagos",
+          "label": "Pagos en línea",
+          "description": "Cobros con pasarela de pago.",
+          "price": { "COP": 1500000, "USD": 400 }
+        },
+        {
+          "id": "api-publica",
+          "label": "API documentada para terceros",
+          "description": "Otros sistemas se conectan a tu aplicativo.",
+          "price": { "COP": 1200000, "USD": 320 }
+        },
+        {
+          "id": "panel",
+          "label": "Panel de indicadores",
+          "description": "Gráficas y cifras clave de tu operación.",
+          "price": { "COP": 1000000, "USD": 270 }
+        }
+      ]
+    },
+    {
+      "service": "chatbot",
+      "base": { "COP": 1000000, "USD": 280 },
+      "options": [
+        {
+          "id": "whatsapp",
+          "label": "En WhatsApp",
+          "description": "El asistente responde en tu número de WhatsApp Business.",
+          "price": { "COP": 800000, "USD": 220 }
+        },
+        {
+          "id": "agenda",
+          "label": "Agenda citas",
+          "description": "Consulta disponibilidad y reserva citas.",
+          "price": { "COP": 700000, "USD": 190 }
+        },
+        {
+          "id": "crm",
+          "label": "Guarda los contactos en tu CRM",
+          "description": "Cada interesado queda registrado automáticamente.",
+          "price": { "COP": 500000, "USD": 140 }
+        }
+      ]
+    },
+    {
+      "service": "content",
+      "base": { "COP": 1200000, "USD": 320 },
+      "options": [
+        {
+          "id": "boletin",
+          "label": "Boletín por correo",
+          "description": "Tus lectores reciben cada artículo nuevo.",
+          "price": { "COP": 400000, "USD": 110 }
+        },
+        {
+          "id": "migracion-contenido",
+          "label": "Traer tu contenido actual",
+          "description": "Pasamos tus artículos desde otra plataforma.",
+          "price": { "COP": 500000, "USD": 140 }
+        }
+      ]
+    }
+  ]
+}

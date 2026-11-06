@@ -1,0 +1,22 @@
+---
+import ContactCta from '../../components/ContactCta.astro'
+import ServiceList from '../../components/ServiceList.astro'
+import Base from '../../layouts/Base.astro'
+---
+
+<Base
+  title="Servicios"
+  description="Páginas web, automatizaciones, aplicativos, chatbots y blogs a la medida, con precio de arranque en pesos o dólares."
+>
+  <section class="wrap pt-12 md:pt-16">
+    <h1 class="text-step-4 font-semibold md:text-step-5">Servicios</h1>
+    <p class="prose-measure mt-4 text-step-1 text-muted">
+      Cinco formas de ayudarte, con precio de arranque y alcance claro. Si lo tuyo no encaja exacto, escríbeme: casi
+      siempre es una mezcla.
+    </p>
+    <div class="mt-12">
+      <ServiceList headingLevel="h2" />
+    </div>
+  </section>
+  <ContactCta />
+</Base>

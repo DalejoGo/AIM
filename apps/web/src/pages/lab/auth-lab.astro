@@ -1,0 +1,14 @@
+---
+import LabShell from '../../components/LabShell.astro'
+import { AuthLab } from '../../features/auth-lab/AuthLab'
+---
+
+<LabShell slug="auth-lab">
+  <noscript>
+    <p class="prose-measure rounded-xl border border-line bg-raised p-4">
+      Esta demo necesita JavaScript: genera las llaves y verifica las firmas con la criptografía de tu navegador.
+      Actívalo y recarga la página para recorrerla.
+    </p>
+  </noscript>
+  <AuthLab client:visible />
+</LabShell>

@@ -1,0 +1,70 @@
+---
+import '@fontsource-variable/jetbrains-mono'
+import { getCollection, getEntry, render } from 'astro:content'
+import { es } from '../i18n/es'
+import Base from '../layouts/Base.astro'
+import Hex from './Hex.astro'
+
+interface Props {
+  /** Slug of the entry in src/content/lab/. */
+  slug: string
+}
+
+// Shared frame for every Lab demo page: title, summary, what backs it, and the demo itself in the default slot.
+const entry = await getEntry('lab', Astro.props.slug)
+if (!entry) throw new Error(`Unknown Lab demo: ${Astro.props.slug}`)
+const demo = entry.data
+const { Content } = await render(entry)
+const certificates = (await getCollection('certificates')).filter((c) => demo.certificates.includes(c.id))
+---
+
+<Base title={demo.title} description={demo.summary}>
+  <article class="wrap pt-12 md:pt-16">
+    <nav aria-label="Migas de pan" class="text-step--1 text-muted">
+      <a href="/lab/" class="hover:text-text">{es.nav.lab}</a>
+    </nav>
+    <header class="mt-4 grid gap-4 md:grid-cols-[1fr_18rem] md:gap-12">
+      <div class="grid gap-4">
+        <h1 class="text-step-4 font-semibold md:text-step-5">{demo.title}</h1>
+        <p class="prose-measure text-step-1 text-muted">{demo.summary}</p>
+      </div>
+      <dl class="grid content-start gap-3 text-step--1 md:border-l md:border-line md:pl-6">
+        <div class="flex items-center gap-2">
+          <Hex status={demo.status} />
+          <dt class="sr-only">Estado</dt>
+          <dd>{demo.status === 'live' ? es.lab.live : es.lab.soon}. {demo.runsOn === 'browser' ? es.lab.browser : es.lab.server}.</dd>
+        </div>
+        <div>
+          <dt class="text-muted">Tecnologías</dt>
+          <dd>{demo.stack.join(', ')}</dd>
+        </div>
+        {
+          certificates.length > 0 && (
+            <div>
+              <dt class="text-muted">{es.lab.proves}</dt>
+              <dd>
+                <ul>
+                  {certificates.map((c) => (
+                    <li>
+                      <a href={c.data.file} class="link">
+                        {c.data.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+    </header>
+
+    <section aria-label="Demo" class="mt-12">
+      <slot />
+    </section>
+
+    <div class="prose-measure mt-12 text-muted [&_p]:mt-3">
+      <Content />
+    </div>
+  </article>
+</Base>

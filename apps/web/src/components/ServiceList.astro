@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content'
+import Price from './Price.astro'
+
+interface Props {
+  /** Heading level of each service title inside the list. */
+  headingLevel?: 'h2' | 'h3'
+}
+
+// A price list rather than a grid of identical cards (docs/DISENO.md): each row expands to its scope.
+const { headingLevel: H = 'h3' } = Astro.props
+const services = (await getCollection('services')).map((s) => s.data).sort((a, b) => a.order - b.order)
+---
+
+<ul class="border-t border-line">
+  {
+    services.map((s) => (
+      <li class="border-b border-line">
+        <details class="group">
+          <summary class="grid cursor-pointer list-none grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 py-6 [&::-webkit-details-marker]:hidden">
+            <H class="text-step-2 font-semibold group-open:text-brand md:text-step-3">{s.title}</H>
+            <span class="row-span-2 self-center text-right text-step-0 md:text-step-1">
+              <Price price={s.priceFrom} />
+            </span>
+            <span class="text-muted">{s.tagline}</span>
+          </summary>
+          <div class="grid gap-8 pb-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+            <div class="grid content-start gap-4">
+              <p class="prose-measure">{s.summary}</p>
+              <p class="text-muted">
+                <strong class="font-semibold text-text">Ideal para:</strong> {s.idealFor}
+              </p>
+              <div class="flex flex-wrap gap-3">
+                <a href={`/cotizar/?servicio=${s.id}`} class="btn btn-primary">
+                  Cotizar {s.title.toLowerCase()}
+                </a>
+                <a href={`/servicios/${s.slug}/`} class="btn btn-quiet">
+                  Ver detalles
+                </a>
+              </div>
+            </div>
+            <dl class="grid content-start gap-4 text-step--1">
+              <div>
+                <dt class="font-semibold">Incluye</dt>
+                <dd>
+                  <ul class="mt-1 list-disc space-y-1 pl-5 text-muted marker:text-brand">
+                    {s.includes.map((i) => (
+                      <li>{i}</li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+              <div>
+                <dt class="font-semibold">Tiempo de referencia</dt>
+                <dd class="text-muted">{s.timeline}</dd>
+              </div>
+            </dl>
+          </div>
+        </details>
+      </li>
+    ))
+  }
+</ul>

@@ -1,0 +1,138 @@
+---
+import { getCollection } from 'astro:content'
+import ContactCta from '../components/ContactCta.astro'
+import Base from '../layouts/Base.astro'
+import { profile, site } from '../lib/site'
+
+const certificates = (await getCollection('certificates'))
+  .map((c) => c.data)
+  .sort((a, b) => b.issuedOn.localeCompare(a.issuedOn))
+const labTitles = new Map((await getCollection('lab')).map((d) => [d.data.slug, d.data]))
+const date = new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+---
+
+<Base title="Sobre mí" description={`${site.founder.name}, ${site.founder.role}. Experiencia, estudios, habilidades y certificaciones.`}>
+  <section class="wrap grid gap-12 pt-12 md:pt-16 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+    <div class="grid content-start gap-6">
+      <h1 class="text-step-4 font-semibold md:text-step-5">Hola, soy {site.founder.shortName}</h1>
+      <p class="prose-measure text-step-1">{profile.summary}</p>
+      <p class="prose-measure text-muted">
+        Fundé {site.brand.name} para llevar lo que hago a diario en empresas a negocios que necesitan resultados sin un
+        equipo de tecnología propio. Uso agentes de inteligencia artificial como parte de mi flujo de trabajo para entregar
+        más rápido y con pruebas, sin perder el criterio humano.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a href={site.media.cv} class="btn btn-primary" download>Descargar hoja de vida (PDF)</a>
+        {site.contact.linkedin && <a href={site.contact.linkedin} class="btn btn-quiet" rel="noopener">LinkedIn</a>}
+        {site.contact.github && <a href={site.contact.github} class="btn btn-quiet" rel="noopener">GitHub</a>}
+      </div>
+    </div>
+    <figure class="mx-auto grid w-full max-w-[17rem] gap-3">
+      <video
+        src={site.media.video}
+        poster={site.media.videoPoster}
+        controls
+        playsinline
+        preload="none"
+        class="aspect-[9/16] w-full rounded-3xl border border-line bg-raised object-cover"
+      >
+      </video>
+      <figcaption class="text-center text-step--1 text-muted">{site.brand.name} en 30 segundos</figcaption>
+    </figure>
+  </section>
+
+  <section class="wrap mt-24 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]" aria-labelledby="experiencia">
+    <h2 id="experiencia" class="text-step-3 font-semibold">Experiencia</h2>
+    <ol class="grid gap-8 border-l border-line pl-6">
+      {
+        profile.experience.map((e) => (
+          <li class="relative grid gap-1">
+            <span class:list={['absolute -left-[1.85rem] top-2 size-3 rounded-full', e.current ? 'bg-live' : 'bg-line']} aria-hidden="true" />
+            <h3 class="text-step-1 font-semibold">{e.role}</h3>
+            <p class="text-step--1 text-muted">
+              {e.company}
+              {e.current && ', actualmente'}
+            </p>
+            <p class="prose-measure mt-1 text-muted">{e.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap mt-24 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]" aria-labelledby="estudios">
+    <h2 id="estudios" class="text-step-3 font-semibold">Estudios</h2>
+    <ul class="grid gap-4">
+      {
+        profile.education.map((e) => (
+          <li class="grid gap-0.5 border-b border-line pb-4">
+            <span class="font-semibold">{e.title}</span>
+            {(e.institution || e.period) && (
+              <span class="text-step--1 text-muted">{[e.institution, e.period].filter(Boolean).join(', ')}</span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="wrap mt-24 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]" aria-labelledby="habilidades">
+    <h2 id="habilidades" class="text-step-3 font-semibold">Habilidades</h2>
+    <dl class="grid gap-6 sm:grid-cols-2">
+      {
+        profile.skills.map((s) => (
+          <div>
+            <dt class="font-semibold">{s.group}</dt>
+            <dd class="mt-1 text-muted">{s.items.join(', ')}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="wrap mt-24 grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]" aria-labelledby="certificados-titulo" id="certificados">
+    <div class="grid content-start gap-3">
+      <h2 id="certificados-titulo" class="text-step-3 font-semibold">Certificados</h2>
+      {
+        site.contact.platzi && (
+          <p class="text-step--1 text-muted">
+            Verificables en mi <a href={site.contact.platzi} class="link" rel="noopener">perfil de Platzi</a>.
+          </p>
+        )
+      }
+    </div>
+    <ul class="border-t border-line" aria-labelledby="certificados-titulo">
+      {
+        certificates.map((c) => {
+          const demo = c.demo ? labTitles.get(c.demo) : undefined
+          return (
+            <li class="grid gap-1 border-b border-line py-4 sm:grid-cols-[1fr_auto] sm:gap-x-6">
+              <a href={c.file} class="font-semibold hover:text-brand">
+                {c.title}
+              </a>
+              <span class="text-step--1 text-muted sm:row-span-2 sm:text-right">
+                {date.format(new Date(c.issuedOn))}
+                {c.hours && <br class="hidden sm:block" />}
+                {c.hours && <span class="sm:hidden">, </span>}
+                {c.hours && `${c.hours} horas`}
+              </span>
+              <span class="text-step--1 text-muted">
+                {c.issuer}
+                {demo && (
+                  <>
+                    {'. Demo: '}
+                    <a href={demo.status === 'live' && demo.href ? demo.href : `/lab/${demo.slug}/`} class="link">
+                      {demo.title}
+                    </a>
+                  </>
+                )}
+              </span>
+            </li>
+          )
+        })
+      }
+    </ul>
+  </section>
+
+  <ContactCta />
+</Base>

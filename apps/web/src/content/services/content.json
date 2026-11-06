@@ -1,0 +1,22 @@
+{
+  "id": "content",
+  "slug": "blogs-y-contenido",
+  "order": 5,
+  "title": "Blogs y contenido web",
+  "tagline": "Tus ideas, ordenadas y fáciles de encontrar.",
+  "summary": "Blogs y secciones de contenido que tú mismo administras, con una estructura pensada para que te encuentren en buscadores y para que leer sea cómodo.",
+  "includes": [
+    "Blog administrable (WordPress o CMS sin servidor)",
+    "Categorías, etiquetas y buscador",
+    "Estructura y metadatos para buscadores",
+    "Integración con redes sociales y boletín por correo"
+  ],
+  "deliverables": ["Blog publicado", "Acceso de administración", "Guía de publicación"],
+  "technologies": ["WordPress", "Strapi", "Astro"],
+  "idealFor": "Marcas personales y negocios que quieren crecer con contenido.",
+  "timeline": "2 a 3 semanas",
+  "priceFrom": {
+    "COP": 1200000,
+    "USD": 320
+  }
+}

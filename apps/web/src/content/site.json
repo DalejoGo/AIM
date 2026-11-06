@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "name": "AIM",
+    "descriptor": "Desarrollo Web y Automatización",
+    "tagline": "Ideas, código y resultados",
+    "description": "Páginas web, aplicativos, automatizaciones y chatbots a la medida. Trabajo 100 % remoto, para cualquier lugar."
+  },
+  "founder": {
+    "name": "David Alejandro Gómez Ramírez",
+    "shortName": "David",
+    "role": "Desarrollador backend y fundador de AIM"
+  },
+  "contact": {
+    "whatsapp": "573027015524",
+    "whatsappMessage": "Hola David, vi tu sitio y quiero contarte sobre un proyecto.",
+    "email": "dacty2003@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/david-alejandro-gomez-ramirez-52126936b",
+    "github": "https://github.com/DalejoGo",
+    "platzi": "https://platzi.com/@david.gomez715/"
+  },
+  "currency": { "default": "COP" },
+  "media": {
+    "cv": "/media/david-gomez-hoja-de-vida.pdf",
+    "video": "/media/aim-presentacion.mp4",
+    "videoPoster": "/media/aim-presentacion.jpg"
+  }
+}

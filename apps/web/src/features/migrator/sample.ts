@@ -1,0 +1,48 @@
+/**
+ * A messy customer list, as it usually comes out of an old system or a shared spreadsheet. Names, emails and
+ * phones are made up (example.com domains, 555 numbers). Expected outcome, checked in pipeline.test.ts:
+ * 37 data rows: 20 valid, 11 with errors, 3 duplicates and 3 empty.
+ */
+export const SAMPLE_NAME = 'clientes-ejemplo.csv'
+
+export const SAMPLE_CSV = [
+  ' Nombre completo ;Correo Electrónico;Teléfono;Fecha de registro;Monto (COP);Ciudad',
+  '  ana maría  GÓMEZ ;Ana.Gomez@Example.com ;300 555 0101;03/04/2024;$1.200.000,50;bogotá',
+  'CARLOS andrés ruiz;carlos.ruiz@example.com;+57 (310) 555-0102;2024-04-05;1200000.5;Medellín',
+  'luisa fernanda díaz; LUISA.DIAZ@EXAMPLE.ORG;3125550103;3 de abril de 2024;850.000;cali',
+  'josé del carmen pérez;jose.perez@example.com;(+57) 315 555 0104;15/01/2023;$ 2.500.000;SANTA MARTA',
+  'María de los Ángeles Torres;mangeles.torres@example.net;320-555-0105;7 abr 2024;350000;Barranquilla',
+  '',
+  'pedro salazar;pedro.salazar@example;301 555 0106;12/05/2024;$780.000;Pereira',
+  '  ana maría gómez;ana.gomez@example.com;+57 300 555 0101;2024-04-03;1200000.5;Bogotá',
+  'marta ríos;marta.rios.example.com;311 555 0107;20/06/2024;95.000;Bucaramanga',
+  'Jorge Iván Restrepo;jorge.restrepo@example.com;555 0108;01/07/2024;1.500.000;Manizales',
+  ';;;;;',
+  'Sofía Martínez;SOFIA.MARTINEZ@example.com;3165550109;31/02/2024;420000;Cartagena',
+  'andrés felipe castro;andres.castro@example.com;3175550110;04/13/2024;$ 1.050.000;Cúcuta',
+  'Valentina Rojas;valentina.rojas@example.com;318 555 0111;2024-08-19;mil doscientos;Ibagué',
+  'CARLOS andrés ruiz;carlos.ruiz@example.com;+57 (310) 555-0102;2024-04-05;1200000.5;Medellín',
+  'daniela   herrera;daniela.herrera@example.com;+57 300 555 01;10/09/2024;640.000,00;Villavicencio',
+  'Camilo Andrés Vargas;camilo vargas@example.com;3195550113;5 de octubre de 2024;2.000.000;Neiva',
+  '  ;  ; ;;;',
+  'natalia gómez;natalia.gomez@example.com;3205550114;23/10/2024;$3.450.000;Pasto',
+  'luis eduardo moreno;LUIS.MORENO@example.com;300 555 0115;2024/11/02;150000.75;tunja',
+  'paula andrea suárez;paula.suarez@example.com;3015550116;8 de noviembre de 2024;$ 980.500;Armenia',
+  'luisa fernanda díaz;luisa.diaz@example.org;+573125550103;03/04/2024;850000;Cali',
+  'Ricardo Peña;ricardo.pena@example.com;+1 (415) 555-0117;12/12/2024;USD 1,250.00;Miami',
+  'Gabriela Ortiz;gabriela.ortiz@example.com;+57 601 555 0118;14/02/2025;275.000;bogotá d.c.',
+  'Esteban Quintero;esteban.quintero@example.com;3105550119;;;Popayán',
+  'martín alonso lópez;martin.lopez@example.com;3115550120;2 de enero de 2025;$1.2.3;Montería',
+  'Laura Jiménez;laura.jimenez@exa mple.com;31255501;17/03/2025;560.000;Sincelejo',
+  'Diego Fernando Ruiz;diego.ruiz@example.com;3135550122;miércoles 9 de abril de 2025;1.000.000;Valledupar',
+  'Isabella Cárdenas;isabella.cardenas@example.com;314 555 0123;22-04-2025;720000;Riohacha',
+  'Mateo Sánchez;MATEO.SANCHEZ@EXAMPLE.COM;315 555 0124;30/04/2025;$ 1.800.000,00;Quibdó',
+  'Mariana Pineda;mariana.pineda@example.com;3165550125;5/5/25;99.900;Florencia',
+  'Sebastián Giraldo;sebastian.giraldo@example.com;3175550126;2025-05-12;2.300.000;Yopal;VIP',
+  'camila andrea mejía;camila.mejia@example.com;3185550127;3 jun 2025;$450.000;Leticia',
+  'JUAN PABLO OSORIO;juan.osorio@example.com;319 555 0128;15.06.2025;1250000;Mocoa',
+  'Lucía Fernández;lucia.fernandez@example.com;+57 320 555 0129;julio 1, 2025;$ 600.000;San Andrés',
+  'Tomás Herrera;tomas.herrera@example.com;0057 300 555 0130;20/07/2025;3.100.000,25;Arauca',
+  'samuel ospina;samuel.ospina@example.com;301-555-0131;2025-08-01;875000;Puerto Carreño',
+  '',
+].join('\n')

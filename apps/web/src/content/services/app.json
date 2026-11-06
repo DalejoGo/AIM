@@ -1,0 +1,22 @@
+{
+  "id": "app",
+  "slug": "aplicativos-web",
+  "order": 3,
+  "title": "Aplicativos web",
+  "tagline": "El sistema que tu operación necesita.",
+  "summary": "Paneles, sistemas internos y APIs a la medida: inventarios, reservas, gestión de clientes o lo que tu operación pida. Seguros, probados y listos para crecer.",
+  "includes": [
+    "Análisis de requisitos y propuesta de arquitectura",
+    "Backend con NestJS, Node.js o Python y base de datos SQL",
+    "Inicio de sesión seguro y roles de usuario",
+    "Pruebas automáticas y documentación de la API"
+  ],
+  "deliverables": ["Aplicativo desplegado", "Código fuente y accesos", "Documentación técnica y de uso"],
+  "technologies": ["NestJS", "TypeScript", "PostgreSQL", "Python", "Docker"],
+  "idealFor": "Empresas con procesos propios que ya no caben en hojas de cálculo.",
+  "timeline": "4 a 10 semanas",
+  "priceFrom": {
+    "COP": 3500000,
+    "USD": 950
+  }
+}

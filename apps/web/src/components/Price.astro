@@ -1,0 +1,26 @@
+---
+import { CURRENCIES, type Price } from '@aim/contracts'
+import { es } from '../i18n/es'
+import { formatMoney } from '../lib/money'
+
+interface Props {
+  price?: Price | undefined
+  prefix?: boolean
+}
+
+// Every currency is rendered; global.css shows the one selected in the header (DEC-010).
+const { price, prefix = true } = Astro.props
+---
+
+{
+  price ? (
+    <span class="tabular-nums whitespace-nowrap">
+      {prefix && <span class="text-muted">{es.price.from} </span>}
+      {CURRENCIES.map((currency) => (
+        <span data-price={currency}>{formatMoney(price[currency], currency)}</span>
+      ))}
+    </span>
+  ) : (
+    <span class="text-muted">{es.price.ask}</span>
+  )
+}

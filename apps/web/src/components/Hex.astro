@@ -1,0 +1,18 @@
+---
+interface Props {
+  status: 'live' | 'soon'
+  size?: number
+}
+
+// The logo's hexagon is the only structural motif (docs/DISENO.md): filled = live demo, outline = coming soon.
+const { status, size = 14 } = Astro.props
+---
+
+<svg width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" class="shrink-0">
+  <path
+    d="M8 1.2 13.9 4.6v6.8L8 14.8 2.1 11.4V4.6Z"
+    fill={status === 'live' ? 'var(--color-live)' : 'none'}
+    stroke={status === 'live' ? 'var(--color-live)' : 'var(--color-muted)'}
+    stroke-width="1.6"
+    stroke-linejoin="round"></path>
+</svg>

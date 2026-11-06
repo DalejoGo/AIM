@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content'
+
+interface Props {
+  featuredOnly?: boolean
+}
+
+const { featuredOnly = false } = Astro.props
+const kinds: Record<string, string> = {
+  web: 'Plataforma web',
+  app: 'App web instalable',
+  mobile: 'App móvil',
+  api: 'API',
+  automation: 'Automatización',
+  ai: 'Inteligencia artificial',
+}
+const projects = (await getCollection('projects', (p) => p.data.public && (!featuredOnly || p.data.featured)))
+  .map((p) => p.data)
+  .sort((a, b) => a.order - b.order)
+---
+
+<ol class="grid gap-6">
+  {
+    projects.map((p) => (
+      <li>
+        <article class="grid gap-6 rounded-2xl border border-line bg-raised p-6 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:p-10">
+          <div class="grid content-start gap-4">
+            <p class="text-step--1 text-muted">
+              {kinds[p.kind]}, {p.year}
+            </p>
+            <h3 class="text-step-2 font-semibold md:text-step-3">
+              <a href={`/proyectos/${p.slug}/`} class="no-underline hover:text-brand">
+                {p.title}
+              </a>
+            </h3>
+            <p class="prose-measure text-muted">{p.summary}</p>
+            <ul class="flex flex-wrap gap-2 text-step--1" aria-label="Tecnologías">
+              {p.stack.slice(0, 6).map((t) => (
+                <li class="rounded-full border border-line px-3 py-0.5">{t}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="grid content-start gap-3 md:border-l md:border-line md:pl-8">
+            <h4 class="text-step--1 font-semibold">Resultados verificables</h4>
+            <ul class="grid gap-2 text-step--1">
+              {p.results.slice(0, 3).map((r) => (
+                <li class="flex gap-2">
+                  <span class="mt-2 size-1.5 shrink-0 rounded-full bg-live" aria-hidden="true" />
+                  {r}
+                </li>
+              ))}
+            </ul>
+            <a href={`/proyectos/${p.slug}/`} class="link mt-2 text-step--1">
+              Leer el caso completo<span class="sr-only">: {p.title}</span>
+            </a>
+          </div>
+        </article>
+      </li>
+    ))
+  }
+</ol>

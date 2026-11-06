@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content'
+import LabShell from '../components/LabShell.astro'
+import QuoteCalculator from '../features/quote/QuoteCalculator'
+import { quote, site, whatsapp } from '../lib/site'
+
+// Only what the island needs crosses to the browser: id, title and tagline of each service, in page order.
+const services = (await getCollection('services'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map(({ data }) => ({ id: data.id, title: data.title, tagline: data.tagline }))
+---
+
+<LabShell slug="cotizador">
+  <QuoteCalculator client:load services={services} config={quote} whatsapp={site.contact.whatsapp} />
+  <noscript>
+    <p class="prose-measure mt-6 text-muted">
+      El cotizador necesita JavaScript para calcular el rango. Si prefieres, <a href={whatsapp()} class="link"
+        >escríbeme por WhatsApp</a
+      > y te respondo con una cotización.
+    </p>
+  </noscript>
+</LabShell>

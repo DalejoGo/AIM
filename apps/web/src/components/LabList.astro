@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content'
+import { es } from '../i18n/es'
+import Hex from './Hex.astro'
+
+interface Props {
+  limit?: number
+}
+
+const { limit } = Astro.props
+const certificates = await getCollection('certificates')
+const certTitle = (id: string) => certificates.find((c) => c.id === id)?.data.title
+const demos = (await getCollection('lab'))
+  .map((d) => d.data)
+  .sort((a, b) => (a.status === b.status ? a.order - b.order : a.status === 'live' ? -1 : 1))
+  .slice(0, limit)
+---
+
+<ul class="grid gap-x-10 border-t border-line md:grid-cols-2">
+  {
+    demos.map((d) => {
+      const href = d.status === 'live' && d.href ? d.href : `/lab/${d.slug}/`
+      const backers = d.certificates.map(certTitle).filter(Boolean)
+      return (
+        <li class="border-b border-line">
+          <a href={href} class="group grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 py-5 no-underline">
+            <span class="mt-1.5">
+              <Hex status={d.status} size={16} />
+            </span>
+            <span class="flex flex-wrap items-baseline gap-x-3">
+              <span class="font-display text-step-1 font-semibold group-hover:text-brand">{d.title}</span>
+              <span class:list={['text-step--1', d.status === 'live' ? 'text-live' : 'text-muted']}>
+                {d.status === 'live' ? es.lab.live : es.lab.soon}
+              </span>
+            </span>
+            <span class="col-start-2 text-step--1 text-muted">{d.summary}</span>
+            {backers.length > 0 && (
+              <span class="col-start-2 text-step--1 text-muted">
+                {es.lab.proves}: {backers.join('; ')}
+              </span>
+            )}
+          </a>
+        </li>
+      )
+    })
+  }
+</ul>

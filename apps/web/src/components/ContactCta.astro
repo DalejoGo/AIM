@@ -1,0 +1,43 @@
+---
+import { Mail, MessageCircle } from '@lucide/astro'
+import { es } from '../i18n/es'
+import { site, whatsapp } from '../lib/site'
+
+interface Props {
+  title?: string
+  text?: string
+}
+
+const {
+  title = '¿Tienes una idea? Cuéntamela.',
+  text = 'Escríbeme sin compromiso, estés donde estés. Te respondo con preguntas concretas y, si encaja, con una propuesta por escrito.',
+} = Astro.props
+---
+
+<section class="wrap mt-24" aria-labelledby="contacto-titulo">
+  <div class="grid gap-8 rounded-3xl bg-brand p-8 text-brand-contrast md:grid-cols-[1.4fr_1fr] md:items-end md:p-14">
+    <div class="grid gap-4">
+      <h2 id="contacto-titulo" class="text-step-3 font-semibold md:text-step-4">{title}</h2>
+      <p class="prose-measure text-step-1 opacity-90">{text}</p>
+    </div>
+    <div class="grid gap-3">
+      <a
+        href={whatsapp()}
+        rel="noopener"
+        class="btn bg-brand-contrast text-brand hover:opacity-90"
+      >
+        <MessageCircle size={20} aria-hidden="true" />
+        {es.cta.whatsapp}
+      </a>
+      {
+        site.contact.email && (
+          <a href={`mailto:${site.contact.email}`} class="btn border-brand-contrast/40 text-brand-contrast hover:border-brand-contrast">
+            <Mail size={20} aria-hidden="true" />
+            {site.contact.email}
+          </a>
+        )
+      }
+      <a href="/cotizar/" class="text-center font-semibold underline underline-offset-4">{es.cta.quote}</a>
+    </div>
+  </div>
+</section>

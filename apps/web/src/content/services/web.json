@@ -1,0 +1,22 @@
+{
+  "id": "web",
+  "slug": "paginas-web",
+  "order": 1,
+  "title": "Páginas web",
+  "tagline": "Tu negocio, encontrado y contactado.",
+  "summary": "Sitios rápidos y claros que explican lo que haces y llevan a tus visitantes a escribirte. Se ven bien en celular, cargan en segundos y los puedes actualizar.",
+  "includes": [
+    "Diseño a la medida, pensado primero para celular",
+    "Botón de WhatsApp y formulario de contacto",
+    "SEO básico: título, descripción, sitemap y datos para Google",
+    "Publicación en internet y conexión con tu dominio"
+  ],
+  "deliverables": ["Sitio publicado", "Acceso para editar textos e imágenes", "Guía corta de uso"],
+  "technologies": ["Astro", "WordPress", "HTML y CSS", "Cloudflare"],
+  "idealFor": "Emprendedores, profesionales independientes y pymes que necesitan presencia seria en internet.",
+  "timeline": "1 a 3 semanas",
+  "priceFrom": {
+    "COP": 900000,
+    "USD": 250
+  }
+}

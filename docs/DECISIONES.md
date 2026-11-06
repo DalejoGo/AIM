@@ -4,11 +4,10 @@ Registro de decisiones del proyecto. Cada una: contexto, decisión, alternativas
 
 ---
 
-## DEC-001 — Nombre de marca · PENDIENTE (antes de Fase 1)
+## DEC-001 — Nombre de marca
 
-- **Contexto:** la tarjeta muestra el monograma "AM"; David se refiere a la marca como "AIM".
-- **Decisión provisional:** se usa **AIM** en código y textos (`@aim/*`). El nombre visible sale de una sola constante de contenido, así que cambiarlo es un cambio de una línea.
-- **Pendiente:** confirmar la grafía oficial y su significado.
+- **Decisión (David, 2026-11-06):** la marca es **AIM · Desarrollo Web y Automatización**, con David como fundador. El sitio es de marca (sin foto personal): logo AIM y video de presentación.
+- **Consecuencia:** el nombre visible y todos los datos de contacto salen de `apps/web/src/content/site.json`.
 
 ## DEC-002 — Cadena de suministro: versiones exactas y 14 días
 
@@ -33,20 +32,40 @@ Registro de decisiones del proyecto. Cada una: contexto, decisión, alternativas
 - **Por qué:** Cloudflare Workers no corre NestJS de forma fiable. El sitio público sigue en Cloudflare (estático, gratis).
 - **Alternativa descartada:** Hono en Workers (gratis, pero dejaría de mostrar NestJS, que es el núcleo del perfil).
 
-## DEC-006 — Precios en el sitio · PENDIENTE (antes de Fase 1)
+## DEC-006 — Precios en el sitio
 
-- **Decisión:** rangos "desde" por servicio, porque filtran clientes.
-- **Pendiente:** los valores. Mientras no existan, el sitio muestra "Cotiza sin costo" y nunca inventa cifras.
+- **Decisión (David, 2026-11-06):** rangos "desde" por servicio. David pidió que Claude propusiera las tarifas iniciales y que sean **editables**: viven en `apps/web/src/content/services/*.json` (COP y USD) y en `quote.json` (cotizador). Son una referencia de arranque, no un dato de mercado verificado.
+- **Consecuencia:** cambiar un precio es editar un JSON; si un servicio no tiene precio, el sitio muestra "Cotiza sin costo".
 
-## DEC-007 — Dominio · PENDIENTE (antes del despliegue de Fase 1)
+## DEC-007 — Dominio
 
-- **Decisión provisional:** ningún host escrito en el código; todo sale de `PUBLIC_BASE_URL`.
+- **Decisión (David, 2026-11-06):** aún no hay dominio. Se despliega en el subdominio gratuito de Cloudflare y el dominio se conecta después.
+- **Consecuencia:** ningún host escrito en el código; todo sale de `PUBLIC_BASE_URL`.
 
-## DEC-008 — Proyectos públicos · PENDIENTE (antes de Fase 1)
+## DEC-008 — Proyectos públicos
 
-- **Contexto:** el repo de la agencia es privado; los proyectos de clientes requieren su permiso; el trabajo de SAEM no se muestra con código.
-- **Decisión provisional:** los casos se publican sin enlaces a repos privados hasta que David confirme cada uno.
+- **Decisión (David, 2026-11-06):** se publican **la agencia de viajes (anónima)** y **Marea**. El resto del portafolio son proyectos nuevos e interactivos del Lab.
+- **Agencia:** sin nombre ni logo del cliente, sin enlaces al repo privado ni a staging, sin IDs de cuentas.
+- **Marea:** sin datos financieros reales en capturas.
+- **Métricas:** solo hechos verificables en cada repo (pruebas, módulos, Lighthouse), nunca métricas de negocio inventadas.
 
 ## DEC-009 — Cuentas
 
 - **Decisión:** este es un proyecto personal de David; se usan sus cuentas personales (GitHub `DalejoGo`, Cloudflare, Neon). Nada de este proyecto toca cuentas de SAEM ni de la agencia.
+
+## DEC-010 — Visitantes de cualquier lugar
+
+- **Decisión (David, 2026-11-06):** el sitio no se ata a una ciudad: atención 100 % remota y trato que haga sentir bienvenido a cualquier visitante. Tono cercano (tú).
+- **Consecuencia:** precios en COP y USD con selector; el idioma inglés llega en la Fase 5 y los textos de interfaz viven en `src/i18n/` desde ya.
+
+## DEC-011 — Lab guiado por certificaciones
+
+- **Decisión (David, 2026-11-06):** cada certificación tiene (o tendrá) una demo en el Lab que la pruebe. Arranque: Cotizador, Migrador de datos y Auth Lab (solo navegador, Fase 1) y Asistente IA (necesita servidor, Fase 2-3). El resto aparece como "próximamente" y se agrega con un archivo en `apps/web/src/content/lab/`.
+
+## DEC-012 — Contacto editable
+
+- **Decisión (David, 2026-11-06):** se muestran WhatsApp, correo, LinkedIn, GitHub y formulario, todos configurables en `site.json`.
+
+## DEC-013 — Librerías de la Fase 1
+
+- **Decisión:** Tailwind CSS 4 (tokens con `@theme`), fuentes auto-hospedadas con Fontsource (Unbounded, Instrument Sans, JetBrains Mono), `@preact/signals` para el estado de las islas, Lucide y Simple Icons para íconos, PapaParse para CSV, `oauth4webapi` para PKCE, `schema-dts` para tipar JSON-LD, Playwright + axe para E2E y accesibilidad. Todas con más de 14 días publicadas (DEC-002).
