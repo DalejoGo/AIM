@@ -5,25 +5,21 @@ interface Props {
   size?: number
 }
 
+// David's logo (assets/brand): the light version on the light theme, the neon one on the dark theme.
+// Decorative here: the brand name next to it is the accessible text.
 const { size = 36 } = Astro.props
+const width = Math.round(size * 0.9)
 ---
 
 <span class="inline-flex items-center gap-2.5">
-  <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" class="shrink-0">
-    <path
-      d="M20 2.5 35.2 11.25v17.5L20 37.5 4.8 28.75v-17.5Z"
-      fill="none"
-      stroke="var(--color-brand)"
-      stroke-width="2.4"
-      stroke-linejoin="round"
-    ></path>
-    <path
-      d="M11.5 28 18 12h4l6.5 16M14.2 22.5h11.6"
-      fill="none"
-      stroke="var(--color-text)"
-      stroke-width="2.6"
-      stroke-linecap="round"
-      stroke-linejoin="round"></path>
-  </svg>
+  <img src="/brand/aim-logo-light.webp" alt="" width={width} height={size} class="shrink-0 dark:hidden" decoding="async" />
+  <img
+    src="/brand/aim-logo-dark.webp"
+    alt=""
+    width={width}
+    height={size}
+    class="hidden shrink-0 dark:block"
+    decoding="async"
+  />
   <span class="font-display text-[1.15rem] font-semibold tracking-tight">{site.brand.name}</span>
 </span>

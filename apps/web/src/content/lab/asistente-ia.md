@@ -1,11 +1,12 @@
 ---
 slug: asistente-ia
 title: Asistente IA
-summary: Un asistente que responde sobre los servicios de AIM con información real del sitio y toma tus datos si quieres que te contacte.
-status: soon
+summary: Pregúntale por los servicios, los precios de referencia y los proyectos de AIM, y lee la respuesta mientras se escribe, con la información real del sitio.
+status: live
 runsOn: server
+href: /lab/asistente-ia/
 order: 4
-stack: [Claude, NestJS, Zod]
+stack: [Claude, Hono, Zod, SSE]
 certificates: [chatbots-openai, claude-cowork]
 ---
-Necesita la API de la Fase 2: las llamadas al modelo pasan por el servidor, con límite de uso y sin exponer llaves.
+Las llamadas al modelo pasan por la API de AIM en Cloudflare, con límite de uso y sin exponer llaves. La respuesta llega por Server-Sent Events y se muestra a medida que el modelo la escribe.

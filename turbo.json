@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["APP_ENV", "PUBLIC_BASE_URL", "PUBLIC_WHATSAPP_NUMBER"],
+      "env": ["APP_ENV", "PUBLIC_BASE_URL", "PUBLIC_WHATSAPP_NUMBER", "PUBLIC_TURNSTILE_SITE_KEY"],
       "outputs": ["dist/**"]
     },
     "dev": {

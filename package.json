@@ -14,7 +14,10 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "ci": "bash scripts/ci/all.sh",
-    "deploy:web": "bash scripts/deploy-web.sh"
+    "deploy:web": "bash scripts/deploy-web.sh",
+    "db:migrate": "pnpm --filter @aim/edge db:migrate",
+    "dev:full": "pnpm --filter @aim/web build && pnpm --filter @aim/web exec wrangler pages dev --ip 127.0.0.1 --port 8789",
+    "knowledge": "node scripts/build-assistant-knowledge.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

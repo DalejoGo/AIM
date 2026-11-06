@@ -1,0 +1,15 @@
+---
+import LabShell from '../../components/LabShell.astro'
+import { AssistantChat } from '../../features/assistant/AssistantChat'
+import { turnstileSiteKey, whatsapp } from '../../lib/site'
+---
+
+<LabShell slug="asistente-ia">
+  <noscript>
+    <p class="prose-measure rounded-xl border border-line bg-raised p-4">
+      El asistente necesita JavaScript para conversar. Actívalo y recarga la página, o
+      <a href={whatsapp()} class="link">escríbele a David por WhatsApp</a>.
+    </p>
+  </noscript>
+  <AssistantChat client:load turnstileSiteKey={turnstileSiteKey()} whatsappUrl={whatsapp()} />
+</LabShell>

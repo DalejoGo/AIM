@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content'
+import { Calculator, Mail, MessageCircle } from '@lucide/astro'
+import ContactForm from '../features/contact/ContactForm'
+import { es } from '../i18n/es'
+import Base from '../layouts/Base.astro'
+import { site, turnstileSiteKey, whatsapp } from '../lib/site'
+
+// Only ids and titles cross to the browser, in page order, plus "Otro" (LeadService).
+const services = [
+  ...(await getCollection('services'))
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(({ data }) => ({ id: data.id, title: data.title })),
+  { id: 'other', title: 'Otro' },
+]
+---
+
+<Base title="Contacto" description="Cuéntame tu proyecto por el formulario, WhatsApp o correo. Trabajo 100 % remoto, para clientes de cualquier país.">
+  <div class="wrap pt-12 md:pt-16">
+    <header class="grid gap-4">
+      <h1 class="text-step-4 font-semibold md:text-step-5">Escríbeme</h1>
+      <p class="prose-measure text-step-1 text-muted">
+        Cuéntame qué tienes en mente, aunque sea una idea suelta. Leo cada mensaje y te respondo con preguntas
+        concretas por el medio que prefieras.
+      </p>
+    </header>
+
+    <div class="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
+      <div class="min-w-0">
+        <ContactForm
+          client:load
+          services={services}
+          turnstileSiteKey={turnstileSiteKey()}
+          whatsappUrl={whatsapp()}
+        />
+        <noscript>
+          <p class="prose-measure mt-6 text-muted">
+            El formulario necesita JavaScript. Si prefieres, <a href={whatsapp()} class="link">escríbeme por WhatsApp</a
+            >{site.contact.email && <> o a <a href={`mailto:${site.contact.email}`} class="link">{site.contact.email}</a></>}.
+          </p>
+        </noscript>
+      </div>
+
+      <aside aria-labelledby="otros-canales" class="grid content-start gap-4">
+        <h2 id="otros-canales" class="text-step-1 font-semibold">¿Prefieres otro canal?</h2>
+        <a href={whatsapp()} rel="noopener" class="btn btn-primary">
+          <MessageCircle size={20} aria-hidden="true" />
+          {es.cta.whatsapp}
+        </a>
+        {
+          site.contact.email && (
+            <a href={`mailto:${site.contact.email}`} class="btn btn-quiet break-all">
+              <Mail size={20} aria-hidden="true" class="shrink-0" />
+              {site.contact.email}
+            </a>
+          )
+        }
+        <p class="mt-2 text-step--1 text-muted">
+          ¿Quieres una cifra de referencia antes de escribir?
+        </p>
+        <a href="/cotizar/" class="btn btn-quiet">
+          <Calculator size={20} aria-hidden="true" />
+          {es.cta.quote}
+        </a>
+      </aside>
+    </div>
+  </div>
+</Base>

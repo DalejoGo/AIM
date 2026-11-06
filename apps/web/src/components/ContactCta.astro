@@ -1,5 +1,5 @@
 ---
-import { Mail, MessageCircle } from '@lucide/astro'
+import { Mail, MessageCircle, PenLine } from '@lucide/astro'
 import { es } from '../i18n/es'
 import { site, whatsapp } from '../lib/site'
 
@@ -28,6 +28,10 @@ const {
       >
         <MessageCircle size={20} aria-hidden="true" />
         {es.cta.whatsapp}
+      </a>
+      <a href="/contacto/" class="btn border-brand-contrast/40 text-brand-contrast hover:border-brand-contrast">
+        <PenLine size={20} aria-hidden="true" />
+        {es.cta.message}
       </a>
       {
         site.contact.email && (

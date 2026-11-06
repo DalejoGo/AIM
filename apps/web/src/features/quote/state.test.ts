@@ -68,4 +68,24 @@ describe('createQuoteState', () => {
     expect(state.message.value).toContain('Hola, soy Ana.')
     expect(state.message.value).toContain('Mi idea: Algo sencillo.')
   })
+
+  it('keeps a quote snapshot of what is on screen', () => {
+    const { currency, state } = setup('COP')
+    expect(state.snapshot.value).toBeNull()
+    const first = quote.services[0]
+    if (!first) throw new Error('quote.json needs a service for this test')
+    state.selectService(first.service)
+    state.toggleOption(firstOption(0), true)
+    expect(state.snapshot.value).toMatchObject({
+      service: first.service,
+      options: [firstOption(0)],
+      timeline: quote.timelines[0]?.id,
+      currency: 'COP',
+      min: state.summary.value?.estimate.low,
+      max: state.summary.value?.estimate.high,
+    })
+    currency.value = 'USD'
+    expect(state.snapshot.value?.currency).toBe('USD')
+    expect(state.snapshot.value?.min).toBe(state.summary.value?.estimate.low)
+  })
 })

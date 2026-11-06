@@ -70,3 +70,24 @@ Registro de decisiones del proyecto. Cada una: contexto, decisión, alternativas
 ## DEC-013 — Librerías de la Fase 1
 
 - **Decisión:** Tailwind CSS 4 (tokens con `@theme`), fuentes auto-hospedadas con Fontsource (Unbounded, Instrument Sans, JetBrains Mono), `@preact/signals` para el estado de las islas, Lucide y Simple Icons para íconos, PapaParse para CSV, `oauth4webapi` para PKCE, `schema-dts` para tipar JSON-LD, Playwright + axe para E2E y accesibilidad. Todas con más de 14 días publicadas (DEC-002).
+
+## DEC-014 — API híbrida
+
+- **Decisión (David, 2026-11-06):** los contactos, el cotizador y el login del panel corren en **Cloudflare Pages Functions con Hono** (`apps/edge`), en el mismo dominio del sitio (`/api/*`): gratis, sin arranque en frío y sin CORS. **NestJS** (`apps/api`) se despliega en Render (plan gratuito) solo para la demo API Playground del Lab (Fase 3), donde esperar a que despierte es aceptable.
+- **Reemplaza** parcialmente DEC-005 (NestJS ya no recibe los contactos).
+- **Restricción:** el plan gratuito de Workers limita la CPU a ~10 ms por petición: nada de hashes de contraseña costosos en `apps/edge`.
+
+## DEC-015 — Datos en Neon Postgres
+
+- **Decisión (David, 2026-11-06):** proyecto nuevo `aim` en la cuenta personal de Neon. Drizzle ORM con `pg`; migraciones con drizzle-kit. En local, el Postgres de `docker-compose.yml`; en pruebas, PGlite (Postgres en memoria, sin Docker).
+
+## DEC-016 — Avisos de contactos
+
+- **Decisión (David, 2026-11-06):** correo con **Resend** al llegar un contacto (mientras no haya dominio, Resend solo envía al correo de la cuenta, que es el destinatario). En local, Mailpit por su API HTTP. En la Fase 4, además, un flujo de n8n.
+
+## DEC-017 — Login propio del panel /admin
+
+- **Decisión (David, 2026-11-06):** login propio con **correo + código de un solo uso** (6 dígitos, 10 min, 5 intentos) enviado por Resend, solo para correos de `ADMIN_EMAILS`.
+- **Middleware estilo OAuth 2.0 (seguridad media):** endpoint de token con concesiones `urn:aim:grant-type:email-otp` y `refresh_token`; token de acceso JWT (HS256, 15 min) con `scope` (`leads:read`, `leads:write`, `audit:read`); token de renovación opaco (7 días) con **rotación y detección de reutilización** por familia; ambos en cookies `HttpOnly`, `Secure`, `SameSite=Strict`. El middleware también acepta `Authorization: Bearer` (RFC 6750) para clientes de API. Peticiones que cambian estado exigen `Origin` del propio sitio.
+- **Protecciones:** sin enumeración de usuarios (la respuesta a "pedir código" es siempre igual), límites de intentos por correo e IP, códigos y tokens guardados solo como HMAC-SHA-256, registro de auditoría de accesos.
+- **Alternativas descartadas:** usuario + contraseña (el hash seguro no cabe en la CPU gratuita de Workers) y login con GitHub (David prefirió un login propio).

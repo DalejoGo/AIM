@@ -4,6 +4,7 @@ import faqJson from '../content/faq.json'
 import profileJson from '../content/profile.json'
 import quoteJson from '../content/quote.json'
 import siteJson from '../content/site.json'
+import { resolveSiteKey } from '../features/turnstile/siteKey'
 import { whatsappLink } from './whatsapp'
 
 // Single-file content (DEC-012): parsed at build time, so a typo in a JSON file fails the build instead of the page.
@@ -29,6 +30,8 @@ export const SiteConfig = z.object({
     cv: z.string().startsWith('/'),
     video: z.string().startsWith('/'),
     videoPoster: z.string().startsWith('/'),
+    ogImage: z.string().startsWith('/'),
+    logo: z.string().startsWith('/'),
   }),
 })
 export type SiteConfig = z.infer<typeof SiteConfig>
@@ -58,3 +61,7 @@ export const quote = QuoteConfig.parse(quoteJson)
 
 export const whatsapp = (message: string = site.contact.whatsappMessage) =>
   whatsappLink(site.contact.whatsapp, message)
+
+/** Turnstile site key for this build (build time only: APP_ENV is not exposed to the browser). */
+export const turnstileSiteKey = () =>
+  resolveSiteKey({ siteKey: import.meta.env.PUBLIC_TURNSTILE_SITE_KEY, appEnv: process.env.APP_ENV })

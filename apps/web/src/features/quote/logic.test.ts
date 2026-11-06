@@ -1,9 +1,10 @@
-import { QuoteConfig, type ServiceId } from '@aim/contracts'
+import { QuoteConfig, QuoteSnapshot, type ServiceId } from '@aim/contracts'
 import { describe, expect, it } from 'vitest'
 import { quote } from '../../lib/site'
 import {
   availableServices,
   buildMessage,
+  buildQuoteSnapshot,
   CURRENCY_LIST,
   currencyName,
   defaultTimelineId,
@@ -11,6 +12,8 @@ import {
   findTimeline,
   formatRange,
   keepOwnOptions,
+  LEAD_MESSAGE_MAX,
+  leadMessage,
   parseServiceParam,
   type QuoteSummary,
   roundFor,
@@ -310,6 +313,49 @@ describe('buildMessage', () => {
     expect(message).toContain('Funcionalidades: Blog, Catálogo con pedido por WhatsApp')
     expect(message).toContain('Plazo: Es urgente')
     expect(message).toContain('Rango estimado: US$ 930 a US$ 1.250')
+  })
+})
+
+describe('buildQuoteSnapshot', () => {
+  it('keeps ids, the timeline, the currency and the range on screen', () => {
+    const summary = summaryOf(pick('web', ['catalogo', 'blog'], 'urgente'), 'USD')
+    expect(buildQuoteSnapshot(summary)).toEqual({
+      service: 'web',
+      // Configured order, not click order.
+      options: ['blog', 'catalogo'],
+      timeline: 'urgente',
+      currency: 'USD',
+      min: summary.estimate.low,
+      max: summary.estimate.high,
+    })
+  })
+
+  it('sends an empty list when no option is chosen', () => {
+    expect(buildQuoteSnapshot(summaryOf(pick('automation')))).toMatchObject({
+      service: 'automation',
+      options: [],
+      timeline: 'normal',
+      currency: 'COP',
+      min: 600_000,
+      max: 810_000,
+    })
+  })
+
+  it('passes the contract', () => {
+    const snapshot = buildQuoteSnapshot(summaryOf(pick('web', ['blog'], 'prioritario')))
+    expect(QuoteSnapshot.parse(snapshot)).toEqual(snapshot)
+  })
+})
+
+describe('leadMessage', () => {
+  it('is the WhatsApp text', () => {
+    const summary = summaryOf(pick('web', ['blog']))
+    expect(leadMessage(summary, { name: 'Ana' })).toBe(buildMessage(summary, { name: 'Ana' }))
+  })
+
+  it('never passes the length the API accepts', () => {
+    const message = leadMessage(summaryOf(pick('web')), { idea: 'a'.repeat(3000) })
+    expect(message).toHaveLength(LEAD_MESSAGE_MAX)
   })
 })
 

@@ -9,3 +9,8 @@
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# The admin panel is private (DEC-017): never indexed, never cached by shared caches.
+/admin/*
+  X-Robots-Tag: noindex
+  Cache-Control: no-store

@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/dist", "!**/node_modules", "!**/.turbo", "!**/.astro"]
+    "includes": ["**", "!**/dist", "!**/node_modules", "!**/.turbo", "!**/.astro", "!**/drizzle"]
   },
   "formatter": {
     "indentStyle": "space",
@@ -67,6 +67,16 @@
         "rules": {
           "complexity": {
             "noImportantStyles": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
           }
         }
       }

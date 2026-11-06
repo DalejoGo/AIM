@@ -1,0 +1,24 @@
+# Allowlist: the build context is the monorepo root, but only what the API image needs goes in.
+# Keeps the context small and keeps secrets (.env, .dev.vars) and the other apps out of the image.
+# A future image that needs more (e.g. services/) adds its own lines here.
+*
+
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+
+!packages/config/package.json
+!packages/config/tsconfig.*.json
+
+!apps/api/package.json
+!apps/api/tsconfig.json
+!apps/api/tsconfig.build.json
+!apps/api/src/**
+
+# Never inside, even under the allowed folders.
+**/node_modules
+**/dist
+**/.turbo
+**/*.test.ts
+**/.env
+**/.env.*

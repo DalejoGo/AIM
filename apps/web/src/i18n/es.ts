@@ -19,6 +19,7 @@ export const es = {
     whatsapp: 'Escribir por WhatsApp',
     quote: 'Calcular mi presupuesto',
     email: 'Enviar un correo',
+    message: 'Escribir un mensaje',
   },
   price: {
     from: 'Desde',

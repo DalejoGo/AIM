@@ -23,13 +23,19 @@ export interface QuoteCalculatorProps {
   config: QuoteConfig
   /** WhatsApp number in international format, digits only. */
   whatsapp: string
+  turnstileSiteKey: string
 }
 
 // currencySignal() needs the DOM. The static render has no service chosen, so nothing priced by it shows yet.
 const staticCurrency = signal<Currency>('COP')
 const sharedCurrency = () => (typeof document === 'undefined' ? staticCurrency : currencySignal())
 
-export default function QuoteCalculator({ services, config, whatsapp }: QuoteCalculatorProps) {
+export default function QuoteCalculator({
+  services,
+  config,
+  whatsapp,
+  turnstileSiteKey,
+}: QuoteCalculatorProps) {
   const listed = useMemo(() => availableServices(services, config), [services, config])
   const state = useMemo(() => createQuoteState(config, listed, sharedCurrency()), [config, listed])
   const unknownService = useSignal<string | null>(null)
@@ -173,6 +179,7 @@ export default function QuoteCalculator({ services, config, whatsapp }: QuoteCal
       <SummaryStep
         state={state}
         whatsapp={whatsapp}
+        turnstileSiteKey={turnstileSiteKey}
         class="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-6rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain"
       />
     </div>

@@ -3,5 +3,16 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "aimweb",
   "compatibility_date": "2026-10-01",
-  "pages_build_output_dir": "./dist"
+  // pg (Neon) needs Node APIs and TCP sockets in the /api Pages Function.
+  "compatibility_flags": ["nodejs_compat"],
+  "pages_build_output_dir": "./dist",
+  // Non-secret settings of the /api function. Secrets (DATABASE_URL, JWT_SECRET, TURNSTILE_SECRET,
+  // RESEND_API_KEY) are set with `wrangler pages secret put` (docs/DESPLIEGUE.md).
+  "vars": {
+    "APP_ENV": "production",
+    "SITE_ORIGIN": "https://aimweb-9hc.pages.dev",
+    "ADMIN_EMAILS": "dacty2003@gmail.com",
+    "MAIL_FROM": "AIM <onboarding@resend.dev>",
+    "NOTIFY_TO": "dacty2003@gmail.com"
+  }
 }

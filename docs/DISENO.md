@@ -2,6 +2,10 @@
 
 Tema: estudio de desarrollo web y automatización. Público: emprendedores, pymes, profesionales independientes, empresas con procesos y otras agencias, **de cualquier país** (DEC-010). Trabajo principal del sitio: generar confianza y llevar a WhatsApp o al cotizador; probar el stack con demos reales del Lab.
 
+## Logo
+
+Monograma AIM en hexágono, entregado por David (originales en `assets/brand/`). Versión clara (degradado morado) en el tema claro y versión neón en el oscuro, ambas con fondo transparente (`apps/web/public/brand/`). Favicon, íconos e imagen para redes usan la versión neón sobre la tinta violeta. Para regenerarlos: `assets/brand/README.md`.
+
 ## Color
 
 Tinta violeta (no negro neutro) tomada de la tarjeta AIM. Modo claro y oscuro de primera clase.

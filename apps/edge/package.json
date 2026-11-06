@@ -1,0 +1,36 @@
+{
+  "name": "@aim/edge",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./pages": "./src/pages.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@aim/contracts": "workspace:*",
+    "@anthropic-ai/sdk": "1.1.0",
+    "@hono/zod-validator": "0.9.1",
+    "drizzle-orm": "0.45.4",
+    "hono": "4.13.13",
+    "jose": "6.2.13",
+    "pg": "8.23.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@aim/config": "workspace:*",
+    "@cloudflare/workers-types": "5.20261022.1",
+    "@electric-sql/pglite": "0.5.11",
+    "@types/node": "22.20.5",
+    "@types/pg": "8.23.1",
+    "drizzle-kit": "0.31.11",
+    "typescript": "5.9.3",
+    "vitest": "5.0.3"
+  }
+}

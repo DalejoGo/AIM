@@ -2,7 +2,10 @@
 
 Todo el contenido vive en `apps/web/src/content/`. Cada archivo se valida al compilar: si algo está mal escrito, `pnpm build` falla y dice qué campo revisar, en vez de publicar una página rota.
 
-Después de cualquier cambio: `bash scripts/ci/all.sh` (o al menos `pnpm build`).
+Después de cualquier cambio:
+
+1. `pnpm knowledge`: actualiza lo que sabe el Asistente IA (si lo olvidas, una prueba falla y te lo recuerda).
+2. `bash scripts/ci/all.sh` (o al menos `pnpm build`).
 
 ## Datos de contacto y marca
 

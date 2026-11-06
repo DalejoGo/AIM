@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
+import { fakeTurnstile, mockApi, unauthorized } from './fakes'
 
 const pages = [
   '/',
@@ -15,12 +16,17 @@ const pages = [
   '/lab/auth-lab/',
   '/sobre-mi/',
   '/privacidad/',
+  '/contacto/',
+  '/admin/',
 ]
 
 for (const theme of ['light', 'dark'] as const) {
   test.describe(`${theme} theme`, () => {
     test.beforeEach(async ({ page }) => {
       await page.addInitScript((t) => localStorage.setItem('aim-theme', t), theme)
+      // No third parties and no API in these checks: Turnstile is faked and /admin/ finds no session.
+      await fakeTurnstile(page)
+      await mockApi(page, () => unauthorized)
     })
 
     for (const path of pages) {

@@ -1,12 +1,11 @@
-import { Logger } from '@nestjs/common'
+import { ConsoleLogger, Logger } from '@nestjs/common'
 import { createApp } from './app.js'
+import { loadConfig } from './config.js'
 
-const port = Number(process.env.API_PORT ?? 3000)
-const corsOrigins = (process.env.API_CORS_ORIGINS ?? '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean)
+const config = loadConfig(process.env)
+// One JSON object per line in production, so Render's log search can filter by field.
+const logger = new ConsoleLogger({ json: process.env.NODE_ENV === 'production' })
 
-const app = await createApp({ corsOrigins })
-await app.listen(port)
-Logger.log(`API listening on http://localhost:${port} (docs at /docs)`, 'Bootstrap')
+const app = await createApp({ config, logger })
+await app.listen(config.port)
+Logger.log(`API listening on port ${config.port} (docs at /docs)`, 'Bootstrap')

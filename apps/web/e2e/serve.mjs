@@ -3,9 +3,10 @@
 import { createReadStream } from 'node:fs'
 import { stat } from 'node:fs/promises'
 import { createServer } from 'node:http'
-import { extname, join, normalize } from 'node:path'
+import { extname, join, normalize, resolve } from 'node:path'
 
-const root = join(import.meta.dirname, '../dist')
+// Usage: node e2e/serve.mjs [port] [folder]. The folder defaults to dist/ (another build can be tested in place).
+const root = process.argv[3] ? resolve(process.argv[3]) : join(import.meta.dirname, '../dist')
 const port = Number(process.argv[2] ?? 4322)
 const types = {
   '.html': 'text/html; charset=utf-8',

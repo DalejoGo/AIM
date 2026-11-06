@@ -1,6 +1,13 @@
 import type { Currency, QuoteConfig, ServiceId } from '@aim/contracts'
 import { batch, computed, type ReadonlySignal, signal } from '@preact/signals'
-import { buildMessage, defaultTimelineId, keepOwnOptions, type ServiceSummary, summarize } from './logic'
+import {
+  buildMessage,
+  buildQuoteSnapshot,
+  defaultTimelineId,
+  keepOwnOptions,
+  type ServiceSummary,
+  summarize,
+} from './logic'
 
 /** Cotizador state as signals. The currency is injected so this module runs without a DOM (and in tests). */
 export function createQuoteState(
@@ -25,6 +32,8 @@ export function createQuoteState(
   const message = computed(() =>
     summary.value ? buildMessage(summary.value, { name: name.value, idea: idea.value }) : '',
   )
+  // What "Enviar mi solicitud" attaches to the lead: always the range on screen, in the current currency.
+  const snapshot = computed(() => (summary.value ? buildQuoteSnapshot(summary.value) : null))
 
   return {
     service,
@@ -34,6 +43,7 @@ export function createQuoteState(
     idea,
     summary,
     message,
+    snapshot,
     /** Changing the service drops the options that belong to the previous one. */
     selectService(id: ServiceId) {
       batch(() => {

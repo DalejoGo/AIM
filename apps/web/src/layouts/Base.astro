@@ -13,9 +13,11 @@ interface Props {
   description: string
   /** Page-specific structured data, merged into the site graph. */
   jsonLd?: Graph['@graph']
+  /** Private pages (/admin/): not indexed and without the floating WhatsApp button. */
+  private?: boolean
 }
 
-const { title, description, jsonLd = [] } = Astro.props
+const { title, description, jsonLd = [], private: isPrivate = false } = Astro.props
 const fullTitle =
   title === site.brand.name ? `${site.brand.name}, ${site.brand.descriptor}` : `${title} | ${site.brand.name}`
 const canonical = new URL(Astro.url.pathname, Astro.site)
@@ -31,6 +33,8 @@ const graph: Graph = {
       description: site.brand.description,
       url: origin,
       areaServed: 'Worldwide',
+      logo: new URL(site.media.logo, Astro.site).href,
+      image: new URL(site.media.ogImage, Astro.site).href,
       founder: { '@id': `${origin}#david` },
       ...(site.contact.email ? { email: site.contact.email } : {}),
     },
@@ -55,8 +59,12 @@ const graph: Graph = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {isPrivate && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#15122b" />
     <meta name="color-scheme" content="light dark" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_CO" />
@@ -64,7 +72,10 @@ const graph: Graph = {
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL(site.media.videoPoster, Astro.site)} />
+    <meta property="og:image" content={new URL(site.media.ogImage, Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`Logo de ${site.brand.name}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />
     <script is:inline>
@@ -93,6 +104,7 @@ const graph: Graph = {
       <slot />
     </main>
     <Footer />
+    {!isPrivate && (
     <a
       href={whatsapp()}
       rel="noopener"
@@ -105,5 +117,6 @@ const graph: Graph = {
         ></path>
       </svg>
     </a>
+    )}
   </body>
 </html>

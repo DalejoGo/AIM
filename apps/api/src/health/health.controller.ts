@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { SkipThrottle } from '@nestjs/throttler'
 
 export interface HealthStatus {
   status: 'ok'
@@ -7,6 +8,8 @@ export interface HealthStatus {
 }
 
 @ApiTags('health')
+// Render's health checks must never get a 429.
+@SkipThrottle()
 @Controller('health')
 export class HealthController {
   @Get()

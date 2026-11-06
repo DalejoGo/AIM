@@ -1,26 +1,51 @@
 import { useSignal } from '@preact/signals'
-import { Check, CircleAlert, Copy, Info, MessageCircle } from 'lucide-preact'
-import { useEffect, useRef } from 'preact/hooks'
+import { Check, ChevronDown, CircleAlert, Copy, Info, MessageCircle } from 'lucide-preact'
+import type { JSX } from 'preact'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { formatMoney } from '../../lib/money'
 import { whatsappLink } from '../../lib/whatsapp'
+import { FieldError } from '../forms/fields'
 import { currencyName, surchargeLabel } from './logic'
 import { StepHeading } from './parts'
+import type { QuoteRequestProps } from './QuoteRequest'
 import type { QuoteState } from './state'
 
 interface SummaryStepProps {
   state: QuoteState
   whatsapp: string
+  /** Turnstile site key for "Enviar mi solicitud". */
+  turnstileSiteKey: string
   class?: string
 }
+
+type RequestForm = (props: QuoteRequestProps) => JSX.Element
+
+// The request form brings zod, the API client and Turnstile: it loads on first use (or when the button is hovered).
+let requestForm: Promise<RequestForm> | null = null
+function loadRequestForm(): Promise<RequestForm> {
+  requestForm ??= import('./QuoteRequest')
+    .then((m) => m.QuoteRequest)
+    .catch((error: unknown) => {
+      requestForm = null
+      throw error
+    })
+  return requestForm
+}
+
+const NAME_ID = 'quote-name'
 
 type CopyStatus = 'idle' | 'copied' | 'failed'
 
 const fieldClass =
   'w-full rounded-lg border border-line bg-ink px-3 py-2.5 text-text placeholder:text-muted hover:border-brand'
 
-export function SummaryStep({ state, whatsapp, class: className = '' }: SummaryStepProps) {
+export function SummaryStep({ state, whatsapp, turnstileSiteKey, class: className = '' }: SummaryStepProps) {
   const summary = state.summary.value
   const copyStatus = useSignal<CopyStatus>('idle')
+  const requestOpen = useSignal(false)
+  const requestFailed = useSignal(false)
+  const nameError = useSignal<string | null>(null)
+  const [Request, setRequest] = useState<RequestForm | null>(null)
   const preview = useRef<HTMLDetailsElement>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const stopTimer = () => {
@@ -43,6 +68,28 @@ export function SummaryStep({ state, whatsapp, class: className = '' }: SummaryS
       if (preview.current) preview.current.open = true
     }
   }
+
+  function preloadRequest() {
+    loadRequestForm().catch(() => {
+      // Retried when the visitor opens the form.
+    })
+  }
+
+  function toggleRequest() {
+    requestOpen.value = !requestOpen.value
+    if (!requestOpen.value) {
+      nameError.value = null
+      return
+    }
+    requestFailed.value = false
+    loadRequestForm()
+      .then((form) => setRequest(() => form))
+      .catch(() => {
+        requestFailed.value = true
+      })
+  }
+
+  const nameRequired = requestOpen.value
 
   return (
     <section
@@ -121,20 +168,24 @@ export function SummaryStep({ state, whatsapp, class: className = '' }: SummaryS
 
       <div class="grid gap-4">
         <div class="grid gap-1.5">
-          <label for="quote-name" class="text-step--1 font-semibold">
-            Tu nombre <span class="font-normal text-muted">(opcional)</span>
+          <label for={NAME_ID} class="text-step--1 font-semibold">
+            Tu nombre {!nameRequired && <span class="font-normal text-muted">(opcional)</span>}
           </label>
           <input
-            id="quote-name"
+            id={NAME_ID}
             type="text"
             autocomplete="name"
             maxLength={80}
             value={state.name.value}
+            aria-invalid={nameError.value ? true : undefined}
+            aria-describedby={nameError.value ? `${NAME_ID}-error` : undefined}
             onInput={(e) => {
               state.name.value = e.currentTarget.value
+              nameError.value = null
             }}
-            class={fieldClass}
+            class={`${fieldClass} aria-[invalid=true]:border-danger`}
           />
+          {nameError.value && <FieldError id={`${NAME_ID}-error`}>{nameError.value}</FieldError>}
         </div>
         <div class="grid gap-1.5">
           <label for="quote-idea" class="text-step--1 font-semibold">
@@ -175,6 +226,22 @@ export function SummaryStep({ state, whatsapp, class: className = '' }: SummaryS
               )}
               Copiar resumen
             </button>
+            <button
+              type="button"
+              aria-expanded={requestOpen.value}
+              aria-controls="quote-request"
+              onClick={toggleRequest}
+              onPointerEnter={preloadRequest}
+              onFocus={preloadRequest}
+              class="btn btn-quiet grow"
+            >
+              Enviar mi solicitud
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                class={`transition-transform ${requestOpen.value ? 'rotate-180' : ''}`}
+              />
+            </button>
           </div>
 
           <p role="status" class="text-step--1">
@@ -197,6 +264,30 @@ export function SummaryStep({ state, whatsapp, class: className = '' }: SummaryS
             <summary class="cursor-pointer text-muted hover:text-text">Ver el mensaje completo</summary>
             <p class="mt-2 whitespace-pre-wrap rounded-lg bg-ink p-3">{state.message.value}</p>
           </details>
+
+          <div id="quote-request" hidden={!requestOpen.value}>
+            {requestOpen.value &&
+              (Request ? (
+                <Request
+                  state={state}
+                  turnstileSiteKey={turnstileSiteKey}
+                  nameId={NAME_ID}
+                  nameError={nameError}
+                />
+              ) : requestFailed.value ? (
+                <p role="alert" class="flex gap-2 text-step--1 text-danger">
+                  <CircleAlert size={16} class="mt-1 shrink-0" aria-hidden="true" />
+                  <span>
+                    El formulario no cargó. Revisa tu conexión y vuelve a tocar «Enviar mi solicitud», o usa
+                    «Enviar por WhatsApp».
+                  </span>
+                </p>
+              ) : (
+                <p role="status" class="text-step--1 text-muted">
+                  Cargando el formulario…
+                </p>
+              ))}
+          </div>
         </div>
       )}
     </section>

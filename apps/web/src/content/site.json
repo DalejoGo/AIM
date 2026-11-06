@@ -18,10 +18,14 @@
     "github": "https://github.com/DalejoGo",
     "platzi": "https://platzi.com/@david.gomez715/"
   },
-  "currency": { "default": "COP" },
+  "currency": {
+    "default": "COP"
+  },
   "media": {
     "cv": "/media/david-gomez-hoja-de-vida.pdf",
     "video": "/media/aim-presentacion.mp4",
-    "videoPoster": "/media/aim-presentacion.jpg"
+    "videoPoster": "/media/aim-presentacion.jpg",
+    "ogImage": "/brand/og-image.png",
+    "logo": "/icon-512.png"
   }
 }

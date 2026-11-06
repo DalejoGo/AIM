@@ -3,6 +3,7 @@ import type {
   QuoteConfig,
   QuoteOption,
   QuoteService,
+  QuoteSnapshot,
   QuoteTimeline,
   ServiceId,
 } from '@aim/contracts'
@@ -170,6 +171,26 @@ export function buildMessage(summary: QuoteSummary, contact: Contact = {}): stri
   ]
   if (idea) lines.push('', `Mi idea: ${idea}`)
   return lines.join('\n')
+}
+
+/** Longest message a lead accepts (CreateLead). */
+export const LEAD_MESSAGE_MAX = 2000
+
+/** What the API stores with a lead sent from the cotizador: ids and the range the visitor saw. */
+export function buildQuoteSnapshot(summary: QuoteSummary): QuoteSnapshot {
+  return {
+    service: summary.service.id,
+    options: summary.options.map((o) => o.id),
+    timeline: summary.timeline.id,
+    currency: summary.estimate.currency,
+    min: summary.estimate.low,
+    max: summary.estimate.high,
+  }
+}
+
+/** The lead message is the same text WhatsApp would carry, cut to the length the API accepts. */
+export function leadMessage(summary: QuoteSummary, contact: Contact = {}): string {
+  return buildMessage(summary, contact).slice(0, LEAD_MESSAGE_MAX)
 }
 
 /** Reads ?servicio= from a query string. Case and surrounding spaces are forgiven; unknown ids are reported. */

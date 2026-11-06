@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content'
+import AdminApp from '../features/admin/AdminApp'
+import { buildCatalog } from '../features/admin/format'
+import Base from '../layouts/Base.astro'
+import { quote, turnstileSiteKey } from '../lib/site'
+
+// Private panel (DEC-017): noindex, out of the sitemap (astro.config.ts) and not linked from the site.
+const services = [
+  ...(await getCollection('services')).map(({ data }) => ({ id: data.id, title: data.title })),
+  { id: 'other', title: 'Otro' },
+]
+const catalog = buildCatalog(services, quote)
+---
+
+<Base title="Panel" description="Panel privado de AIM para revisar los contactos." private>
+  <div class="wrap pt-12 md:pt-16">
+    <h1 class="text-step-3 font-semibold md:text-step-4">Panel</h1>
+    <div class="mt-8">
+      <AdminApp client:load turnstileSiteKey={turnstileSiteKey()} catalog={catalog} />
+      <noscript>
+        <p class="mt-6 text-muted">El panel necesita JavaScript.</p>
+      </noscript>
+    </div>
+  </div>
+</Base>

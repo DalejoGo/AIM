@@ -1,0 +1,30 @@
+# Render Blueprint (DEC-014): the NestJS API for the Lab's API Playground. Steps in docs/DESPLIEGUE.md.
+# Spec: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: aimweb-api
+    runtime: docker
+    plan: free
+    # Closest free region to Colombia; same coast as the Neon project (aws-us-east-1).
+    region: virginia
+    dockerContext: .
+    dockerfilePath: ./apps/api/Dockerfile
+    healthCheckPath: /api/v1/health
+    # Deploy a commit to main only after its GitHub checks (CI) pass.
+    autoDeployTrigger: checksPass
+    # Only changes that can affect the image trigger a build.
+    buildFilter:
+      paths:
+        - apps/api/**
+        - packages/config/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - .dockerignore
+    envVars:
+      # Comma-separated. Add https://aimweb.dev when the domain is connected (DEC-007).
+      - key: API_CORS_ORIGINS
+        value: https://aimweb-9hc.pages.dev
+      # Requests per minute per IP.
+      - key: API_RATE_LIMIT
+        value: '60'

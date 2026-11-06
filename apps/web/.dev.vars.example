@@ -1,0 +1,20 @@
+# Copy to .dev.vars for `wrangler pages dev` (local only; .dev.vars is gitignored).
+APP_ENV=development
+SITE_ORIGIN=http://127.0.0.1:8789
+DATABASE_URL=postgres://aim:aim@127.0.0.1:54321/aim
+# Any random string of 32+ characters for local use; production uses a Cloudflare secret.
+JWT_SECRET=change-me-local-only-change-me-local-only
+ADMIN_EMAILS=dacty2003@gmail.com
+# Cloudflare's always-pass test secret (https://developers.cloudflare.com/turnstile/troubleshooting/testing/).
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+MAILPIT_URL=http://127.0.0.1:8026
+MAIL_FROM=AIM <avisos@aim.local>
+NOTIFY_TO=dacty2003@gmail.com
+
+# --- Asistente IA (optional; without the key /api/assistant/* answers 503) ---
+# Local: a key with a low spending limit. Production: `wrangler pages secret put ANTHROPIC_API_KEY`.
+# ANTHROPIC_API_KEY=
+ASSISTANT_MODEL=claude-haiku-5-5
+ASSISTANT_MAX_TOKENS=500
+ASSISTANT_MESSAGES_PER_HOUR=15
+ASSISTANT_DAILY_LIMIT=300
