@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro'
+import { whatsappLink } from '../lib/whatsapp'
+
+const whatsapp = whatsappLink(import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '573027015524')
+---
+
+<Base title="AIM · Desarrollo Web y Automatización" description="Sitio en construcción.">
+  <main>
+    <p class="eyebrow">En construcción</p>
+    <h1>AIM · Desarrollo Web y Automatización</h1>
+    <p>Ideas · Código · Resultados</p>
+    <a href={whatsapp} rel="noopener">Escríbeme por WhatsApp</a>
+  </main>
+</Base>
+
+<style>
+  main {
+    min-height: 100dvh;
+    display: grid;
+    place-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+  }
+  .eyebrow {
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+  }
+  p {
+    margin: 0;
+    color: var(--muted);
+  }
+  a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>

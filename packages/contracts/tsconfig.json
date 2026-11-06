@@ -1,0 +1,1 @@
+{ "extends": "@aim/config/tsconfig.base.json", "include": ["src"] }

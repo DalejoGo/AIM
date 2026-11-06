@@ -1,0 +1,39 @@
+# Local services only. Ports bind to 127.0.0.1 and differ from the agencia project's so both can run at once.
+name: aim
+
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_USER: aim
+      POSTGRES_PASSWORD: aim
+      POSTGRES_DB: aim
+    ports: ['127.0.0.1:54321:5432']
+    volumes: [postgres:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U aim']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  valkey:
+    image: valkey/valkey:8.1-alpine
+    ports: ['127.0.0.1:6381:6379']
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports: ['127.0.0.1:1026:1025', '127.0.0.1:8026:8025']
+
+  # Phase 4 (Lab: live automation). Start with: docker compose --profile automations up -d
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.45.2
+    profiles: [automations]
+    environment:
+      N8N_SECURE_COOKIE: 'false'
+      GENERIC_TIMEZONE: America/Bogota
+    ports: ['127.0.0.1:5679:5678']
+    volumes: [n8n:/home/node/.n8n]
+
+volumes:
+  postgres:
+  n8n:

@@ -1,0 +1,13 @@
+node_modules
+.turbo
+dist
+coverage
+.astro
+.env
+.env.*
+!.env.example
+*.log
+*.tsbuildinfo
+*:Zone.Identifier
+__pycache__
+.venv

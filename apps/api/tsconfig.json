@@ -1,0 +1,4 @@
+{
+  "extends": "@aim/config/tsconfig.node.json",
+  "include": ["src", "test", "vitest.config.ts"]
+}

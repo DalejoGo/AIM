@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:best-practices"],
+  "minimumReleaseAge": "14 days",
+  "rangeStrategy": "pin",
+  "labels": ["dependencies"],
+  "packageRules": [
+    { "matchUpdateTypes": ["major"], "dependencyDashboardApproval": true },
+    {
+      "description": "Security patches may skip the 14-day wait ONLY via the process in docs/DECISIONES.md (DEC-002)",
+      "matchCategories": ["security"],
+      "minimumReleaseAge": null,
+      "labels": ["security"]
+    },
+    { "matchPackageNames": ["astro", "@astrojs/**", "preact"], "groupName": "astro" },
+    { "matchPackageNames": ["@nestjs/**"], "groupName": "nestjs" }
+  ],
+  "vulnerabilityAlerts": { "labels": ["security"] }
+}
