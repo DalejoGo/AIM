@@ -3,15 +3,17 @@ import { site } from '../lib/site'
 
 interface Props {
   size?: number
+  /** Adds "Desarrollo y Automatizaciones" under the name, so the header reads the official name (DEC-001). */
+  descriptor?: boolean
 }
 
 // David's logo (assets/brand): the light version on the light theme, the neon one on the dark theme.
 // Decorative here: the brand name next to it is the accessible text.
-const { size = 36 } = Astro.props
+const { size = 36, descriptor = false } = Astro.props
 const width = Math.round(size * 0.9)
 ---
 
-<span class="inline-flex items-center gap-2.5">
+<span class:list={['inline-flex items-center', descriptor ? 'gap-2' : 'gap-2.5']}>
   <img src="/brand/aim-logo-light.webp" alt="" width={width} height={size} class="shrink-0 dark:hidden" decoding="async" />
   <img
     src="/brand/aim-logo-dark.webp"
@@ -21,5 +23,18 @@ const width = Math.round(size * 0.9)
     class="hidden shrink-0 dark:block"
     decoding="async"
   />
-  <span class="font-display text-[1.15rem] font-semibold tracking-tight">{site.brand.name}</span>
+  {
+    descriptor ? (
+      <span class="grid leading-none">
+        {/* The trailing space keeps "AIM Desarrollo…" as words for screen readers and the link's name. */}
+        <span class="font-display text-[1.15rem] font-semibold tracking-tight">{`${site.brand.name} `}</span>
+        {/* Two short lines on phones and tablets, one line on desktop; hidden below 360 px where it cannot fit. */}
+        <span class="mt-1 max-w-[5.75rem] text-[0.64rem] leading-tight text-muted max-[359px]:hidden lg:max-w-none lg:whitespace-nowrap lg:text-[0.72rem]">
+          {site.brand.descriptor}
+        </span>
+      </span>
+    ) : (
+      <span class="font-display text-[1.15rem] font-semibold tracking-tight">{site.brand.name}</span>
+    )
+  }
 </span>

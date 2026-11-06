@@ -2,6 +2,7 @@
 import { CURRENCIES } from '@aim/contracts'
 import { Menu, Moon, Sun } from '@lucide/astro'
 import { es } from '../i18n/es'
+import { site } from '../lib/site'
 import Logo from './Logo.astro'
 
 const links = [
@@ -16,11 +17,11 @@ const isCurrent = (href: string) => current.startsWith(href)
 
 <header class="sticky top-0 z-40 border-b border-line bg-ink/85 backdrop-blur-md">
   <div class="wrap flex h-16 items-center gap-3">
-    <a href="/" class="rounded-md no-underline" aria-label="AIM, ir al inicio">
-      <Logo />
+    <a href="/" class="shrink-0 rounded-md no-underline" aria-label={`${site.brand.fullName}, ir al inicio`}>
+      <Logo size={32} descriptor />
     </a>
 
-    <nav aria-label={es.nav.label} class="ml-6 hidden md:block">
+    <nav aria-label={es.nav.label} class="ml-6 hidden lg:block">
       <ul class="flex gap-6 text-step--1">
         {
           links.map((l) => (
@@ -67,7 +68,7 @@ const isCurrent = (href: string) => current.startsWith(href)
       </button>
       <a href="/cotizar/" class="btn btn-primary hidden min-h-9 py-1.5 text-step--1 sm:inline-flex">{es.nav.quote}</a>
 
-      <details class="relative md:hidden">
+      <details class="relative lg:hidden">
         <summary
           class="grid size-9 cursor-pointer list-none place-items-center rounded-lg border border-line text-muted [&::-webkit-details-marker]:hidden"
           aria-label={es.nav.menu}
