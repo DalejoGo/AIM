@@ -1,0 +1,15 @@
+﻿
+  
+"Nombre, completo",correo,"Monto ""total""",nota
+"Gómez, Ana",ana@example.com,"1,200.50","línea 1
+línea 2"
+"Ruiz ""el mono"" Carlos",carlos@example.com,950,"sin problema"
+"Díaz Luisa"  ,luisa@example.com,  "300",ok
+"Pérez"Juan",juan@example.com,100,mal cerrada
+solo,dos
+Torres,torres@example.com,10,x,sobra
+Vargas,vargas@example.com,20,y,,,
+,,,
+"Mejía",mejia@example.com,30,"nota con ""comillas"""
+"Ríos",rios@example.com,40,"sin cierre
+esto queda dentro del campo

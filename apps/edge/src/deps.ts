@@ -1,4 +1,4 @@
-import type { Principal } from '@aim/contracts'
+import type { AutomationWebhookPayload, Principal } from '@aim/contracts'
 import type { PgDatabase, PgQueryResultHKT } from 'drizzle-orm/pg-core'
 import type * as schema from './db/schema'
 import type { EdgeEnv } from './env'
@@ -67,6 +67,20 @@ export class LlmError extends Error {
   }
 }
 
+/**
+ * The n8n of the Lab demo "Automatización en vivo" (docs/AUTOMATIZACION.md). Each call is one subrequest of
+ * the Worker, and neither throws: a failure, a timeout or an abort is `false`.
+ */
+export interface N8n {
+  /** GET /healthz/readiness: true only for a 200 that is not an HTML page (Render shows one while it wakes up). */
+  healthy(signal: AbortSignal): Promise<boolean>
+  /** POST /webhook/<path>: true when n8n accepted the run (2xx). n8n answers before running the flow. */
+  trigger(payload: AutomationWebhookPayload, signal: AbortSignal): Promise<boolean>
+}
+
+/** Waits `ms`, or less when `signal` aborts. Never rejects. */
+export type Sleep = (ms: number, signal?: AbortSignal) => Promise<void>
+
 /** Everything a route needs, injected per request so tests swap in PGlite and fakes. */
 export interface Deps {
   env: EdgeEnv
@@ -76,7 +90,11 @@ export interface Deps {
   captcha: Captcha
   /** Lab assistant model; absent when ANTHROPIC_API_KEY is not configured. */
   llm?: Llm
+  /** n8n of the Lab automation demo; absent when AUTOMATION_N8N_URL is empty. */
+  n8n?: N8n
   now: () => Date
+  /** Pauses between polls (Lab automation demo). Tests move their clock instead of waiting. */
+  sleep: Sleep
   /** Work that may finish after the response (notifications). Awaited in tests. */
   waitUntil: (promise: Promise<unknown>) => void
 }

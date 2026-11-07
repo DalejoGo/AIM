@@ -1,0 +1,7 @@
+# Allowlist: the image needs the lockfile and the code only (no tests, fixtures, caches or virtualenv).
+*
+!pyproject.toml
+!uv.lock
+!.python-version
+!src/**
+**/__pycache__

@@ -1,0 +1,226 @@
+{
+  "ok": true,
+  "result": {
+    "delimiter": ",",
+    "totalRows": 8,
+    "columns": [
+      {
+        "index": 0,
+        "label": "Cédula",
+        "key": "cedula",
+        "type": "text",
+        "titleCase": false,
+        "reason": "identifier",
+        "sampled": 6,
+        "matched": 6
+      },
+      {
+        "index": 1,
+        "label": "Nombres",
+        "key": "nombres",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 6,
+        "matched": 6
+      },
+      {
+        "index": 2,
+        "label": "Correo electrónico",
+        "key": "correo_electronico",
+        "type": "email",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 6,
+        "matched": 6
+      },
+      {
+        "index": 3,
+        "label": "Teléfono fijo",
+        "key": "telefono_fijo",
+        "type": "phone",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 6,
+        "matched": 6
+      },
+      {
+        "index": 4,
+        "label": "Fecha de pago",
+        "key": "fecha_de_pago",
+        "type": "date",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 6,
+        "matched": 6
+      },
+      {
+        "index": 5,
+        "label": "Total pagado",
+        "key": "total_pagado",
+        "type": "amount",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 6,
+        "matched": 6
+      }
+    ],
+    "emptyRows": [
+      5,
+      7
+    ],
+    "duplicates": [
+      {
+        "rowNumber": 6,
+        "duplicateOf": 3
+      }
+    ],
+    "valid": [
+      {
+        "rowNumber": 3,
+        "raw": {
+          "cedula": "1020305",
+          "nombres": "Carlos Ruiz",
+          "correo_electronico": "carlos@example.com",
+          "telefono_fijo": "+57 601 555 0102",
+          "fecha_de_pago": "2024-04-05",
+          "total_pagado": "850000"
+        },
+        "clean": {
+          "cedula": "1020305",
+          "nombres": "Carlos Ruiz",
+          "correo_electronico": "carlos@example.com",
+          "telefono_fijo": "+576015550102",
+          "fecha_de_pago": "2024-04-05",
+          "total_pagado": 850000
+        },
+        "changed": [
+          "telefono_fijo"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 8,
+        "raw": {
+          "cedula": "1020307",
+          "nombres": "Jorge",
+          "correo_electronico": "jorge@example.com",
+          "telefono_fijo": "3105550104",
+          "fecha_de_pago": "7/4/2024",
+          "total_pagado": "1500"
+        },
+        "clean": {
+          "cedula": "1020307",
+          "nombres": "Jorge",
+          "correo_electronico": "jorge@example.com",
+          "telefono_fijo": "+573105550104",
+          "fecha_de_pago": "2024-04-07",
+          "total_pagado": 1500
+        },
+        "changed": [
+          "telefono_fijo",
+          "fecha_de_pago"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 9,
+        "raw": {
+          "cedula": "1020308",
+          "nombres": "Sofía",
+          "correo_electronico": "sofia@example.com",
+          "telefono_fijo": "(310) 555-0105",
+          "fecha_de_pago": "08-04-2024",
+          "total_pagado": "2,500.75"
+        },
+        "clean": {
+          "cedula": "1020308",
+          "nombres": "Sofía",
+          "correo_electronico": "sofia@example.com",
+          "telefono_fijo": "+573105550105",
+          "fecha_de_pago": "2024-04-08",
+          "total_pagado": 2500.75
+        },
+        "changed": [
+          "telefono_fijo",
+          "fecha_de_pago",
+          "total_pagado"
+        ],
+        "errors": []
+      }
+    ],
+    "invalid": [
+      {
+        "rowNumber": 2,
+        "raw": {
+          "cedula": "1.020.304",
+          "nombres": "ana maría GÓMEZ",
+          "correo_electronico": "ana@example.com",
+          "telefono_fijo": "601 555 0101",
+          "fecha_de_pago": "03/04/2024",
+          "total_pagado": "1.200.000"
+        },
+        "clean": {
+          "cedula": "1.020.304",
+          "nombres": "Ana María Gómez",
+          "correo_electronico": "ana@example.com",
+          "telefono_fijo": "601 555 0101",
+          "fecha_de_pago": "2024-04-03",
+          "total_pagado": 1200000
+        },
+        "changed": [
+          "nombres",
+          "fecha_de_pago",
+          "total_pagado"
+        ],
+        "errors": [
+          {
+            "key": "telefono_fijo",
+            "label": "Teléfono fijo",
+            "message": "«601 555 0101» no tiene indicativo de país y no es un celular de Colombia (empiezan por 3). Escríbelo con + y el indicativo, por ejemplo +57 601 555 0101."
+          }
+        ]
+      },
+      {
+        "rowNumber": 4,
+        "raw": {
+          "cedula": "1020306",
+          "nombres": "  luisa   díaz ",
+          "correo_electronico": "LUISA@example.com",
+          "telefono_fijo": "6045550103",
+          "fecha_de_pago": "05/04/2024",
+          "total_pagado": "$ 95.000"
+        },
+        "clean": {
+          "cedula": "1020306",
+          "nombres": "Luisa Díaz",
+          "correo_electronico": "luisa@example.com",
+          "telefono_fijo": "6045550103",
+          "fecha_de_pago": "2024-04-05",
+          "total_pagado": 95000
+        },
+        "changed": [
+          "nombres",
+          "correo_electronico",
+          "fecha_de_pago",
+          "total_pagado"
+        ],
+        "errors": [
+          {
+            "key": "telefono_fijo",
+            "label": "Teléfono fijo",
+            "message": "«6045550103» no tiene indicativo de país y no es un celular de Colombia (empiezan por 3). Escríbelo con + y el indicativo, por ejemplo +57 601 555 0101."
+          }
+        ]
+      }
+    ],
+    "changedCells": 18,
+    "changesByType": {
+      "email": 2,
+      "phone": 4,
+      "date": 5,
+      "amount": 4,
+      "text": 3
+    }
+  }
+}

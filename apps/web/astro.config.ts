@@ -24,7 +24,11 @@ export default defineConfig({
   security: {
     csp: {
       algorithm: 'SHA-256',
-      directives: cspDirectives({ connectTo: [process.env.PUBLIC_PLAYGROUND_API_URL], analytics }),
+      // The Lab's APIs on Render: the API Playground and the data migrator's Python engine.
+      directives: cspDirectives({
+        connectTo: [process.env.PUBLIC_PLAYGROUND_API_URL, process.env.PUBLIC_PYLAB_API_URL],
+        analytics,
+      }),
       scriptDirective: { resources: cspScriptResources({ analytics }), hashes: [cspHash(BOOT_SCRIPT)] },
       styleDirective: { resources: CSP_STYLE_RESOURCES },
     },

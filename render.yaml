@@ -28,3 +28,56 @@ services:
       # Requests per minute per IP.
       - key: API_RATE_LIMIT
         value: '60'
+
+  # Lab: "Automatización en vivo" (DEC-021, docs/AUTOMATIZACION.md). Stateless n8n, webhook only, no secrets:
+  # the flow is baked into the image at build time (automations/scripts/prepare-image.sh).
+  - type: web
+    name: aimweb-n8n
+    runtime: docker
+    plan: free
+    region: virginia
+    dockerContext: ./automations
+    dockerfilePath: ./automations/Dockerfile
+    # /healthz answers before the webhook is registered; readiness only once it is.
+    healthCheckPath: /healthz/readiness
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - automations/Dockerfile
+        - automations/.dockerignore
+        - automations/workflows/**
+        - automations/scripts/**
+    envVars:
+      # Where the flow reports each step (POST /api/automation/runs/:id/events). Change it to https://aimweb.dev
+      # when the domain is connected (DEC-007). Render sets PORT and RENDER_EXTERNAL_URL itself.
+      - key: AIM_SITE_ORIGIN
+        value: https://aimweb-9hc.pages.dev
+
+  # Lab: Python data migrator (DEC-022). Stateless; processes uploads in memory. Steps in docs/DESPLIEGUE.md.
+  - type: web
+    name: aimweb-pylab
+    runtime: docker
+    plan: free
+    region: virginia
+    dockerContext: ./services/py-lab
+    dockerfilePath: ./services/py-lab/Dockerfile
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - services/py-lab/pyproject.toml
+        - services/py-lab/uv.lock
+        - services/py-lab/.python-version
+        - services/py-lab/src/**
+        - services/py-lab/Dockerfile
+        - services/py-lab/.dockerignore
+    envVars:
+      # Comma-separated. Add https://aimweb.dev when the domain is connected (DEC-007).
+      - key: PYLAB_CORS_ORIGINS
+        value: https://aimweb-9hc.pages.dev
+      # Requests per minute per IP.
+      - key: PYLAB_RATE_LIMIT
+        value: '20'
+      # Render's proxy is the only hop in front of the app: the visitor is the right-most X-Forwarded-For entry.
+      - key: PYLAB_TRUSTED_PROXY_HOPS
+        value: '1'

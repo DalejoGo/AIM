@@ -9,7 +9,8 @@
     "preview": "astro preview --port 4321",
     "typecheck": "astro check",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "parity:update": "vitest run src/features/migrator/parity.test.ts --update"
   },
   "dependencies": {
     "@aim/contracts": "workspace:*",

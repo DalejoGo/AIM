@@ -9,6 +9,7 @@
         "PUBLIC_WHATSAPP_NUMBER",
         "PUBLIC_TURNSTILE_SITE_KEY",
         "PUBLIC_PLAYGROUND_API_URL",
+        "PUBLIC_PYLAB_API_URL",
         "PUBLIC_CF_ANALYTICS_TOKEN"
       ],
       "outputs": ["dist/**"]
@@ -22,6 +23,15 @@
     },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "lint": {},
+    "@aim/web#test": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/services/py-lab/tests/parity/**"]
+    },
+    "@aim/contracts#test": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/services/py-lab/contract/**"]
     }
   }
 }

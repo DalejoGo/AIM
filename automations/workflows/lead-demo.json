@@ -1,0 +1,882 @@
+{
+  "id": "AimLeadDemoFlow1",
+  "name": "Contacto → lead calificado",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Contacto → lead calificado\nDemo **Automatización en vivo** del sitio de AIM (`docs/AUTOMATIZACION.md`).\n\n1. El sitio llama a este webhook con `runId`, `callbackToken` y el lead de prueba. n8n responde **202** de inmediato.\n2. Cada paso se reporta al sitio con un nodo **Reportar** (POST a `AIM_SITE_ORIGIN`, con el token como `Bearer`). Si el sitio responde algo distinto de 2xx, la ejecución se detiene.\n3. El correo **no se envía**: solo se muestra como vista previa.\n\nn8n no guarda secretos ni ejecuciones.",
+        "height": 340,
+        "width": 520,
+        "color": 7
+      },
+      "id": "1a3a1c24-040d-4e9b-be49-6397e075175f",
+      "name": "Nota: cómo funciona",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-40, -420]
+    },
+    {
+      "parameters": {
+        "content": "## Edita aquí las reglas\nEl nodo **Reglas del flujo** tiene en un solo JSON:\n- qué correos cuentan como personales y cuántos enlaces se permiten,\n- los puntos de presupuesto, plazo, servicio, correo y mensaje,\n- los cortes de nivel (hot ≥ 70, warm ≥ 40),\n- las rutas con su texto y SLA,\n- las plantillas del correo (`{firstName}`, `{service}`, `{fromCompany}`).\n\nDespués exporta el flujo al repo (`automations/README.md`).",
+        "height": 340,
+        "width": 520,
+        "color": 4
+      },
+      "id": "60dbb599-6529-4705-b27a-8aeb7171a352",
+      "name": "Nota: reglas",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1260, -420]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aim-lead-demo",
+        "responseMode": "onReceived",
+        "options": {
+          "noResponseBody": true,
+          "responseCode": {
+            "values": {
+              "responseCode": "customCode",
+              "customCode": 202
+            }
+          }
+        }
+      },
+      "id": "d7ad222b-2b43-4cc1-82eb-6c2a06764c34",
+      "name": "Recibir contacto",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "webhookId": "7a6dc786-c452-41c6-b154-fce14e85aad6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cf028c9c-8935-4bf6-841f-14f6d4a6d177",
+              "name": "runId",
+              "value": "={{ String($json.body?.runId ?? '') }}",
+              "type": "string"
+            },
+            {
+              "id": "7c823d96-16a9-4324-9a9e-43672e41e9a6",
+              "name": "callbackToken",
+              "value": "={{ String($json.body?.callbackToken ?? '') }}",
+              "type": "string"
+            },
+            {
+              "id": "fbb152e3-8b6b-4af9-b791-455ccb870158",
+              "name": "callbackUrl",
+              "value": "={{ String($env.AIM_SITE_ORIGIN ?? '').replace(/\\/+$/, '') + '/api/automation/runs/' + encodeURIComponent(String($json.body?.runId ?? '')) + '/events' }}",
+              "type": "string"
+            },
+            {
+              "id": "a7f0e8a2-b715-4540-a08c-bf87358ff24b",
+              "name": "requestOk",
+              "value": "={{ /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String($json.body?.runId ?? '')) && /^[\\w-]+\\.[\\w-]+\\.[\\w-]+$/.test(String($json.body?.callbackToken ?? '')) && typeof $json.body?.lead === 'object' && $json.body?.lead !== null }}",
+              "type": "boolean"
+            },
+            {
+              "id": "0c363ffc-4aed-458a-bab3-2ef65334a21d",
+              "name": "lead",
+              "value": "={{ ((l) => ({ name: String(l.name ?? '').trim(), company: String(l.company ?? '').trim(), email: String(l.email ?? '').trim().toLowerCase(), service: String(l.service ?? ''), serviceTitle: String(l.serviceTitle ?? l.service ?? '').trim(), budget: String(l.budget ?? 'unknown'), timeline: String(l.timeline ?? 'flexible'), message: String(l.message ?? '').trim() }))($json.body?.lead ?? {}) }}",
+              "type": "object"
+            },
+            {
+              "id": "c4e4934c-9053-4e47-865e-0ff830cd99cc",
+              "name": "vars",
+              "value": "={{ ((l) => ({ firstName: String(l.name ?? '').trim().split(/\\s+/)[0], service: String(l.serviceTitle ?? l.service ?? '').trim(), fromCompany: String(l.company ?? '').trim() ? ' desde ' + String(l.company).trim() : '' }))($json.body?.lead ?? {}) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d1aa2846-4f32-46c6-89df-7a98fca9dc24",
+      "name": "Preparar ejecución",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [260, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4004f6b3-ea36-4132-abb2-af32fa39f473",
+              "leftValue": "={{ $json.requestOk }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c6db6333-306d-4a53-9bc6-108881ff806f",
+      "name": "¿Petición válida?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [520, 0]
+    },
+    {
+      "parameters": {
+        "errorMessage": "La petición no trae un runId o un token válidos: no se reporta nada."
+      },
+      "id": "5c9ab43e-aad6-4625-971f-d8d1822898c3",
+      "name": "Petición inválida",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [780, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar ejecución').first().json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Preparar ejecución').first().json.callbackToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { step: 'received', data: { execution: String($execution.id) } } }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "8caf1d11-e47f-4cc4-97cc-f1dd623d673e",
+      "name": "Reportar: recibido",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 0],
+      "retryOnFail": false,
+      "onError": "stopWorkflow"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"validation\": {\n    \"freeEmailProviders\": [\n      \"gmail\",\n      \"hotmail\",\n      \"outlook\",\n      \"yahoo\",\n      \"icloud\"\n    ],\n    \"minMessageLength\": 40,\n    \"maxLinks\": 2,\n    \"linkPattern\": \"(https?://|www\\\\.)[^\\\\s]+\",\n    \"blockingChecks\": [\n      \"no_suspicious_links\"\n    ],\n    \"labels\": {\n      \"corporate_email\": \"Correo corporativo\",\n      \"detailed_message\": \"Mensaje con detalle\",\n      \"company_given\": \"Empresa indicada\",\n      \"no_suspicious_links\": \"Sin enlaces sospechosos\"\n    }\n  },\n  \"scoring\": {\n    \"budget\": {\n      \"lt500\": 5,\n      \"500-2000\": 15,\n      \"2000-5000\": 25,\n      \"gt5000\": 35,\n      \"unknown\": 10\n    },\n    \"timeline\": {\n      \"urgent\": 20,\n      \"month\": 15,\n      \"flexible\": 5\n    },\n    \"service\": {\n      \"automation\": 20,\n      \"app\": 20,\n      \"other\": 12\n    },\n    \"corporateEmail\": 10,\n    \"detailedMessage\": 15,\n    \"detailedMessageLength\": 80,\n    \"max\": 100,\n    \"tiers\": {\n      \"hot\": 70,\n      \"warm\": 40\n    }\n  },\n  \"factorLabels\": {\n    \"budget\": \"Presupuesto\",\n    \"timeline\": \"Plazo\",\n    \"service\": \"Servicio\",\n    \"corporateEmail\": \"Correo corporativo\",\n    \"personalEmail\": \"Correo personal\",\n    \"detailedMessage\": \"Mensaje detallado\",\n    \"shortMessage\": \"Mensaje breve\"\n  },\n  \"budgetLabels\": {\n    \"lt500\": \"menos de 500 USD\",\n    \"500-2000\": \"500 a 2.000 USD\",\n    \"2000-5000\": \"2.000 a 5.000 USD\",\n    \"gt5000\": \"más de 5.000 USD\",\n    \"unknown\": \"por definir\"\n  },\n  \"timelineLabels\": {\n    \"urgent\": \"urgente (menos de 2 semanas)\",\n    \"month\": \"de 1 a 2 meses\",\n    \"flexible\": \"flexible\"\n  },\n  \"routes\": {\n    \"hot\": {\n      \"route\": \"call\",\n      \"label\": \"Llamada en menos de 24 horas\",\n      \"sla\": \"24 horas\"\n    },\n    \"warm\": {\n      \"route\": \"proposal\",\n      \"label\": \"Propuesta por correo en 48 horas\",\n      \"sla\": \"48 horas\"\n    },\n    \"cold\": {\n      \"route\": \"nurture\",\n      \"label\": \"Secuencia de contenido útil\",\n      \"sla\": \"Primer envío en 7 días\"\n    }\n  },\n  \"drafts\": {\n    \"call\": {\n      \"subject\": \"{firstName}, hablemos de tu proyecto de {service}\",\n      \"body\": [\n        \"Hola, {firstName}:\",\n        \"Gracias por escribirnos{fromCompany}. Leímos tu mensaje sobre {service} y creemos que podemos ayudarte.\",\n        \"Por lo que nos cuentas, lo mejor es conversarlo: te llamaremos en menos de 24 horas para entender tu proceso y proponerte un primer paso concreto.\",\n        \"Si quieres adelantar algo, responde a este correo con cualquier detalle o ejemplo que te parezca útil.\",\n        \"Un saludo,\\nAIM Desarrollo y Automatizaciones\"\n      ]\n    },\n    \"proposal\": {\n      \"subject\": \"{firstName}, preparamos tu propuesta de {service}\",\n      \"body\": [\n        \"Hola, {firstName}:\",\n        \"Gracias por escribirnos{fromCompany}. Ya revisamos lo que necesitas en {service}.\",\n        \"En las próximas 48 horas te enviaremos por correo una propuesta con alcance, tiempos y un estimado de inversión. Si algo no te cuadra, la ajustamos contigo.\",\n        \"Si mientras tanto se te ocurre algo más, solo responde a este correo.\",\n        \"Un saludo,\\nAIM Desarrollo y Automatizaciones\"\n      ]\n    },\n    \"nurture\": {\n      \"subject\": \"{firstName}, gracias por tu interés en {service}\",\n      \"body\": [\n        \"Hola, {firstName}:\",\n        \"Gracias por escribirnos{fromCompany}. Nos alegra que estés pensando en {service}.\",\n        \"Para que des el siguiente paso con calma, en los próximos días te compartiremos contenido útil: ejemplos, preguntas frecuentes y buenas prácticas.\",\n        \"Cuando quieras conversar, responde a este correo y lo agendamos.\",\n        \"Un saludo,\\nAIM Desarrollo y Automatizaciones\"\n      ]\n    }\n  }\n}\n",
+        "options": {}
+      },
+      "id": "26ea6491-db2b-4bc1-993e-2826bfd78024",
+      "name": "Reglas del flujo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1040, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "901e2824-204e-4961-8120-e1f590f9d0bd",
+              "name": "checks",
+              "value": "={{ ((R, lead) => [\n  { id: 'corporate_email', label: R.validation.labels.corporate_email, ok: !lead.email.split('@').pop().split('.').some((part) => R.validation.freeEmailProviders.includes(part)) },\n  { id: 'detailed_message', label: R.validation.labels.detailed_message, ok: lead.message.length >= R.validation.minMessageLength },\n  { id: 'company_given', label: R.validation.labels.company_given, ok: lead.company.length > 0 },\n  { id: 'no_suspicious_links', label: R.validation.labels.no_suspicious_links, ok: (lead.message.match(new RegExp(R.validation.linkPattern, 'gi')) ?? []).length <= R.validation.maxLinks }\n])($('Reglas del flujo').first().json, $('Preparar ejecución').first().json.lead) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c8cd0e4e-33c4-494b-a7f1-2f73cd455af9",
+      "name": "Validar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1300, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aede9ada-1f7f-4287-9a64-f1a3a300d8fe",
+              "name": "valid",
+              "value": "={{ $json.checks.filter((check) => $('Reglas del flujo').first().json.validation.blockingChecks.includes(check.id)).every((check) => check.ok) }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "57d942c9-e425-474b-8235-4adb42b2c940",
+      "name": "Resumir validación",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1560, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar ejecución').first().json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Preparar ejecución').first().json.callbackToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { step: 'validated', data: { valid: $('Resumir validación').first().json.valid, checks: $('Resumir validación').first().json.checks } } }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "10a9aea7-d069-45d9-a20c-9046dd56c464",
+      "name": "Reportar: validado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1820, 0],
+      "retryOnFail": false,
+      "onError": "stopWorkflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d4082d7-6787-41ce-a2ec-93436e6e0000",
+              "leftValue": "={{ $('Resumir validación').first().json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "12faf580-654e-4238-b7e3-dab966b35028",
+      "name": "¿Pasa la validación?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2080, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar ejecución').first().json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Preparar ejecución').first().json.callbackToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { step: 'done', data: { outcome: 'rejected' } } }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "081c47dd-416d-49d0-a41a-18c27528a8ba",
+      "name": "Reportar: rechazado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2340, 200],
+      "retryOnFail": false,
+      "onError": "stopWorkflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fdb7d9c7-c6de-4acf-b455-8916a90c468d",
+              "name": "factors",
+              "value": "={{ ((R, lead, checks) => [\n  { label: R.factorLabels.budget + ': ' + (R.budgetLabels[lead.budget] ?? lead.budget), points: R.scoring.budget[lead.budget] ?? 0 },\n  { label: R.factorLabels.timeline + ': ' + (R.timelineLabels[lead.timeline] ?? lead.timeline), points: R.scoring.timeline[lead.timeline] ?? 0 },\n  { label: R.factorLabels.service + ': ' + lead.serviceTitle, points: R.scoring.service[lead.service] ?? R.scoring.service.other },\n  checks.find((check) => check.id === 'corporate_email').ok ? { label: R.factorLabels.corporateEmail, points: R.scoring.corporateEmail } : { label: R.factorLabels.personalEmail, points: 0 },\n  lead.message.length >= R.scoring.detailedMessageLength ? { label: R.factorLabels.detailedMessage, points: R.scoring.detailedMessage } : { label: R.factorLabels.shortMessage, points: 0 }\n])($('Reglas del flujo').first().json, $('Preparar ejecución').first().json.lead, $('Validar').first().json.checks) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "42d93282-fb35-4491-bb5f-488d7a03cccf",
+      "name": "Calificar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2340, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e58a238f-d6b8-43ae-9c5c-192735dc9c40",
+              "name": "score",
+              "value": "={{ Math.max(0, Math.min($('Reglas del flujo').first().json.scoring.max, $json.factors.reduce((sum, factor) => sum + factor.points, 0))) }}",
+              "type": "number"
+            },
+            {
+              "id": "ad6e9c7f-0d18-4b0d-831a-348019fa03e0",
+              "name": "tier",
+              "value": "={{ ((tiers, score) => (score >= tiers.hot ? 'hot' : score >= tiers.warm ? 'warm' : 'cold'))($('Reglas del flujo').first().json.scoring.tiers, $json.factors.reduce((sum, factor) => sum + factor.points, 0)) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "76dfaef2-4cce-4ac9-90fc-a4eae0c1602c",
+      "name": "Calcular nivel",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2600, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar ejecución').first().json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Preparar ejecución').first().json.callbackToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { step: 'scored', data: { score: $('Calcular nivel').first().json.score, tier: $('Calcular nivel').first().json.tier, factors: $('Calcular nivel').first().json.factors } } }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "35a99fd6-04b5-4dff-943e-242c873310fc",
+      "name": "Reportar: calificado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2860, 0],
+      "retryOnFail": false,
+      "onError": "stopWorkflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28033754-92f8-4ffb-ba60-d9c7fd68cea2",
+              "name": "route",
+              "value": "={{ $('Reglas del flujo').first().json.routes[$('Calcular nivel').first().json.tier].route }}",
+              "type": "string"
+            },
+            {
+              "id": "670efe30-37ed-492b-9ad5-fc0e678c3688",
+              "name": "label",
+              "value": "={{ $('Reglas del flujo').first().json.routes[$('Calcular nivel').first().json.tier].label }}",
+              "type": "string"
+            },
+            {
+              "id": "8e53ca69-e5ab-4143-bd32-07f3687773ea",
+              "name": "sla",
+              "value": "={{ $('Reglas del flujo').first().json.routes[$('Calcular nivel').first().json.tier].sla }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "02b30fe9-eed8-4e3c-bccc-50d062838ddd",
+      "name": "Enrutar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [3120, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar ejecución').first().json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Preparar ejecución').first().json.callbackToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { step: 'routed', data: { route: $('Enrutar').first().json.route, label: $('Enrutar').first().json.label, sla: $('Enrutar').first().json.sla } } }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "162fe8cf-b5d7-4d05-bbc4-69ef6af5e815",
+      "name": "Reportar: enrutado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3380, 0],
+      "retryOnFail": false,
+      "onError": "stopWorkflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c0b45609-c9e3-47c5-903a-8c2f1fdcc0a2",
+              "name": "subject",
+              "value": "={{ $('Reglas del flujo').first().json.drafts[$('Enrutar').first().json.route].subject.replace(/\\{(\\w+)\\}/g, (match, key) => $('Preparar ejecución').first().json.vars[key] ?? match).slice(0, 160) }}",
+              "type": "string"
+            },
+            {
+              "id": "e0c833a4-67a6-4da6-b23e-64f94037bcab",
+              "name": "body",
+              "value": "={{ $('Reglas del flujo').first().json.drafts[$('Enrutar').first().json.route].body.join('\\n\\n').replace(/\\{(\\w+)\\}/g, (match, key) => $('Preparar ejecución').first().json.vars[key] ?? match).slice(0, 2000) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e67eac8f-deb6-415a-9919-d8716edd9a34",
+      "name": "Redactar respuesta",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [3640, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar ejecución').first().json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Preparar ejecución').first().json.callbackToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { step: 'drafted', data: { subject: $('Redactar respuesta').first().json.subject, body: $('Redactar respuesta').first().json.body } } }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "7c581320-5de9-45bd-bff4-4ff846e1097c",
+      "name": "Reportar: redactado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3900, 0],
+      "retryOnFail": false,
+      "onError": "stopWorkflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e2e7f798-7225-4ace-99ae-d44bc4ff947e",
+              "name": "reference",
+              "value": "={{ 'AIM-' + $('Preparar ejecución').first().json.runId.slice(0, 8).toUpperCase() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Registrar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [4160, 0],
+      "id": "5e6adbc9-ee9b-42b1-80c2-f011a8c21041"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar ejecución').first().json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Preparar ejecución').first().json.callbackToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { step: 'recorded', data: { reference: $('Registrar').first().json.reference } } }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "name": "Reportar: registrado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [4420, 0],
+      "retryOnFail": false,
+      "onError": "stopWorkflow",
+      "id": "6d2b4915-3a4a-46bb-9c00-03383f12d590"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Preparar ejecución').first().json.callbackUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Preparar ejecución').first().json.callbackToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { step: 'done', data: { outcome: 'accepted' } } }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "name": "Reportar: listo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [4680, 0],
+      "retryOnFail": false,
+      "onError": "stopWorkflow",
+      "id": "7330eae1-629e-4f8d-9b2c-245290eee9ae"
+    }
+  ],
+  "connections": {
+    "Recibir contacto": {
+      "main": [
+        [
+          {
+            "node": "Preparar ejecución",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar ejecución": {
+      "main": [
+        [
+          {
+            "node": "¿Petición válida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Petición válida?": {
+      "main": [
+        [
+          {
+            "node": "Reportar: recibido",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Petición inválida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reportar: recibido": {
+      "main": [
+        [
+          {
+            "node": "Reglas del flujo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reglas del flujo": {
+      "main": [
+        [
+          {
+            "node": "Validar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar": {
+      "main": [
+        [
+          {
+            "node": "Resumir validación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumir validación": {
+      "main": [
+        [
+          {
+            "node": "Reportar: validado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reportar: validado": {
+      "main": [
+        [
+          {
+            "node": "¿Pasa la validación?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Pasa la validación?": {
+      "main": [
+        [
+          {
+            "node": "Calificar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reportar: rechazado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calificar": {
+      "main": [
+        [
+          {
+            "node": "Calcular nivel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular nivel": {
+      "main": [
+        [
+          {
+            "node": "Reportar: calificado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reportar: calificado": {
+      "main": [
+        [
+          {
+            "node": "Enrutar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrutar": {
+      "main": [
+        [
+          {
+            "node": "Reportar: enrutado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reportar: enrutado": {
+      "main": [
+        [
+          {
+            "node": "Redactar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redactar respuesta": {
+      "main": [
+        [
+          {
+            "node": "Reportar: redactado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reportar: redactado": {
+      "main": [
+        [
+          {
+            "node": "Registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar": {
+      "main": [
+        [
+          {
+            "node": "Reportar: registrado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reportar: registrado": {
+      "main": [
+        [
+          {
+            "node": "Reportar: listo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false,
+    "saveExecutionProgress": false,
+    "timezone": "America/Bogota",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 120
+  }
+}

@@ -49,6 +49,19 @@ describe('cspDirectives', () => {
     expect(directive(directives, 'connect-src')).toEqual(["'self'", 'https://aim-api.example.com'])
   })
 
+  it('allows both Render APIs of the Lab, and nothing else, in connect-src', () => {
+    const directives = cspDirectives({
+      connectTo: ['https://aimweb-api.onrender.com', 'https://aimweb-pylab.onrender.com/'],
+    })
+    expect(directive(directives, 'connect-src')).toEqual([
+      "'self'",
+      'https://aimweb-api.onrender.com',
+      'https://aimweb-pylab.onrender.com',
+    ])
+    expect(directive(directives, 'default-src')).toEqual(["'self'"])
+    expect(directive(directives, 'frame-src')).toEqual([TURNSTILE_ORIGIN])
+  })
+
   it('lets the Web Analytics beacon load and report only when analytics is on', () => {
     expect(directive(cspDirectives(), 'connect-src')).not.toContain(CF_ANALYTICS_REPORT_ORIGIN)
     expect(cspScriptResources()).not.toContain(CF_ANALYTICS_ORIGIN)
@@ -64,6 +77,7 @@ describe('cspOrigin', () => {
 
   it('fails the build on a value that is not an http(s) URL', () => {
     expect(() => cspOrigin('aim-api.example.com')).toThrow(/PUBLIC_PLAYGROUND_API_URL/)
+    expect(() => cspOrigin('pylab.example.com')).toThrow(/PUBLIC_PYLAB_API_URL/)
     expect(() => cspOrigin('javascript:alert(1)')).toThrow(/https/)
   })
 })

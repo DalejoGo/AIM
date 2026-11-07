@@ -1,0 +1,1099 @@
+{
+  "ok": true,
+  "result": {
+    "delimiter": ";",
+    "totalRows": 20,
+    "columns": [
+      {
+        "index": 0,
+        "label": "ID",
+        "key": "id",
+        "type": "text",
+        "titleCase": false,
+        "reason": "identifier",
+        "sampled": 20,
+        "matched": 20
+      },
+      {
+        "index": 1,
+        "label": "Nombre",
+        "key": "nombre",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 20,
+        "matched": 20
+      },
+      {
+        "index": 2,
+        "label": "Apellidos",
+        "key": "apellidos",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 20,
+        "matched": 20
+      },
+      {
+        "index": 3,
+        "label": "Email",
+        "key": "email",
+        "type": "email",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 20,
+        "matched": 20
+      },
+      {
+        "index": 4,
+        "label": "Celular",
+        "key": "celular",
+        "type": "phone",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 20,
+        "matched": 19
+      },
+      {
+        "index": 5,
+        "label": "Fecha nacimiento",
+        "key": "fecha_nacimiento",
+        "type": "date",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 20,
+        "matched": 20
+      },
+      {
+        "index": 6,
+        "label": "Valor",
+        "key": "valor",
+        "type": "amount",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 20,
+        "matched": 17
+      },
+      {
+        "index": 7,
+        "label": "2024",
+        "key": "2024",
+        "type": "text",
+        "titleCase": false,
+        "reason": "default",
+        "sampled": 20,
+        "matched": 20
+      },
+      {
+        "index": 8,
+        "label": "",
+        "key": "columna_9",
+        "type": "text",
+        "titleCase": false,
+        "reason": "default",
+        "sampled": 3,
+        "matched": 3
+      },
+      {
+        "index": 9,
+        "label": "Ciudad",
+        "key": "ciudad",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 20,
+        "matched": 20
+      },
+      {
+        "index": 10,
+        "label": "Nombre",
+        "key": "nombre_2",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 20,
+        "matched": 20
+      },
+      {
+        "index": 11,
+        "label": "Código postal",
+        "key": "codigo_postal",
+        "type": "text",
+        "titleCase": false,
+        "reason": "identifier",
+        "sampled": 3,
+        "matched": 3
+      },
+      {
+        "index": 12,
+        "label": "Vacía",
+        "key": "vacia",
+        "type": "text",
+        "titleCase": false,
+        "reason": "default",
+        "sampled": 0,
+        "matched": 0
+      }
+    ],
+    "emptyRows": [],
+    "duplicates": [],
+    "valid": [
+      {
+        "rowNumber": 2,
+        "raw": {
+          "2024": "uno",
+          "id": "001",
+          "nombre": " o'neil  ",
+          "apellidos": "JEAN-PIERRE de la rosa",
+          "email": "mailto:Ana @ Example .COM",
+          "celular": "0057 300 555 0101",
+          "fecha_nacimiento": "lunes, 3 de abril de 2024",
+          "valor": "(1.500,00)",
+          "columna_9": "x",
+          "ciudad": "bogotá d.c.",
+          "nombre_2": "  ana​ ",
+          "codigo_postal": "050001",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "uno",
+          "id": "001",
+          "nombre": "O'Neil",
+          "apellidos": "Jean-Pierre de la Rosa",
+          "email": "ana@example.com",
+          "celular": "+573005550101",
+          "fecha_nacimiento": "2024-04-03",
+          "valor": -1500,
+          "columna_9": "x",
+          "ciudad": "Bogotá D.C.",
+          "nombre_2": "Ana",
+          "codigo_postal": "050001",
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "email",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 3,
+        "raw": {
+          "2024": "dos",
+          "id": "002",
+          "nombre": "MARÍA JOSÉ",
+          "apellidos": "del valle",
+          "email": "  luis.perez@example.co ",
+          "celular": "+1 (415) 555-0117",
+          "fecha_nacimiento": "abril 3, 2024",
+          "valor": "-$ 2.000",
+          "columna_9": "y",
+          "ciudad": "SAN JOSÉ DEL GUAVIARE",
+          "nombre_2": "luis",
+          "codigo_postal": "110111",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "dos",
+          "id": "002",
+          "nombre": "María José",
+          "apellidos": "Del Valle",
+          "email": "luis.perez@example.co",
+          "celular": "+14155550117",
+          "fecha_nacimiento": "2024-04-03",
+          "valor": -2000,
+          "columna_9": "y",
+          "ciudad": "San José del Guaviare",
+          "nombre_2": "Luis",
+          "codigo_postal": "110111",
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "email",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 10,
+        "raw": {
+          "2024": "nueve",
+          "id": "009",
+          "nombre": "mateo",
+          "apellidos": "ortiz",
+          "email": "mateo@example.com",
+          "celular": "3005550109",
+          "fecha_nacimiento": "sábado 05/10/2024",
+          "valor": "1,234,567.89",
+          "columna_9": "",
+          "ciudad": "ibagué",
+          "nombre_2": "mateo",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "nueve",
+          "id": "009",
+          "nombre": "Mateo",
+          "apellidos": "Ortiz",
+          "email": "mateo@example.com",
+          "celular": "+573005550109",
+          "fecha_nacimiento": "2024-10-05",
+          "valor": 1234567.89,
+          "columna_9": null,
+          "ciudad": "Ibagué",
+          "nombre_2": "Mateo",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 13,
+        "raw": {
+          "2024": "doce",
+          "id": "012",
+          "nombre": "inés",
+          "apellidos": "paz",
+          "email": "ines@example.com",
+          "celular": "3005550112",
+          "fecha_nacimiento": "5 sept 2024 10:30",
+          "valor": "€ 45",
+          "columna_9": "",
+          "ciudad": "leticia",
+          "nombre_2": "inés",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "doce",
+          "id": "012",
+          "nombre": "Inés",
+          "apellidos": "Paz",
+          "email": "ines@example.com",
+          "celular": "+573005550112",
+          "fecha_nacimiento": "2024-09-05",
+          "valor": 45,
+          "columna_9": null,
+          "ciudad": "Leticia",
+          "nombre_2": "Inés",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 14,
+        "raw": {
+          "2024": "trece",
+          "id": "013",
+          "nombre": "ana",
+          "apellidos": "ruiz",
+          "email": "ANA@EXAMPLE.COM",
+          "celular": "3005550113",
+          "fecha_nacimiento": "2024-11-02T08:15:00",
+          "valor": "45 pesos",
+          "columna_9": "",
+          "ciudad": "arauca",
+          "nombre_2": "ana",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "trece",
+          "id": "013",
+          "nombre": "Ana",
+          "apellidos": "Ruiz",
+          "email": "ana@example.com",
+          "celular": "+573005550113",
+          "fecha_nacimiento": "2024-11-02",
+          "valor": 45,
+          "columna_9": null,
+          "ciudad": "Arauca",
+          "nombre_2": "Ana",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "email",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 15,
+        "raw": {
+          "2024": "catorce",
+          "id": "014",
+          "nombre": "lía",
+          "apellidos": "mar",
+          "email": "lia@example.com",
+          "celular": "3005550114",
+          "fecha_nacimiento": "5/5/25",
+          "valor": "COP 1.000",
+          "columna_9": "",
+          "ciudad": "yopal",
+          "nombre_2": "lía",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "catorce",
+          "id": "014",
+          "nombre": "Lía",
+          "apellidos": "Mar",
+          "email": "lia@example.com",
+          "celular": "+573005550114",
+          "fecha_nacimiento": "2025-05-05",
+          "valor": 1000,
+          "columna_9": null,
+          "ciudad": "Yopal",
+          "nombre_2": "Lía",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 16,
+        "raw": {
+          "2024": "quince",
+          "id": "015",
+          "nombre": "río",
+          "apellidos": "sol",
+          "email": "rio@example.com",
+          "celular": "3005550115",
+          "fecha_nacimiento": "1/1/99",
+          "valor": "-0",
+          "columna_9": "",
+          "ciudad": "mocoa",
+          "nombre_2": "río",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "quince",
+          "id": "015",
+          "nombre": "Río",
+          "apellidos": "Sol",
+          "email": "rio@example.com",
+          "celular": "+573005550115",
+          "fecha_nacimiento": "1999-01-01",
+          "valor": 0,
+          "columna_9": null,
+          "ciudad": "Mocoa",
+          "nombre_2": "Río",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 17,
+        "raw": {
+          "2024": "dieciséis",
+          "id": "016",
+          "nombre": "teo",
+          "apellidos": "luz",
+          "email": "teo@example.com",
+          "celular": "3005550116",
+          "fecha_nacimiento": "15.06.2025",
+          "valor": "007",
+          "columna_9": "",
+          "ciudad": "sincelejo",
+          "nombre_2": "teo",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "dieciséis",
+          "id": "016",
+          "nombre": "Teo",
+          "apellidos": "Luz",
+          "email": "teo@example.com",
+          "celular": "+573005550116",
+          "fecha_nacimiento": "2025-06-15",
+          "valor": 7,
+          "columna_9": null,
+          "ciudad": "Sincelejo",
+          "nombre_2": "Teo",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 19,
+        "raw": {
+          "2024": "dieciocho",
+          "id": "018",
+          "nombre": "sara",
+          "apellidos": "sol",
+          "email": "sara@example.com",
+          "celular": "3005550118",
+          "fecha_nacimiento": "miércoles 9 de abril de 2025",
+          "valor": "$ 9.999.999.999",
+          "columna_9": "",
+          "ciudad": "florencia",
+          "nombre_2": "sara",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "dieciocho",
+          "id": "018",
+          "nombre": "Sara",
+          "apellidos": "Sol",
+          "email": "sara@example.com",
+          "celular": "+573005550118",
+          "fecha_nacimiento": "2025-04-09",
+          "valor": 9999999999,
+          "columna_9": null,
+          "ciudad": "Florencia",
+          "nombre_2": "Sara",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 20,
+        "raw": {
+          "2024": "diecinueve",
+          "id": "019",
+          "nombre": "iván",
+          "apellidos": "rey",
+          "email": "ivan@example.com",
+          "celular": "3005550119",
+          "fecha_nacimiento": "20 dic 2024",
+          "valor": "0",
+          "columna_9": "",
+          "ciudad": "mitú",
+          "nombre_2": "iván",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "diecinueve",
+          "id": "019",
+          "nombre": "Iván",
+          "apellidos": "Rey",
+          "email": "ivan@example.com",
+          "celular": "+573005550119",
+          "fecha_nacimiento": "2024-12-20",
+          "valor": 0,
+          "columna_9": null,
+          "ciudad": "Mitú",
+          "nombre_2": "Iván",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 21,
+        "raw": {
+          "2024": "veinte",
+          "id": "020",
+          "nombre": "ana",
+          "apellidos": "ruiz",
+          "email": "ana@example.com",
+          "celular": "+57 300 555 0101",
+          "fecha_nacimiento": "03/04/2024",
+          "valor": "-1500",
+          "columna_9": "",
+          "ciudad": "bogotá",
+          "nombre_2": "ana",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "veinte",
+          "id": "020",
+          "nombre": "Ana",
+          "apellidos": "Ruiz",
+          "email": "ana@example.com",
+          "celular": "+573005550101",
+          "fecha_nacimiento": "2024-04-03",
+          "valor": -1500,
+          "columna_9": null,
+          "ciudad": "Bogotá",
+          "nombre_2": "Ana",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": []
+      }
+    ],
+    "invalid": [
+      {
+        "rowNumber": 4,
+        "raw": {
+          "2024": "tres",
+          "id": "003",
+          "nombre": "pedro",
+          "apellidos": "de los ríos",
+          "email": "pedro@example",
+          "celular": "(+57) 300 555 0103",
+          "fecha_nacimiento": "3-abr-24",
+          "valor": "+300",
+          "columna_9": "z",
+          "ciudad": "cali",
+          "nombre_2": "pedro",
+          "codigo_postal": "760001",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "tres",
+          "id": "003",
+          "nombre": "Pedro",
+          "apellidos": "De los Ríos",
+          "email": "pedro@example",
+          "celular": "+573005550103",
+          "fecha_nacimiento": "2024-04-03",
+          "valor": 300,
+          "columna_9": "z",
+          "ciudad": "Cali",
+          "nombre_2": "Pedro",
+          "codigo_postal": "760001",
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "email",
+            "label": "Email",
+            "message": "«pedro@example» no tiene una extensión de dominio válida. Revisa el final, por ejemplo @dominio.com o @dominio.co."
+          }
+        ]
+      },
+      {
+        "rowNumber": 5,
+        "raw": {
+          "2024": "cuatro",
+          "id": "004",
+          "nombre": "\tcarlos\t",
+          "apellidos": "Y",
+          "email": "carlos@@example.com",
+          "celular": "+57 300 555 01",
+          "fecha_nacimiento": "2024/02/29",
+          "valor": "USD 1,250.00",
+          "columna_9": "",
+          "ciudad": "cali",
+          "nombre_2": "carlos",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "cuatro",
+          "id": "004",
+          "nombre": "Carlos",
+          "apellidos": "Y",
+          "email": "carlos@@example.com",
+          "celular": "+57 300 555 01",
+          "fecha_nacimiento": "2024-02-29",
+          "valor": 1250,
+          "columna_9": null,
+          "ciudad": "Cali",
+          "nombre_2": "Carlos",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "fecha_nacimiento",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "email",
+            "label": "Email",
+            "message": "«carlos@@example.com» tiene más de una @. Deja solo una, entre el usuario y el dominio."
+          },
+          {
+            "key": "celular",
+            "label": "Celular",
+            "message": "Un número de Colombia (+57) lleva 10 dígitos después del indicativo y «+57 300 555 01» tiene 8. Revisa que no falte ni sobre ninguno."
+          }
+        ]
+      },
+      {
+        "rowNumber": 6,
+        "raw": {
+          "2024": "cinco",
+          "id": "005",
+          "nombre": "ana",
+          "apellidos": "ruiz",
+          "email": "@example.com",
+          "celular": "+44 20 7946 0958",
+          "fecha_nacimiento": "29/02/2023",
+          "valor": "1,5",
+          "columna_9": "",
+          "ciudad": "medellín",
+          "nombre_2": "ana",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "cinco",
+          "id": "005",
+          "nombre": "Ana",
+          "apellidos": "Ruiz",
+          "email": "@example.com",
+          "celular": "+442079460958",
+          "fecha_nacimiento": "29/02/2023",
+          "valor": 1.5,
+          "columna_9": null,
+          "ciudad": "Medellín",
+          "nombre_2": "Ana",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "email",
+            "label": "Email",
+            "message": "«@example.com» no tiene nada antes de la @. Agrega el usuario, por ejemplo ana@dominio.com."
+          },
+          {
+            "key": "fecha_nacimiento",
+            "label": "Fecha nacimiento",
+            "message": "«29/02/2023» no existe: febrero de 2023 tiene 28 días. Revisa el día."
+          }
+        ]
+      },
+      {
+        "rowNumber": 7,
+        "raw": {
+          "2024": "seis",
+          "id": "006",
+          "nombre": "luisa",
+          "apellidos": "díaz",
+          "email": "luisa diaz@example.com",
+          "celular": "300-555-0106 ext 2",
+          "fecha_nacimiento": "31/04/2024",
+          "valor": "0.500",
+          "columna_9": "",
+          "ciudad": "pasto",
+          "nombre_2": "luisa",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "seis",
+          "id": "006",
+          "nombre": "Luisa",
+          "apellidos": "Díaz",
+          "email": "luisa diaz@example.com",
+          "celular": "300-555-0106 ext 2",
+          "fecha_nacimiento": "31/04/2024",
+          "valor": 0.5,
+          "columna_9": null,
+          "ciudad": "Pasto",
+          "nombre_2": "Luisa",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "email",
+            "label": "Email",
+            "message": "«luisa diaz@example.com» tiene espacios. Quítalos: un correo va todo junto."
+          },
+          {
+            "key": "celular",
+            "label": "Celular",
+            "message": "«300-555-0106 ext 2» tiene letras o símbolos. Deja solo números, espacios, guiones o paréntesis."
+          },
+          {
+            "key": "fecha_nacimiento",
+            "label": "Fecha nacimiento",
+            "message": "«31/04/2024» no existe: abril de 2024 tiene 30 días. Revisa el día."
+          }
+        ]
+      },
+      {
+        "rowNumber": 8,
+        "raw": {
+          "2024": "siete",
+          "id": "007",
+          "nombre": "jorge",
+          "apellidos": "niño",
+          "email": "jorge@example.c",
+          "celular": "555 0107",
+          "fecha_nacimiento": "13/13/2024",
+          "valor": "0,500",
+          "columna_9": "",
+          "ciudad": "cúcuta",
+          "nombre_2": "jorge",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "siete",
+          "id": "007",
+          "nombre": "Jorge",
+          "apellidos": "Niño",
+          "email": "jorge@example.c",
+          "celular": "555 0107",
+          "fecha_nacimiento": "13/13/2024",
+          "valor": 0.5,
+          "columna_9": null,
+          "ciudad": "Cúcuta",
+          "nombre_2": "Jorge",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "email",
+            "label": "Email",
+            "message": "«jorge@example.c» no tiene una extensión de dominio válida. Revisa el final, por ejemplo @dominio.com o @dominio.co."
+          },
+          {
+            "key": "celular",
+            "label": "Celular",
+            "message": "«555 0107» tiene 7 dígitos. Un celular de Colombia lleva 10, por ejemplo 300 555 0101. Si es de otro país, agrega + y el indicativo."
+          },
+          {
+            "key": "fecha_nacimiento",
+            "label": "Fecha nacimiento",
+            "message": "«13/13/2024» tiene el mes 13, que no existe. Usa día/mes/año (03/04/2024), año-mes-día (2024-04-03) o «3 de abril de 2024»."
+          }
+        ]
+      },
+      {
+        "rowNumber": 9,
+        "raw": {
+          "2024": "ocho",
+          "id": "008",
+          "nombre": "sofía",
+          "apellidos": "peña",
+          "email": "sofía@example.com",
+          "celular": "601 555 0108",
+          "fecha_nacimiento": "1899-12-31",
+          "valor": "1.234.567,89",
+          "columna_9": "",
+          "ciudad": "neiva",
+          "nombre_2": "sofía",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "ocho",
+          "id": "008",
+          "nombre": "Sofía",
+          "apellidos": "Peña",
+          "email": "sofía@example.com",
+          "celular": "601 555 0108",
+          "fecha_nacimiento": "1899-12-31",
+          "valor": 1234567.89,
+          "columna_9": null,
+          "ciudad": "Neiva",
+          "nombre_2": "Sofía",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "valor",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "email",
+            "label": "Email",
+            "message": "«sofía@example.com» no es un correo válido. Revisa que no tenga tildes, comas ni símbolos raros."
+          },
+          {
+            "key": "celular",
+            "label": "Celular",
+            "message": "«601 555 0108» no tiene indicativo de país y no es un celular de Colombia (empiezan por 3). Escríbelo con + y el indicativo, por ejemplo +57 601 555 0101."
+          }
+        ]
+      },
+      {
+        "rowNumber": 11,
+        "raw": {
+          "2024": "diez",
+          "id": "010",
+          "nombre": "eva",
+          "apellidos": "lópez",
+          "email": "eva@example.com",
+          "celular": "573005550110",
+          "fecha_nacimiento": "2024-02-30",
+          "valor": "1.2.3",
+          "columna_9": "",
+          "ciudad": "tunja",
+          "nombre_2": "eva",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "diez",
+          "id": "010",
+          "nombre": "Eva",
+          "apellidos": "López",
+          "email": "eva@example.com",
+          "celular": "+573005550110",
+          "fecha_nacimiento": "2024-02-30",
+          "valor": "1.2.3",
+          "columna_9": null,
+          "ciudad": "Tunja",
+          "nombre_2": "Eva",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "fecha_nacimiento",
+            "label": "Fecha nacimiento",
+            "message": "«2024-02-30» no existe: febrero de 2024 tiene 29 días. Revisa el día."
+          },
+          {
+            "key": "valor",
+            "label": "Valor",
+            "message": "No se entiende «1.2.3» como monto. Usa puntos para los miles y coma para los decimales (1.200.000,50), o solo el punto decimal (1200000.5)."
+          }
+        ]
+      },
+      {
+        "rowNumber": 12,
+        "raw": {
+          "2024": "once",
+          "id": "011",
+          "nombre": "raúl",
+          "apellidos": "gil",
+          "email": "raul@example.com",
+          "celular": "3005550111",
+          "fecha_nacimiento": "10/31/2024",
+          "valor": "12,34,567",
+          "columna_9": "",
+          "ciudad": "quibdó",
+          "nombre_2": "raúl",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "once",
+          "id": "011",
+          "nombre": "Raúl",
+          "apellidos": "Gil",
+          "email": "raul@example.com",
+          "celular": "+573005550111",
+          "fecha_nacimiento": "10/31/2024",
+          "valor": "12,34,567",
+          "columna_9": null,
+          "ciudad": "Quibdó",
+          "nombre_2": "Raúl",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "fecha_nacimiento",
+            "label": "Fecha nacimiento",
+            "message": "«10/31/2024» no existe si se lee como día/mes/año: no hay mes 31. Si viene en formato mes/día, escríbela como 31/10/2024."
+          },
+          {
+            "key": "valor",
+            "label": "Valor",
+            "message": "No se entiende «12,34,567» como monto. Usa puntos para los miles y coma para los decimales (1.200.000,50), o solo el punto decimal (1200000.5)."
+          }
+        ]
+      },
+      {
+        "rowNumber": 18,
+        "raw": {
+          "2024": "diecisiete",
+          "id": "017",
+          "nombre": "zoe",
+          "apellidos": "mar",
+          "email": "zoe@example.com",
+          "celular": "3005550117",
+          "fecha_nacimiento": "3 de abril de 2024",
+          "valor": "mil",
+          "columna_9": "",
+          "ciudad": "riohacha",
+          "nombre_2": "zoe",
+          "codigo_postal": "",
+          "vacia": ""
+        },
+        "clean": {
+          "2024": "diecisiete",
+          "id": "017",
+          "nombre": "Zoe",
+          "apellidos": "Mar",
+          "email": "zoe@example.com",
+          "celular": "+573005550117",
+          "fecha_nacimiento": "2024-04-03",
+          "valor": "mil",
+          "columna_9": null,
+          "ciudad": "Riohacha",
+          "nombre_2": "Zoe",
+          "codigo_postal": null,
+          "vacia": null
+        },
+        "changed": [
+          "nombre",
+          "apellidos",
+          "celular",
+          "fecha_nacimiento",
+          "ciudad",
+          "nombre_2"
+        ],
+        "errors": [
+          {
+            "key": "valor",
+            "label": "Valor",
+            "message": "«mil» tiene letras. Escríbelo solo con números, por ejemplo 1.200.000,50."
+          }
+        ]
+      }
+    ],
+    "changedCells": 127,
+    "changesByType": {
+      "email": 3,
+      "phone": 16,
+      "date": 14,
+      "amount": 15,
+      "text": 79
+    }
+  }
+}

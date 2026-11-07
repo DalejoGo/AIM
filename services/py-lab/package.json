@@ -1,0 +1,13 @@
+{
+  "name": "@aim/py-lab",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Migrador de datos en Python (FastAPI). Las tareas llaman a uv: necesita uv instalado (README.md).",
+  "scripts": {
+    "lint": "uv run --frozen ruff check . && uv run --frozen ruff format --check .",
+    "typecheck": "uv run --frozen mypy",
+    "test": "uv run --frozen pytest -q",
+    "serve": "uv run --frozen uvicorn py_lab.main:app --app-dir src --reload --port 8000",
+    "parity:inputs": "uv run --frozen python scripts/make_parity_inputs.py"
+  }
+}

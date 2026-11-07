@@ -1,0 +1,86 @@
+{
+  "ok": true,
+  "result": {
+    "delimiter": ";",
+    "totalRows": 2,
+    "columns": [
+      {
+        "index": 0,
+        "label": "nombre",
+        "key": "nombre",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 2,
+        "matched": 2
+      },
+      {
+        "index": 1,
+        "label": "correo",
+        "key": "correo",
+        "type": "email",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 2,
+        "matched": 2
+      },
+      {
+        "index": 2,
+        "label": "monto",
+        "key": "monto",
+        "type": "amount",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 2,
+        "matched": 2
+      }
+    ],
+    "emptyRows": [],
+    "duplicates": [],
+    "valid": [
+      {
+        "rowNumber": 2,
+        "raw": {
+          "nombre": "Ana",
+          "correo": "ana@example.com",
+          "monto": "1.000"
+        },
+        "clean": {
+          "nombre": "Ana",
+          "correo": "ana@example.com",
+          "monto": 1000
+        },
+        "changed": [
+          "monto"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 3,
+        "raw": {
+          "nombre": "Luis",
+          "correo": "luis@example.com",
+          "monto": "2.000,5"
+        },
+        "clean": {
+          "nombre": "Luis",
+          "correo": "luis@example.com",
+          "monto": 2000.5
+        },
+        "changed": [
+          "monto"
+        ],
+        "errors": []
+      }
+    ],
+    "invalid": [],
+    "changedCells": 2,
+    "changesByType": {
+      "email": 0,
+      "phone": 0,
+      "date": 0,
+      "amount": 2,
+      "text": 0
+    }
+  }
+}

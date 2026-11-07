@@ -19,6 +19,10 @@
     "github": "https://github.com/DalejoGo",
     "platzi": "https://platzi.com/@david.gomez715/"
   },
+  "source": {
+    "repository": "https://github.com/DalejoGo/AIM",
+    "branch": "main"
+  },
   "currency": {
     "default": "COP"
   },

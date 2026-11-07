@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "result": {
+    "delimiter": ",",
+    "totalRows": 5,
+    "columns": [
+      {
+        "index": 0,
+        "label": "correo",
+        "key": "correo",
+        "type": "email",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 4,
+        "matched": 3
+      }
+    ],
+    "emptyRows": [
+      5
+    ],
+    "duplicates": [],
+    "valid": [
+      {
+        "rowNumber": 2,
+        "raw": {
+          "correo": "ana@example.com"
+        },
+        "clean": {
+          "correo": "ana@example.com"
+        },
+        "changed": [],
+        "errors": []
+      },
+      {
+        "rowNumber": 3,
+        "raw": {
+          "correo": "LUIS@EXAMPLE.COM"
+        },
+        "clean": {
+          "correo": "luis@example.com"
+        },
+        "changed": [
+          "correo"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 6,
+        "raw": {
+          "correo": "eva@example.co"
+        },
+        "clean": {
+          "correo": "eva@example.co"
+        },
+        "changed": [],
+        "errors": []
+      }
+    ],
+    "invalid": [
+      {
+        "rowNumber": 4,
+        "raw": {
+          "correo": "no-es-correo"
+        },
+        "clean": {
+          "correo": "no-es-correo"
+        },
+        "changed": [],
+        "errors": [
+          {
+            "key": "correo",
+            "label": "correo",
+            "message": "«no-es-correo» no es un correo: le falta la @. Escríbelo como nombre@dominio.com."
+          }
+        ]
+      }
+    ],
+    "changedCells": 1,
+    "changesByType": {
+      "email": 1,
+      "phone": 0,
+      "date": 0,
+      "amount": 0,
+      "text": 0
+    }
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "ok": true,
+  "result": {
+    "delimiter": ";",
+    "totalRows": 3,
+    "columns": [
+      {
+        "index": 0,
+        "label": "Nombre",
+        "key": "nombre",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 3,
+        "matched": 3
+      },
+      {
+        "index": 1,
+        "label": "Teléfono",
+        "key": "telefono",
+        "type": "phone",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 3,
+        "matched": 3
+      },
+      {
+        "index": 2,
+        "label": "Año de ingreso",
+        "key": "ano_de_ingreso",
+        "type": "date",
+        "titleCase": false,
+        "reason": "values",
+        "sampled": 3,
+        "matched": 3
+      },
+      {
+        "index": 3,
+        "label": "Salario",
+        "key": "salario",
+        "type": "amount",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 3,
+        "matched": 3
+      },
+      {
+        "index": 4,
+        "label": "Ciudad",
+        "key": "ciudad",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 3,
+        "matched": 3
+      }
+    ],
+    "emptyRows": [],
+    "duplicates": [],
+    "valid": [
+      {
+        "rowNumber": 2,
+        "raw": {
+          "nombre": "Peña Núñez",
+          "telefono": "300 555 0101",
+          "ano_de_ingreso": "01/02/2020",
+          "salario": "€ 1.250",
+          "ciudad": "Bogotá"
+        },
+        "clean": {
+          "nombre": "Peña Núñez",
+          "telefono": "+573005550101",
+          "ano_de_ingreso": "2020-02-01",
+          "salario": 1250,
+          "ciudad": "Bogotá"
+        },
+        "changed": [
+          "telefono",
+          "ano_de_ingreso",
+          "salario"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 3,
+        "raw": {
+          "nombre": "O’Brien Muñoz",
+          "telefono": "310 555 0102",
+          "ano_de_ingreso": "15/03/2021",
+          "salario": "2.300.000",
+          "ciudad": "Medellín"
+        },
+        "clean": {
+          "nombre": "O’Brien Muñoz",
+          "telefono": "+573105550102",
+          "ano_de_ingreso": "2021-03-15",
+          "salario": 2300000,
+          "ciudad": "Medellín"
+        },
+        "changed": [
+          "telefono",
+          "ano_de_ingreso",
+          "salario"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 4,
+        "raw": {
+          "nombre": "Ángela Ibáñez",
+          "telefono": "3205550103",
+          "ano_de_ingreso": "2019-07-30",
+          "salario": "1.800.000,50",
+          "ciudad": "Cúcuta"
+        },
+        "clean": {
+          "nombre": "Ángela Ibáñez",
+          "telefono": "+573205550103",
+          "ano_de_ingreso": "2019-07-30",
+          "salario": 1800000.5,
+          "ciudad": "Cúcuta"
+        },
+        "changed": [
+          "telefono",
+          "salario"
+        ],
+        "errors": []
+      }
+    ],
+    "invalid": [],
+    "changedCells": 8,
+    "changesByType": {
+      "email": 0,
+      "phone": 3,
+      "date": 2,
+      "amount": 3,
+      "text": 0
+    }
+  }
+}

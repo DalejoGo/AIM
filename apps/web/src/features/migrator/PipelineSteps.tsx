@@ -1,3 +1,4 @@
+import type { MigrationSource } from '@aim/contracts/migrator'
 import type { ComponentChildren } from 'preact'
 import { formatBytes, formatCount } from './file'
 import {
@@ -10,6 +11,7 @@ import {
   typeLabel,
 } from './format'
 import { data, ScrollTable, td, th } from './ScrollTable'
+import { type Engine, encodingText, isWorkbook } from './server'
 import type { MigrationResult } from './types'
 
 export interface Source {
@@ -20,6 +22,27 @@ export interface Source {
 interface Props {
   result: MigrationResult | null
   source: Source | null
+  /** Which engine runs (or ran) the steps. Default: the browser. */
+  engine?: Engine
+  /** What the Python engine reported about the file it read. */
+  server?: MigrationSource | null
+}
+
+/** Step 1 of the Python engine, once it ran: format, sheet or encoding, rows and separator. */
+function serverReadReport(result: MigrationResult, source: Source, server: MigrationSource) {
+  const how = isWorkbook(server)
+    ? `la hoja «${server.sheet ?? ''}» del libro de Excel`
+    : `el texto como ${encodingText(server.encoding ?? { name: 'utf-8', detectedBy: 'utf-8' })}`
+  const separator = isWorkbook(server) ? '' : `, separadas por ${delimiterName(result.delimiter)}`
+  return (
+    <p>
+      Python leyó «{source.name}» ({formatBytes(source.size)}) en memoria, sin guardarlo: {how}. Encontró una
+      fila de encabezados y {plural(result.totalRows, 'fila de datos', 'filas de datos')}
+      {separator}.{' '}
+      {result.emptyRows.length > 0 &&
+        `${plural(result.emptyRows.length, 'fila estaba vacía y se descartó', 'filas estaban vacías y se descartaron')}.`}
+    </p>
+  )
 }
 
 interface Step {
@@ -32,14 +55,19 @@ interface Step {
 }
 
 /** The pipeline as a numbered sequence: what each step does and, once a file ran, what it did and how many. */
-export function PipelineSteps({ result, source }: Props) {
+export function PipelineSteps({ result, source, engine = 'browser', server = null }: Props) {
+  const python = engine === 'server'
   const steps: Step[] = [
     {
       title: 'Leer el archivo',
-      plan: 'PapaParse lee el CSV, detecta si el separador es coma o punto y coma y toma la primera fila como encabezados.',
+      plan: python
+        ? 'Python recibe el archivo y lo lee en memoria: reconoce por su contenido si es CSV o Excel, detecta la codificación del texto y el separador (coma o punto y coma), y toma la primera fila como encabezados.'
+        : 'PapaParse lee el CSV, detecta si el separador es coma o punto y coma y toma la primera fila como encabezados.',
       ...(result &&
         source && {
-          report: (
+          report: server ? (
+            serverReadReport(result, source, server)
+          ) : (
             <p>
               PapaParse leyó «{source.name}» ({formatBytes(source.size)}): una fila de encabezados y{' '}
               {plural(result.totalRows, 'fila de datos', 'filas de datos')}, separadas por{' '}
@@ -133,13 +161,17 @@ export function PipelineSteps({ result, source }: Props) {
     },
     {
       title: 'Validar',
-      plan: 'Arma un esquema de Zod con los tipos detectados y revisa cada fila: correo válido, teléfono internacional, fecha que exista y monto numérico. Las celdas vacías se permiten.',
+      plan: python
+        ? 'Revisa cada fila con las mismas reglas que Zod aplica en el navegador: correo válido, teléfono internacional, fecha que exista y monto numérico. Las celdas vacías se permiten.'
+        : 'Arma un esquema de Zod con los tipos detectados y revisa cada fila: correo válido, teléfono internacional, fecha que exista y monto numérico. Las celdas vacías se permiten.',
       ...(result && {
         report: (
           <p>
-            Zod revisó {plural(result.valid.length + result.invalid.length, 'fila', 'filas')} con un esquema
-            armado para este archivo: correo válido, teléfono internacional, fecha que exista y monto
-            numérico, según el tipo de cada columna. Las celdas vacías se permiten.{' '}
+            {python ? 'Python' : 'Zod'} revisó{' '}
+            {plural(result.valid.length + result.invalid.length, 'fila', 'filas')}{' '}
+            {python ? 'con las mismas reglas del navegador' : 'con un esquema armado para este archivo'}:
+            correo válido, teléfono internacional, fecha que exista y monto numérico, según el tipo de cada
+            columna. Las celdas vacías se permiten.{' '}
             {result.invalid.length === 0
               ? 'Todas pasaron.'
               : `${plural(result.invalid.length, 'fila tiene', 'filas tienen')} al menos un error, con el motivo por campo.`}

@@ -3,11 +3,13 @@ import { Client } from 'pg'
 import { turnstile } from './adapters/captcha'
 import { anthropicLlm } from './adapters/llm'
 import { mailpitMailer, resendMailer } from './adapters/mail'
+import { httpN8n } from './adapters/n8n'
 import { WORKERS_AI_DEFAULT_MODEL, type WorkersAi, workersAiLlm } from './adapters/workers-ai'
 import type { ResolveDeps } from './app'
 import * as schema from './db/schema'
 import type { Db, Llm, Mailer } from './deps'
 import { EdgeEnv } from './env'
+import { sleep } from './lib/sleep'
 
 /**
  * Production wiring for Cloudflare Pages Functions. Workers cannot share I/O objects across requests,
@@ -34,7 +36,12 @@ export const resolveRuntimeDeps: ResolveDeps = async ({ env: bindings, execution
     captcha: turnstile(env.TURNSTILE_SECRET),
     // Optional: without a model the assistant answers 503 and nothing else changes.
     ...(assistant ? { llm: assistant.llm } : {}),
+    // Optional: without AUTOMATION_N8N_URL the automation demo answers 503 and nothing else changes.
+    ...(env.AUTOMATION_N8N_URL
+      ? { n8n: httpN8n({ baseUrl: env.AUTOMATION_N8N_URL, webhookPath: env.AUTOMATION_WEBHOOK_PATH }) }
+      : {}),
     now: () => new Date(),
+    sleep,
     waitUntil: (promise) => executionCtx?.waitUntil(promise),
     async dispose() {
       await client?.end()

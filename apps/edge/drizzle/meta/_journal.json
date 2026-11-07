@@ -29,6 +29,13 @@
       "when": 1793997260383,
       "tag": "0003_lab_hits",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794019598383,
+      "tag": "0004_automation",
+      "breakpoints": true
     }
   ]
 }

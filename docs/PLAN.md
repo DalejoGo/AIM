@@ -1,6 +1,7 @@
 # PLAN.md — AIM Desarrollo y Automatizaciones
 
 > Estado: **APROBADO (2026-11-06)**, con las recomendaciones de la sección 7 aceptadas. Las decisiones pendientes viven en [`DECISIONES.md`](DECISIONES.md); donde lo contradiga, manda ese archivo.
+> **Fase 4 (Lab, parte 2):** construida y probada de punta a punta en local (2026-11-06): Automatización en vivo con n8n real en Render (DEC-021, `docs/AUTOMATIZACION.md`) y motor en Python (FastAPI) del Migrador de datos en Render (DEC-022); Auth Lab ya estaba en vivo. Falta que Render cree los dos servicios nuevos del Blueprint para darla por publicada.
 > **Fase 3 (Lab):** en vivo (2026-11-06): Asistente IA (Gemma 4 gratis en Workers AI, DEC-018), API Playground (NestJS en Render + consola), Seguridad en acción y Revisor de código con IA; CSP estricta (DEC-019), Lighthouse 98–100 y analítica sin cookies (DEC-020). **Fase completa.**
 > **Fase 2 (API y panel):** en vivo y validada por David (2026-11-06): contactos con Turnstile y aviso por Resend, login propio del panel `/admin/` (DEC-017), datos en Neon.
 > **Fase 1 (sitio público):** construida en local (2026-11-06): inicio, servicios, proyectos (agencia anónima y Marea), Lab con 3 demos en vivo (Cotizador, Migrador de datos, Auth Lab) y 5 próximamente, sobre mí con certificados, privacidad. Contenido editable en `apps/web/src/content` (ver `docs/CONTENIDO.md`). Publicada en https://aimweb-9hc.pages.dev (2026-11-06); pendiente conectar aimweb.dev.
@@ -105,5 +106,6 @@ David pidió revisar estos textos al final, todos juntos:
 - Preguntas frecuentes (`faq.json`): forma de pago, periodo de ajustes, acompañamiento.
 - Política de privacidad (`/privacidad/`): proveedores, transferencia internacional, conservación.
 - Texto del Asistente IA en el Lab (ya no ofrece tomar datos del visitante).
+- Reglas y textos del flujo de n8n (nodo **Reglas del flujo**, `automations/workflows/lead-demo.json`): puntos de calificación, plazos de respuesta ("24 horas", "48 horas", "Primer envío en 7 días") y la firma del correo de ejemplo.
 
 Validado en vivo por David (2026-11-06): formulario de contacto con aviso por correo y login del panel `/admin/` con código.

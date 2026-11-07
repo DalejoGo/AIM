@@ -27,6 +27,8 @@ export const SiteConfig = z.object({
     github: z.url().optional(),
     platzi: z.url().optional(),
   }),
+  /** The site's public repository: Lab demos link to the code they run (e.g. the n8n flow). */
+  source: z.object({ repository: z.url(), branch: z.string().min(1) }),
   currency: z.object({ default: Currency }),
   media: z.object({
     cv: z.string().startsWith('/'),
@@ -60,6 +62,10 @@ export const site = SiteConfig.parse(siteJson)
 export const faq = Faq.parse(faqJson)
 export const profile = Profile.parse(profileJson)
 export const quote = QuoteConfig.parse(quoteJson)
+
+/** A file of the repository on GitHub, e.g. sourceFile('automations/workflows/lead-demo.json'). */
+export const sourceFile = (path: string) =>
+  `${site.source.repository.replace(/\/+$/, '')}/blob/${site.source.branch}/${path.replace(/^\/+/, '')}`
 
 export const whatsapp = (message: string = site.contact.whatsappMessage) =>
   whatsappLink(site.contact.whatsapp, message)

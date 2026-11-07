@@ -1,0 +1,4 @@
+{
+  "ok": false,
+  "error": "El archivo está vacío. Sube un CSV con una fila de encabezados y al menos una fila de datos."
+}

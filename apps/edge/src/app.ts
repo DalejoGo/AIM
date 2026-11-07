@@ -7,6 +7,7 @@ import { apiHeaders, clientIp, sameOrigin } from './middleware/security'
 import { adminRoutes } from './routes/admin'
 import { assistantRoutes } from './routes/assistant'
 import { authRoutes } from './routes/auth'
+import { automationRoutes } from './routes/automation'
 import { labRoutes } from './routes/lab'
 import { leadRoutes } from './routes/leads'
 
@@ -54,6 +55,7 @@ export function createApp(resolveDeps: ResolveDeps) {
   app.route('/admin', adminRoutes)
   app.route('/assistant', assistantRoutes)
   app.route('/lab', labRoutes)
+  app.route('/automation', automationRoutes)
 
   app.notFound((c) => fail(c, 404, 'not_found', 'Esta ruta de la API no existe.'))
   app.onError((err, c) => {

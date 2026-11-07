@@ -1,0 +1,21 @@
+ID;Nombre;Apellidos;Email;Celular;Fecha nacimiento;Valor;2024;;Ciudad;Nombre;Código postal;Vacía
+001; o'neil  ;JEAN-PIERRE de la rosa;mailto:Ana @ Example .COM;0057 300 555 0101;lunes, 3 de abril de 2024;(1.500,00);uno;x;bogotá d.c.;  ana​ ;050001;
+002;MARÍA JOSÉ;del valle;  luis.perez@example.co ;+1 (415) 555-0117;abril 3, 2024;-$ 2.000;dos;y;SAN JOSÉ DEL GUAVIARE;luis;110111;
+003;pedro;de los ríos;pedro@example;(+57) 300 555 0103;3-abr-24;+300;tres;z;cali;pedro;760001;
+004;	carlos	;Y;carlos@@example.com;+57 300 555 01;2024/02/29;USD 1,250.00;cuatro;;cali;carlos;;
+005;ana;ruiz;@example.com;+44 20 7946 0958;29/02/2023;1,5;cinco;;medellín;ana;;
+006;luisa;díaz;luisa diaz@example.com;300-555-0106 ext 2;31/04/2024;0.500;seis;;pasto;luisa;;
+007;jorge;niño;jorge@example.c;555 0107;13/13/2024;0,500;siete;;cúcuta;jorge;;
+008;sofía;peña;sofía@example.com;601 555 0108;1899-12-31;1.234.567,89;ocho;;neiva;sofía;;
+009;mateo;ortiz;mateo@example.com;3005550109;sábado 05/10/2024;1,234,567.89;nueve;;ibagué;mateo;;
+010;eva;lópez;eva@example.com;573005550110;2024-02-30;1.2.3;diez;;tunja;eva;;
+011;raúl;gil;raul@example.com;3005550111;10/31/2024;12,34,567;once;;quibdó;raúl;;
+012;inés;paz;ines@example.com;3005550112;5 sept 2024 10:30;€ 45;doce;;leticia;inés;;
+013;ana;ruiz;ANA@EXAMPLE.COM;3005550113;2024-11-02T08:15:00;45 pesos;trece;;arauca;ana;;
+014;lía;mar;lia@example.com;3005550114;5/5/25;COP 1.000;catorce;;yopal;lía;;
+015;río;sol;rio@example.com;3005550115;1/1/99;-0;quince;;mocoa;río;;
+016;teo;luz;teo@example.com;3005550116;15.06.2025;007;dieciséis;;sincelejo;teo;;
+017;zoe;mar;zoe@example.com;3005550117;3 de abril de 2024;mil;diecisiete;;riohacha;zoe;;
+018;sara;sol;sara@example.com;3005550118;miércoles 9 de abril de 2025;$ 9.999.999.999;dieciocho;;florencia;sara;;
+019;iván;rey;ivan@example.com;3005550119;20 dic 2024;0;diecinueve;;mitú;iván;;
+020;ana;ruiz;ana@example.com;+57 300 555 0101;03/04/2024;-1500;veinte;;bogotá;ana;;

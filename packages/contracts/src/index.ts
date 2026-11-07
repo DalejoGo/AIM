@@ -1,5 +1,6 @@
 export * from './api'
 export * from './assistant'
+export * from './automation'
 export * from './certificates'
 export * from './leads'
 export * from './limits'

@@ -15,6 +15,7 @@ import type {
   CleanValue,
   Column,
   ColumnType,
+  Delimiter,
   DuplicateRow,
   FieldError,
   MigrationOutcome,
@@ -22,7 +23,9 @@ import type {
 } from './types'
 import { buildRowSchema, validateRow } from './validate'
 
-export const DELIMITERS = [',', ';']
+export const DELIMITERS: Delimiter[] = [',', ';']
+
+const isDelimiter = (value: string): value is Delimiter => (DELIMITERS as string[]).includes(value)
 
 export interface SourceRow {
   /** Row number as a spreadsheet shows it (the first line of the file is row 1). */
@@ -33,21 +36,21 @@ export interface SourceRow {
 }
 
 export type ReadOutcome =
-  | { ok: true; delimiter: string; header: string[]; headerRow: number; rows: SourceRow[] }
+  | { ok: true; delimiter: Delimiter; header: string[]; headerRow: number; rows: SourceRow[] }
   | { ok: false; error: string }
 
 /**
  * Comma or semicolon. PapaParse guesses from the first non-empty rows; when it cannot tell (very short files,
  * a single column) the header decides: whichever separator it has more of, outside quotes. Ties go to comma.
  */
-export function detectDelimiter(text: string): string {
+export function detectDelimiter(text: string): Delimiter {
   const guess = Papa.parse<string[]>(text, {
     preview: 20,
     delimitersToGuess: DELIMITERS,
     skipEmptyLines: 'greedy',
   })
   const undetectable = guess.errors.some((error) => error.code === 'UndetectableDelimiter')
-  if (!undetectable && DELIMITERS.includes(guess.meta.delimiter)) return guess.meta.delimiter
+  if (!undetectable && isDelimiter(guess.meta.delimiter)) return guess.meta.delimiter
   const header = (text.split(/\r?\n/).find((line) => line.trim() !== '') ?? '').replace(/"[^"]*"/g, '')
   const count = (separator: string) => header.split(separator).length - 1
   return count(';') > count(',') ? ';' : ','

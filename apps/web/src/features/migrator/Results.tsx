@@ -15,14 +15,21 @@ interface Props {
   /** Bumped on every new result so the preview starts again on its first tab. */
   run: number
   onDownloaded: (fileName: string) => void
+  /** The Python engine read an Excel workbook (see Downloads). */
+  fromWorkbook?: boolean
 }
 
-export function Results({ result, sourceName, run, onDownloaded }: Props) {
+export function Results({ result, sourceName, run, onDownloaded, fromWorkbook }: Props) {
   return (
     <>
       <BeforeAfter result={result} />
       <PreviewTabs key={run} result={result} />
-      <Downloads result={result} sourceName={sourceName} onDownloaded={onDownloaded} />
+      <Downloads
+        result={result}
+        sourceName={sourceName}
+        onDownloaded={onDownloaded}
+        fromWorkbook={fromWorkbook}
+      />
     </>
   )
 }

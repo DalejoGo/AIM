@@ -1,8 +1,13 @@
 ---
 import LabShell from '../../components/LabShell.astro'
 import { DataMigrator } from '../../features/migrator/DataMigrator'
+import { pylabApiUrl } from '../../features/migrator/server'
+
+// Build time (CLAUDE.md rule 4): the deploy script sets it to the Python engine on Render. Without it the page
+// offers only the browser engine, as before.
+const pylabUrl = pylabApiUrl(import.meta.env.PUBLIC_PYLAB_API_URL)
 ---
 
 <LabShell slug="migrador-de-datos">
-  <DataMigrator client:visible />
+  <DataMigrator client:visible pylabUrl={pylabUrl} />
 </LabShell>

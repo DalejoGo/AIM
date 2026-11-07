@@ -1,0 +1,4 @@
+{
+  "ok": false,
+  "error": "El archivo solo tiene la fila de encabezados. Agrega al menos una fila de datos."
+}

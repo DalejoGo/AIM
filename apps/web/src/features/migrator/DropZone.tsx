@@ -1,17 +1,26 @@
 import { useSignal } from '@preact/signals'
 import { Upload } from 'lucide-preact'
+import type { ComponentChildren } from 'preact'
 import { useEffect, useId } from 'preact/hooks'
 import { formatBytes, formatCount, MAX_BYTES, MAX_ROWS } from './file'
 
 interface Props {
   disabled: boolean
   onFile: (file: File) => void
+  /** File types offered by the picker. Default: CSV, for the browser engine. */
+  accept?: string
+  /** What the file is called in the prompt ("tu CSV", "tu CSV o Excel"). */
+  fileNoun?: string
+  /** Limits and format, under the zone. Default: the browser engine's. */
+  hint?: ComponentChildren
 }
+
+const CSV_ACCEPT = '.csv,.txt,text/csv,text/plain'
 
 const hasFiles = (event: DragEvent) => Array.from(event.dataTransfer?.types ?? []).includes('Files')
 
 /** File picker that also accepts drag and drop. It is a real file input, so it works with the keyboard. */
-export function DropZone({ disabled, onFile }: Props) {
+export function DropZone({ disabled, onFile, accept = CSV_ACCEPT, fileNoun = 'tu CSV', hint }: Props) {
   const dragging = useSignal(false)
   const hintId = useId()
 
@@ -65,7 +74,7 @@ export function DropZone({ disabled, onFile }: Props) {
       >
         <input
           type="file"
-          accept=".csv,.txt,text/csv,text/plain"
+          accept={accept}
           class="sr-only"
           disabled={disabled}
           aria-describedby={hintId}
@@ -77,14 +86,18 @@ export function DropZone({ disabled, onFile }: Props) {
             'Suelta el archivo para procesarlo'
           ) : (
             <>
-              Arrastra tu CSV aquí o <span class="link">elige un archivo</span>
+              Arrastra {fileNoun} aquí o <span class="link">elige un archivo</span>
             </>
           )}
         </span>
       </label>
       <p id={hintId} class="text-step--1 text-muted">
-        Hasta {formatBytes(MAX_BYTES)} y {formatCount(MAX_ROWS)} filas, separado por comas o punto y coma, con
-        los nombres de las columnas en la primera fila.
+        {hint ?? (
+          <>
+            Hasta {formatBytes(MAX_BYTES)} y {formatCount(MAX_ROWS)} filas, separado por comas o punto y coma,
+            con los nombres de las columnas en la primera fila.
+          </>
+        )}
       </p>
     </div>
   )

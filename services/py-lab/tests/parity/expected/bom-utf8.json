@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "result": {
+    "delimiter": ",",
+    "totalRows": 2,
+    "columns": [
+      {
+        "index": 0,
+        "label": "nombre",
+        "key": "nombre",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 2,
+        "matched": 2
+      },
+      {
+        "index": 1,
+        "label": "teléfono",
+        "key": "telefono",
+        "type": "phone",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 2,
+        "matched": 2
+      }
+    ],
+    "emptyRows": [],
+    "duplicates": [],
+    "valid": [
+      {
+        "rowNumber": 2,
+        "raw": {
+          "nombre": "Ana",
+          "telefono": "300 555 0101"
+        },
+        "clean": {
+          "nombre": "Ana",
+          "telefono": "+573005550101"
+        },
+        "changed": [
+          "telefono"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 3,
+        "raw": {
+          "nombre": "Luis",
+          "telefono": "+57 310 555 0102"
+        },
+        "clean": {
+          "nombre": "Luis",
+          "telefono": "+573105550102"
+        },
+        "changed": [
+          "telefono"
+        ],
+        "errors": []
+      }
+    ],
+    "invalid": [],
+    "changedCells": 2,
+    "changesByType": {
+      "email": 0,
+      "phone": 2,
+      "date": 0,
+      "amount": 0,
+      "text": 0
+    }
+  }
+}

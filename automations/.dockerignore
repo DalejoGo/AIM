@@ -1,0 +1,6 @@
+# Build context of automations/Dockerfile: only what the image needs.
+*
+!Dockerfile
+!workflows/lead-demo.json
+!scripts/entrypoint.sh
+!scripts/prepare-image.sh

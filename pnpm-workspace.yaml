@@ -1,6 +1,8 @@
 packages:
   - apps/*
   - packages/*
+  # Python services; their package.json scripts call uv (services/py-lab/README.md).
+  - services/*
 
 # Supply chain (DEC-002): nothing published in the last 14 days (20160 min).
 # Exceptions ONLY for security patches; each one is listed in docs/DECISIONES.md.

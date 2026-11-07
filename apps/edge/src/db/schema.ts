@@ -1,5 +1,15 @@
-import type { QuoteSnapshot } from '@aim/contracts'
-import { index, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import type { AutomationStep, AutomationStepReport, QuoteSnapshot } from '@aim/contracts'
+import {
+  index,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core'
 
 export const leadStatus = pgEnum('lead_status', ['new', 'contacted', 'won', 'lost', 'spam'])
 export const auditOutcome = pgEnum('audit_outcome', ['ok', 'denied', 'error'])
@@ -109,4 +119,51 @@ export const labHits = pgTable(
     ipHash: text('ip_hash').notNull(),
   },
   (t) => [index('lab_hits_ip_hash_at_idx').on(t.ipHash, t.at)],
+)
+
+/**
+ * Runs of the Lab demo "Automatización en vivo" (docs/AUTOMATIZACION.md). Nothing of the test lead is kept here:
+ * the lead travels to n8n in the webhook. Each new run deletes the runs (and their steps) older than an hour.
+ */
+export const automationRuns = pgTable(
+  'automation_runs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('automation_runs_created_at_idx').on(t.createdAt)],
+)
+
+/**
+ * The steps n8n reported for a run, as the contract parsed them; one per step (a repeat is refused). The drafted
+ * reply carries the test lead's name, so these rows live an hour at most, with their run.
+ */
+export const automationEvents = pgTable(
+  'automation_events',
+  {
+    runId: uuid('run_id')
+      .notNull()
+      .references(() => automationRuns.id, { onDelete: 'cascade' }),
+    step: text('step').$type<AutomationStep>().notNull(),
+    data: jsonb('data').$type<AutomationStepReport['data']>().notNull(),
+    at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.runId, t.step] })],
+)
+
+/**
+ * One row per run accepted by POST /api/automation/runs: the visitor's burst limit (IP hash) and the daily cap
+ * for everyone. Only the HMAC of the IP and the time; kept 24 hours.
+ */
+export const automationUsage = pgTable(
+  'automation_usage',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    at: timestamp('at', { withTimezone: true }).notNull().defaultNow(),
+    ipHash: text('ip_hash').notNull(),
+  },
+  (t) => [
+    index('automation_usage_at_idx').on(t.at),
+    index('automation_usage_ip_hash_at_idx').on(t.ipHash, t.at),
+  ],
 )

@@ -68,11 +68,14 @@ export interface TestContext {
   request: (path: string, init?: RequestInit & { ip?: string; origin?: string | null }) => Promise<Response>
 }
 
-export interface TestOverrides extends Partial<Pick<Deps, 'captcha' | 'llm'>> {
+export interface TestOverrides extends Partial<Pick<Deps, 'captcha' | 'llm' | 'n8n' | 'sleep'>> {
   env?: Partial<EdgeEnv>
 }
 
-/** Without `llm` the context behaves like production without ANTHROPIC_API_KEY. */
+/**
+ * Without `llm` the context behaves like production without ANTHROPIC_API_KEY, and without `n8n` like production
+ * without AUTOMATION_N8N_URL. `sleep` moves the clock instead of waiting (then yields, so concurrent requests run).
+ */
 export async function createTestContext(overrides: TestOverrides = {}): Promise<TestContext> {
   const db = await testDb()
   const mailer = memoryMailer()
@@ -96,7 +99,14 @@ export async function createTestContext(overrides: TestOverrides = {}): Promise<
       mailer,
       captcha: overrides.captcha ?? fixedCaptcha(true),
       ...(overrides.llm ? { llm: overrides.llm } : {}),
+      ...(overrides.n8n ? { n8n: overrides.n8n } : {}),
       now: () => clock.now,
+      sleep:
+        overrides.sleep ??
+        (async (ms) => {
+          clock.now = new Date(clock.now.getTime() + ms)
+          await new Promise((resolve) => setImmediate(resolve))
+        }),
       waitUntil: (p) => {
         pending.push(p)
       },

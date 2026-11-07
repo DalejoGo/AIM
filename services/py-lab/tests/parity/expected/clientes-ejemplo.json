@@ -1,0 +1,951 @@
+{
+  "ok": true,
+  "result": {
+    "delimiter": ";",
+    "totalRows": 37,
+    "columns": [
+      {
+        "index": 0,
+        "label": "Nombre completo",
+        "key": "nombre_completo",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 34,
+        "matched": 34
+      },
+      {
+        "index": 1,
+        "label": "Correo Electrónico",
+        "key": "correo_electronico",
+        "type": "email",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 34,
+        "matched": 33
+      },
+      {
+        "index": 2,
+        "label": "Teléfono",
+        "key": "telefono",
+        "type": "phone",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 34,
+        "matched": 34
+      },
+      {
+        "index": 3,
+        "label": "Fecha de registro",
+        "key": "fecha_de_registro",
+        "type": "date",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 33,
+        "matched": 33
+      },
+      {
+        "index": 4,
+        "label": "Monto (COP)",
+        "key": "monto_cop",
+        "type": "amount",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 33,
+        "matched": 32
+      },
+      {
+        "index": 5,
+        "label": "Ciudad",
+        "key": "ciudad",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 34,
+        "matched": 34
+      }
+    ],
+    "emptyRows": [
+      7,
+      12,
+      19
+    ],
+    "duplicates": [
+      {
+        "rowNumber": 9,
+        "duplicateOf": 2
+      },
+      {
+        "rowNumber": 16,
+        "duplicateOf": 3
+      },
+      {
+        "rowNumber": 23,
+        "duplicateOf": 4
+      }
+    ],
+    "valid": [
+      {
+        "rowNumber": 2,
+        "raw": {
+          "nombre_completo": "  ana maría  GÓMEZ ",
+          "correo_electronico": "Ana.Gomez@Example.com ",
+          "telefono": "300 555 0101",
+          "fecha_de_registro": "03/04/2024",
+          "monto_cop": "$1.200.000,50",
+          "ciudad": "bogotá"
+        },
+        "clean": {
+          "nombre_completo": "Ana María Gómez",
+          "correo_electronico": "ana.gomez@example.com",
+          "telefono": "+573005550101",
+          "fecha_de_registro": "2024-04-03",
+          "monto_cop": 1200000.5,
+          "ciudad": "Bogotá"
+        },
+        "changed": [
+          "nombre_completo",
+          "correo_electronico",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop",
+          "ciudad"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 3,
+        "raw": {
+          "nombre_completo": "CARLOS andrés ruiz",
+          "correo_electronico": "carlos.ruiz@example.com",
+          "telefono": "+57 (310) 555-0102",
+          "fecha_de_registro": "2024-04-05",
+          "monto_cop": "1200000.5",
+          "ciudad": "Medellín"
+        },
+        "clean": {
+          "nombre_completo": "Carlos Andrés Ruiz",
+          "correo_electronico": "carlos.ruiz@example.com",
+          "telefono": "+573105550102",
+          "fecha_de_registro": "2024-04-05",
+          "monto_cop": 1200000.5,
+          "ciudad": "Medellín"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 4,
+        "raw": {
+          "nombre_completo": "luisa fernanda díaz",
+          "correo_electronico": " LUISA.DIAZ@EXAMPLE.ORG",
+          "telefono": "3125550103",
+          "fecha_de_registro": "3 de abril de 2024",
+          "monto_cop": "850.000",
+          "ciudad": "cali"
+        },
+        "clean": {
+          "nombre_completo": "Luisa Fernanda Díaz",
+          "correo_electronico": "luisa.diaz@example.org",
+          "telefono": "+573125550103",
+          "fecha_de_registro": "2024-04-03",
+          "monto_cop": 850000,
+          "ciudad": "Cali"
+        },
+        "changed": [
+          "nombre_completo",
+          "correo_electronico",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop",
+          "ciudad"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 5,
+        "raw": {
+          "nombre_completo": "josé del carmen pérez",
+          "correo_electronico": "jose.perez@example.com",
+          "telefono": "(+57) 315 555 0104",
+          "fecha_de_registro": "15/01/2023",
+          "monto_cop": "$ 2.500.000",
+          "ciudad": "SANTA MARTA"
+        },
+        "clean": {
+          "nombre_completo": "José del Carmen Pérez",
+          "correo_electronico": "jose.perez@example.com",
+          "telefono": "+573155550104",
+          "fecha_de_registro": "2023-01-15",
+          "monto_cop": 2500000,
+          "ciudad": "Santa Marta"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop",
+          "ciudad"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 6,
+        "raw": {
+          "nombre_completo": "María de los Ángeles Torres",
+          "correo_electronico": "mangeles.torres@example.net",
+          "telefono": "320-555-0105",
+          "fecha_de_registro": "7 abr 2024",
+          "monto_cop": "350000",
+          "ciudad": "Barranquilla"
+        },
+        "clean": {
+          "nombre_completo": "María de los Ángeles Torres",
+          "correo_electronico": "mangeles.torres@example.net",
+          "telefono": "+573205550105",
+          "fecha_de_registro": "2024-04-07",
+          "monto_cop": 350000,
+          "ciudad": "Barranquilla"
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 20,
+        "raw": {
+          "nombre_completo": "natalia gómez",
+          "correo_electronico": "natalia.gomez@example.com",
+          "telefono": "3205550114",
+          "fecha_de_registro": "23/10/2024",
+          "monto_cop": "$3.450.000",
+          "ciudad": "Pasto"
+        },
+        "clean": {
+          "nombre_completo": "Natalia Gómez",
+          "correo_electronico": "natalia.gomez@example.com",
+          "telefono": "+573205550114",
+          "fecha_de_registro": "2024-10-23",
+          "monto_cop": 3450000,
+          "ciudad": "Pasto"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 21,
+        "raw": {
+          "nombre_completo": "luis eduardo moreno",
+          "correo_electronico": "LUIS.MORENO@example.com",
+          "telefono": "300 555 0115",
+          "fecha_de_registro": "2024/11/02",
+          "monto_cop": "150000.75",
+          "ciudad": "tunja"
+        },
+        "clean": {
+          "nombre_completo": "Luis Eduardo Moreno",
+          "correo_electronico": "luis.moreno@example.com",
+          "telefono": "+573005550115",
+          "fecha_de_registro": "2024-11-02",
+          "monto_cop": 150000.75,
+          "ciudad": "Tunja"
+        },
+        "changed": [
+          "nombre_completo",
+          "correo_electronico",
+          "telefono",
+          "fecha_de_registro",
+          "ciudad"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 22,
+        "raw": {
+          "nombre_completo": "paula andrea suárez",
+          "correo_electronico": "paula.suarez@example.com",
+          "telefono": "3015550116",
+          "fecha_de_registro": "8 de noviembre de 2024",
+          "monto_cop": "$ 980.500",
+          "ciudad": "Armenia"
+        },
+        "clean": {
+          "nombre_completo": "Paula Andrea Suárez",
+          "correo_electronico": "paula.suarez@example.com",
+          "telefono": "+573015550116",
+          "fecha_de_registro": "2024-11-08",
+          "monto_cop": 980500,
+          "ciudad": "Armenia"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 24,
+        "raw": {
+          "nombre_completo": "Ricardo Peña",
+          "correo_electronico": "ricardo.pena@example.com",
+          "telefono": "+1 (415) 555-0117",
+          "fecha_de_registro": "12/12/2024",
+          "monto_cop": "USD 1,250.00",
+          "ciudad": "Miami"
+        },
+        "clean": {
+          "nombre_completo": "Ricardo Peña",
+          "correo_electronico": "ricardo.pena@example.com",
+          "telefono": "+14155550117",
+          "fecha_de_registro": "2024-12-12",
+          "monto_cop": 1250,
+          "ciudad": "Miami"
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 25,
+        "raw": {
+          "nombre_completo": "Gabriela Ortiz",
+          "correo_electronico": "gabriela.ortiz@example.com",
+          "telefono": "+57 601 555 0118",
+          "fecha_de_registro": "14/02/2025",
+          "monto_cop": "275.000",
+          "ciudad": "bogotá d.c."
+        },
+        "clean": {
+          "nombre_completo": "Gabriela Ortiz",
+          "correo_electronico": "gabriela.ortiz@example.com",
+          "telefono": "+576015550118",
+          "fecha_de_registro": "2025-02-14",
+          "monto_cop": 275000,
+          "ciudad": "Bogotá D.C."
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop",
+          "ciudad"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 26,
+        "raw": {
+          "nombre_completo": "Esteban Quintero",
+          "correo_electronico": "esteban.quintero@example.com",
+          "telefono": "3105550119",
+          "fecha_de_registro": "",
+          "monto_cop": "",
+          "ciudad": "Popayán"
+        },
+        "clean": {
+          "nombre_completo": "Esteban Quintero",
+          "correo_electronico": "esteban.quintero@example.com",
+          "telefono": "+573105550119",
+          "fecha_de_registro": null,
+          "monto_cop": null,
+          "ciudad": "Popayán"
+        },
+        "changed": [
+          "telefono"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 29,
+        "raw": {
+          "nombre_completo": "Diego Fernando Ruiz",
+          "correo_electronico": "diego.ruiz@example.com",
+          "telefono": "3135550122",
+          "fecha_de_registro": "miércoles 9 de abril de 2025",
+          "monto_cop": "1.000.000",
+          "ciudad": "Valledupar"
+        },
+        "clean": {
+          "nombre_completo": "Diego Fernando Ruiz",
+          "correo_electronico": "diego.ruiz@example.com",
+          "telefono": "+573135550122",
+          "fecha_de_registro": "2025-04-09",
+          "monto_cop": 1000000,
+          "ciudad": "Valledupar"
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 30,
+        "raw": {
+          "nombre_completo": "Isabella Cárdenas",
+          "correo_electronico": "isabella.cardenas@example.com",
+          "telefono": "314 555 0123",
+          "fecha_de_registro": "22-04-2025",
+          "monto_cop": "720000",
+          "ciudad": "Riohacha"
+        },
+        "clean": {
+          "nombre_completo": "Isabella Cárdenas",
+          "correo_electronico": "isabella.cardenas@example.com",
+          "telefono": "+573145550123",
+          "fecha_de_registro": "2025-04-22",
+          "monto_cop": 720000,
+          "ciudad": "Riohacha"
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 31,
+        "raw": {
+          "nombre_completo": "Mateo Sánchez",
+          "correo_electronico": "MATEO.SANCHEZ@EXAMPLE.COM",
+          "telefono": "315 555 0124",
+          "fecha_de_registro": "30/04/2025",
+          "monto_cop": "$ 1.800.000,00",
+          "ciudad": "Quibdó"
+        },
+        "clean": {
+          "nombre_completo": "Mateo Sánchez",
+          "correo_electronico": "mateo.sanchez@example.com",
+          "telefono": "+573155550124",
+          "fecha_de_registro": "2025-04-30",
+          "monto_cop": 1800000,
+          "ciudad": "Quibdó"
+        },
+        "changed": [
+          "correo_electronico",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 32,
+        "raw": {
+          "nombre_completo": "Mariana Pineda",
+          "correo_electronico": "mariana.pineda@example.com",
+          "telefono": "3165550125",
+          "fecha_de_registro": "5/5/25",
+          "monto_cop": "99.900",
+          "ciudad": "Florencia"
+        },
+        "clean": {
+          "nombre_completo": "Mariana Pineda",
+          "correo_electronico": "mariana.pineda@example.com",
+          "telefono": "+573165550125",
+          "fecha_de_registro": "2025-05-05",
+          "monto_cop": 99900,
+          "ciudad": "Florencia"
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 34,
+        "raw": {
+          "nombre_completo": "camila andrea mejía",
+          "correo_electronico": "camila.mejia@example.com",
+          "telefono": "3185550127",
+          "fecha_de_registro": "3 jun 2025",
+          "monto_cop": "$450.000",
+          "ciudad": "Leticia"
+        },
+        "clean": {
+          "nombre_completo": "Camila Andrea Mejía",
+          "correo_electronico": "camila.mejia@example.com",
+          "telefono": "+573185550127",
+          "fecha_de_registro": "2025-06-03",
+          "monto_cop": 450000,
+          "ciudad": "Leticia"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 35,
+        "raw": {
+          "nombre_completo": "JUAN PABLO OSORIO",
+          "correo_electronico": "juan.osorio@example.com",
+          "telefono": "319 555 0128",
+          "fecha_de_registro": "15.06.2025",
+          "monto_cop": "1250000",
+          "ciudad": "Mocoa"
+        },
+        "clean": {
+          "nombre_completo": "Juan Pablo Osorio",
+          "correo_electronico": "juan.osorio@example.com",
+          "telefono": "+573195550128",
+          "fecha_de_registro": "2025-06-15",
+          "monto_cop": 1250000,
+          "ciudad": "Mocoa"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "fecha_de_registro"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 36,
+        "raw": {
+          "nombre_completo": "Lucía Fernández",
+          "correo_electronico": "lucia.fernandez@example.com",
+          "telefono": "+57 320 555 0129",
+          "fecha_de_registro": "julio 1, 2025",
+          "monto_cop": "$ 600.000",
+          "ciudad": "San Andrés"
+        },
+        "clean": {
+          "nombre_completo": "Lucía Fernández",
+          "correo_electronico": "lucia.fernandez@example.com",
+          "telefono": "+573205550129",
+          "fecha_de_registro": "2025-07-01",
+          "monto_cop": 600000,
+          "ciudad": "San Andrés"
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 37,
+        "raw": {
+          "nombre_completo": "Tomás Herrera",
+          "correo_electronico": "tomas.herrera@example.com",
+          "telefono": "0057 300 555 0130",
+          "fecha_de_registro": "20/07/2025",
+          "monto_cop": "3.100.000,25",
+          "ciudad": "Arauca"
+        },
+        "clean": {
+          "nombre_completo": "Tomás Herrera",
+          "correo_electronico": "tomas.herrera@example.com",
+          "telefono": "+573005550130",
+          "fecha_de_registro": "2025-07-20",
+          "monto_cop": 3100000.25,
+          "ciudad": "Arauca"
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 38,
+        "raw": {
+          "nombre_completo": "samuel ospina",
+          "correo_electronico": "samuel.ospina@example.com",
+          "telefono": "301-555-0131",
+          "fecha_de_registro": "2025-08-01",
+          "monto_cop": "875000",
+          "ciudad": "Puerto Carreño"
+        },
+        "clean": {
+          "nombre_completo": "Samuel Ospina",
+          "correo_electronico": "samuel.ospina@example.com",
+          "telefono": "+573015550131",
+          "fecha_de_registro": "2025-08-01",
+          "monto_cop": 875000,
+          "ciudad": "Puerto Carreño"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono"
+        ],
+        "errors": []
+      }
+    ],
+    "invalid": [
+      {
+        "rowNumber": 8,
+        "raw": {
+          "nombre_completo": "pedro salazar",
+          "correo_electronico": "pedro.salazar@example",
+          "telefono": "301 555 0106",
+          "fecha_de_registro": "12/05/2024",
+          "monto_cop": "$780.000",
+          "ciudad": "Pereira"
+        },
+        "clean": {
+          "nombre_completo": "Pedro Salazar",
+          "correo_electronico": "pedro.salazar@example",
+          "telefono": "+573015550106",
+          "fecha_de_registro": "2024-05-12",
+          "monto_cop": 780000,
+          "ciudad": "Pereira"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": [
+          {
+            "key": "correo_electronico",
+            "label": "Correo Electrónico",
+            "message": "«pedro.salazar@example» no tiene una extensión de dominio válida. Revisa el final, por ejemplo @dominio.com o @dominio.co."
+          }
+        ]
+      },
+      {
+        "rowNumber": 10,
+        "raw": {
+          "nombre_completo": "marta ríos",
+          "correo_electronico": "marta.rios.example.com",
+          "telefono": "311 555 0107",
+          "fecha_de_registro": "20/06/2024",
+          "monto_cop": "95.000",
+          "ciudad": "Bucaramanga"
+        },
+        "clean": {
+          "nombre_completo": "Marta Ríos",
+          "correo_electronico": "marta.rios.example.com",
+          "telefono": "+573115550107",
+          "fecha_de_registro": "2024-06-20",
+          "monto_cop": 95000,
+          "ciudad": "Bucaramanga"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": [
+          {
+            "key": "correo_electronico",
+            "label": "Correo Electrónico",
+            "message": "«marta.rios.example.com» no es un correo: le falta la @. Escríbelo como nombre@dominio.com."
+          }
+        ]
+      },
+      {
+        "rowNumber": 11,
+        "raw": {
+          "nombre_completo": "Jorge Iván Restrepo",
+          "correo_electronico": "jorge.restrepo@example.com",
+          "telefono": "555 0108",
+          "fecha_de_registro": "01/07/2024",
+          "monto_cop": "1.500.000",
+          "ciudad": "Manizales"
+        },
+        "clean": {
+          "nombre_completo": "Jorge Iván Restrepo",
+          "correo_electronico": "jorge.restrepo@example.com",
+          "telefono": "555 0108",
+          "fecha_de_registro": "2024-07-01",
+          "monto_cop": 1500000,
+          "ciudad": "Manizales"
+        },
+        "changed": [
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": [
+          {
+            "key": "telefono",
+            "label": "Teléfono",
+            "message": "«555 0108» tiene 7 dígitos. Un celular de Colombia lleva 10, por ejemplo 300 555 0101. Si es de otro país, agrega + y el indicativo."
+          }
+        ]
+      },
+      {
+        "rowNumber": 13,
+        "raw": {
+          "nombre_completo": "Sofía Martínez",
+          "correo_electronico": "SOFIA.MARTINEZ@example.com",
+          "telefono": "3165550109",
+          "fecha_de_registro": "31/02/2024",
+          "monto_cop": "420000",
+          "ciudad": "Cartagena"
+        },
+        "clean": {
+          "nombre_completo": "Sofía Martínez",
+          "correo_electronico": "sofia.martinez@example.com",
+          "telefono": "+573165550109",
+          "fecha_de_registro": "31/02/2024",
+          "monto_cop": 420000,
+          "ciudad": "Cartagena"
+        },
+        "changed": [
+          "correo_electronico",
+          "telefono"
+        ],
+        "errors": [
+          {
+            "key": "fecha_de_registro",
+            "label": "Fecha de registro",
+            "message": "«31/02/2024» no existe: febrero de 2024 tiene 29 días. Revisa el día."
+          }
+        ]
+      },
+      {
+        "rowNumber": 14,
+        "raw": {
+          "nombre_completo": "andrés felipe castro",
+          "correo_electronico": "andres.castro@example.com",
+          "telefono": "3175550110",
+          "fecha_de_registro": "04/13/2024",
+          "monto_cop": "$ 1.050.000",
+          "ciudad": "Cúcuta"
+        },
+        "clean": {
+          "nombre_completo": "Andrés Felipe Castro",
+          "correo_electronico": "andres.castro@example.com",
+          "telefono": "+573175550110",
+          "fecha_de_registro": "04/13/2024",
+          "monto_cop": 1050000,
+          "ciudad": "Cúcuta"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "monto_cop"
+        ],
+        "errors": [
+          {
+            "key": "fecha_de_registro",
+            "label": "Fecha de registro",
+            "message": "«04/13/2024» no existe si se lee como día/mes/año: no hay mes 13. Si viene en formato mes/día, escríbela como 13/04/2024."
+          }
+        ]
+      },
+      {
+        "rowNumber": 15,
+        "raw": {
+          "nombre_completo": "Valentina Rojas",
+          "correo_electronico": "valentina.rojas@example.com",
+          "telefono": "318 555 0111",
+          "fecha_de_registro": "2024-08-19",
+          "monto_cop": "mil doscientos",
+          "ciudad": "Ibagué"
+        },
+        "clean": {
+          "nombre_completo": "Valentina Rojas",
+          "correo_electronico": "valentina.rojas@example.com",
+          "telefono": "+573185550111",
+          "fecha_de_registro": "2024-08-19",
+          "monto_cop": "mil doscientos",
+          "ciudad": "Ibagué"
+        },
+        "changed": [
+          "telefono"
+        ],
+        "errors": [
+          {
+            "key": "monto_cop",
+            "label": "Monto (COP)",
+            "message": "«mil doscientos» tiene letras. Escríbelo solo con números, por ejemplo 1.200.000,50."
+          }
+        ]
+      },
+      {
+        "rowNumber": 17,
+        "raw": {
+          "nombre_completo": "daniela   herrera",
+          "correo_electronico": "daniela.herrera@example.com",
+          "telefono": "+57 300 555 01",
+          "fecha_de_registro": "10/09/2024",
+          "monto_cop": "640.000,00",
+          "ciudad": "Villavicencio"
+        },
+        "clean": {
+          "nombre_completo": "Daniela Herrera",
+          "correo_electronico": "daniela.herrera@example.com",
+          "telefono": "+57 300 555 01",
+          "fecha_de_registro": "2024-09-10",
+          "monto_cop": 640000,
+          "ciudad": "Villavicencio"
+        },
+        "changed": [
+          "nombre_completo",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": [
+          {
+            "key": "telefono",
+            "label": "Teléfono",
+            "message": "Un número de Colombia (+57) lleva 10 dígitos después del indicativo y «+57 300 555 01» tiene 8. Revisa que no falte ni sobre ninguno."
+          }
+        ]
+      },
+      {
+        "rowNumber": 18,
+        "raw": {
+          "nombre_completo": "Camilo Andrés Vargas",
+          "correo_electronico": "camilo vargas@example.com",
+          "telefono": "3195550113",
+          "fecha_de_registro": "5 de octubre de 2024",
+          "monto_cop": "2.000.000",
+          "ciudad": "Neiva"
+        },
+        "clean": {
+          "nombre_completo": "Camilo Andrés Vargas",
+          "correo_electronico": "camilo vargas@example.com",
+          "telefono": "+573195550113",
+          "fecha_de_registro": "2024-10-05",
+          "monto_cop": 2000000,
+          "ciudad": "Neiva"
+        },
+        "changed": [
+          "telefono",
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": [
+          {
+            "key": "correo_electronico",
+            "label": "Correo Electrónico",
+            "message": "«camilo vargas@example.com» tiene espacios. Quítalos: un correo va todo junto."
+          }
+        ]
+      },
+      {
+        "rowNumber": 27,
+        "raw": {
+          "nombre_completo": "martín alonso lópez",
+          "correo_electronico": "martin.lopez@example.com",
+          "telefono": "3115550120",
+          "fecha_de_registro": "2 de enero de 2025",
+          "monto_cop": "$1.2.3",
+          "ciudad": "Montería"
+        },
+        "clean": {
+          "nombre_completo": "Martín Alonso López",
+          "correo_electronico": "martin.lopez@example.com",
+          "telefono": "+573115550120",
+          "fecha_de_registro": "2025-01-02",
+          "monto_cop": "$1.2.3",
+          "ciudad": "Montería"
+        },
+        "changed": [
+          "nombre_completo",
+          "telefono",
+          "fecha_de_registro"
+        ],
+        "errors": [
+          {
+            "key": "monto_cop",
+            "label": "Monto (COP)",
+            "message": "No se entiende «$1.2.3» como monto. Usa puntos para los miles y coma para los decimales (1.200.000,50), o solo el punto decimal (1200000.5)."
+          }
+        ]
+      },
+      {
+        "rowNumber": 28,
+        "raw": {
+          "nombre_completo": "Laura Jiménez",
+          "correo_electronico": "laura.jimenez@exa mple.com",
+          "telefono": "31255501",
+          "fecha_de_registro": "17/03/2025",
+          "monto_cop": "560.000",
+          "ciudad": "Sincelejo"
+        },
+        "clean": {
+          "nombre_completo": "Laura Jiménez",
+          "correo_electronico": "laura.jimenez@exa mple.com",
+          "telefono": "31255501",
+          "fecha_de_registro": "2025-03-17",
+          "monto_cop": 560000,
+          "ciudad": "Sincelejo"
+        },
+        "changed": [
+          "fecha_de_registro",
+          "monto_cop"
+        ],
+        "errors": [
+          {
+            "key": "correo_electronico",
+            "label": "Correo Electrónico",
+            "message": "«laura.jimenez@exa mple.com» tiene espacios. Quítalos: un correo va todo junto."
+          },
+          {
+            "key": "telefono",
+            "label": "Teléfono",
+            "message": "«31255501» tiene 8 dígitos. Un celular de Colombia lleva 10, por ejemplo 300 555 0101. Si es de otro país, agrega + y el indicativo."
+          }
+        ]
+      },
+      {
+        "rowNumber": 33,
+        "raw": {
+          "nombre_completo": "Sebastián Giraldo",
+          "correo_electronico": "sebastian.giraldo@example.com",
+          "telefono": "3175550126",
+          "fecha_de_registro": "2025-05-12",
+          "monto_cop": "2.300.000",
+          "ciudad": "Yopal"
+        },
+        "clean": {
+          "nombre_completo": "Sebastián Giraldo",
+          "correo_electronico": "sebastian.giraldo@example.com",
+          "telefono": "+573175550126",
+          "fecha_de_registro": "2025-05-12",
+          "monto_cop": 2300000,
+          "ciudad": "Yopal"
+        },
+        "changed": [
+          "telefono",
+          "monto_cop"
+        ],
+        "errors": [
+          {
+            "key": "",
+            "label": "Fila",
+            "message": "La fila tiene 7 campos con datos y el encabezado tiene 6. Revisa si sobra un separador, por ejemplo una coma dentro de un monto sin comillas."
+          }
+        ]
+      }
+    ],
+    "changedCells": 104,
+    "changesByType": {
+      "email": 5,
+      "phone": 30,
+      "date": 25,
+      "amount": 21,
+      "text": 23
+    }
+  }
+}

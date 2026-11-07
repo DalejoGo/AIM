@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { base64url, hmac, randomDigits, randomToken, timingSafeEqual } from './crypto'
+import { base64url, deriveKey, hmac, randomDigits, randomToken, timingSafeEqual } from './crypto'
 
 describe('crypto helpers', () => {
   it('encodes base64url without padding', () => {
@@ -19,6 +19,16 @@ describe('crypto helpers', () => {
     const secret = 'x'.repeat(32)
     expect(await hmac(secret, 'code', '123456')).toBe(await hmac(secret, 'code', '123456'))
     expect(await hmac(secret, 'code', '123456')).not.toBe(await hmac(secret, 'token', '123456'))
+  })
+
+  it('derives a stable 256-bit key per purpose, unlike the secret and other purposes', async () => {
+    const secret = 'x'.repeat(32)
+    const key = await deriveKey(secret, 'automation-callback')
+    expect(key).toHaveLength(32)
+    expect(base64url(await deriveKey(secret, 'automation-callback'))).toBe(base64url(key))
+    expect(base64url(await deriveKey(secret, 'other'))).not.toBe(base64url(key))
+    expect(base64url(await deriveKey('y'.repeat(32), 'automation-callback'))).not.toBe(base64url(key))
+    expect(new TextDecoder().decode(key)).not.toContain(secret)
   })
 
   it('compares in constant time', () => {

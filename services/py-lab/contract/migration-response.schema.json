@@ -1,0 +1,434 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$ref": "#/$defs/MigrationResponse",
+  "$defs": {
+    "MigrationResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/MigrationResult"
+        },
+        "meta": {
+          "$ref": "#/$defs/MigrationMeta"
+        }
+      },
+      "required": [
+        "result",
+        "meta"
+      ],
+      "additionalProperties": false
+    },
+    "MigrationResult": {
+      "type": "object",
+      "properties": {
+        "delimiter": {
+          "type": "string",
+          "enum": [
+            ",",
+            ";"
+          ]
+        },
+        "totalRows": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MigrationColumn"
+          }
+        },
+        "emptyRows": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "duplicates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DuplicateRow"
+          }
+        },
+        "valid": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProcessedRow"
+          }
+        },
+        "invalid": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ProcessedRow"
+          }
+        },
+        "changedCells": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "changesByType": {
+          "$ref": "#/$defs/ChangesByType"
+        }
+      },
+      "required": [
+        "delimiter",
+        "totalRows",
+        "columns",
+        "emptyRows",
+        "duplicates",
+        "valid",
+        "invalid",
+        "changedCells",
+        "changesByType"
+      ],
+      "additionalProperties": false
+    },
+    "MigrationColumn": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "label": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "$ref": "#/$defs/ColumnType"
+        },
+        "titleCase": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "header",
+            "values",
+            "identifier",
+            "default"
+          ]
+        },
+        "sampled": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "matched": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "index",
+        "label",
+        "key",
+        "type",
+        "titleCase",
+        "reason",
+        "sampled",
+        "matched"
+      ],
+      "additionalProperties": false
+    },
+    "ColumnType": {
+      "type": "string",
+      "enum": [
+        "email",
+        "phone",
+        "date",
+        "amount",
+        "text"
+      ]
+    },
+    "DuplicateRow": {
+      "type": "object",
+      "properties": {
+        "rowNumber": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "duplicateOf": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "rowNumber",
+        "duplicateOf"
+      ],
+      "additionalProperties": false
+    },
+    "ProcessedRow": {
+      "type": "object",
+      "properties": {
+        "rowNumber": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "raw": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "clean": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/CleanValue"
+          }
+        },
+        "changed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FieldError"
+          }
+        }
+      },
+      "required": [
+        "rowNumber",
+        "raw",
+        "clean",
+        "changed",
+        "errors"
+      ],
+      "additionalProperties": false
+    },
+    "CleanValue": {
+      "type": [
+        "string",
+        "number",
+        "null"
+      ]
+    },
+    "FieldError": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "ChangesByType": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "phone": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "date": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "amount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "text": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "email",
+        "phone",
+        "date",
+        "amount",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "MigrationMeta": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/MigrationSource"
+        },
+        "timings": {
+          "$ref": "#/$defs/MigrationTimings"
+        },
+        "engine": {
+          "$ref": "#/$defs/MigrationEngine"
+        }
+      },
+      "required": [
+        "source",
+        "timings",
+        "engine"
+      ],
+      "additionalProperties": false
+    },
+    "MigrationSource": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "csv",
+            "xls",
+            "xlsx"
+          ]
+        },
+        "encoding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceEncoding"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sheet": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sheets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "bytes",
+        "format",
+        "encoding",
+        "sheet",
+        "sheets"
+      ],
+      "additionalProperties": false
+    },
+    "SourceEncoding": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "utf-8",
+            "utf-16le",
+            "utf-16be",
+            "windows-1252",
+            "ibm850",
+            "macintosh"
+          ]
+        },
+        "detectedBy": {
+          "type": "string",
+          "enum": [
+            "bom",
+            "utf-8",
+            "charset-normalizer",
+            "fallback"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "detectedBy"
+      ],
+      "additionalProperties": false
+    },
+    "MigrationTimings": {
+      "type": "object",
+      "properties": {
+        "readMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "processMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "totalMs": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "readMs",
+        "processMs",
+        "totalMs"
+      ],
+      "additionalProperties": false
+    },
+    "MigrationEngine": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "const": "py-lab"
+        },
+        "version": {
+          "type": "string"
+        },
+        "python": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "python"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

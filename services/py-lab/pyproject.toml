@@ -1,0 +1,75 @@
+[project]
+name = "py-lab"
+version = "0.1.0"
+description = "Demos de Python del Lab de AIM: migrador de datos CSV y Excel con FastAPI, sin persistir nada."
+readme = "README.md"
+requires-python = "==3.12.*"
+# Exact versions, all published before `exclude-newer` (DEC-002). uv.lock pins the transitive ones.
+dependencies = [
+  "charset-normalizer==3.5.2",
+  "fastapi==0.161.1",
+  "orjson==3.13.0",
+  "pydantic==2.14.1",
+  "python-calamine==0.9.0",
+  "python-multipart==0.0.32",
+  "uvicorn==0.54.0",
+]
+
+[dependency-groups]
+dev = [
+  "httpx2==2.16.0",
+  "jsonschema==4.26.0",
+  "mypy==2.4.0",
+  "openpyxl==3.1.5",
+  "pytest==9.1.1",
+  "ruff==0.17.2",
+  "types-jsonschema==4.26.0.20261006",
+  "types-openpyxl==3.1.5.20261017",
+]
+
+[tool.uv]
+# DEC-002: nothing published in the last 14 days. uv ignores every release uploaded after this instant,
+# transitive ones included. To bump: move the date (today minus 14 days), `uv lock --upgrade`, run the checks.
+exclude-newer = "2026-10-23T00:00:00Z"
+required-version = ">=0.8.23"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = ["--strict-markers", "-ra"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "S", "SIM", "RUF", "PL", "T20", "PT", "C4", "PERF", "N"]
+ignore = [
+  "PLR2004", # magic values: the rules mirror the browser's numbers, named where it helps
+  "PLR0911", # many returns: the message builders branch like the TypeScript they port
+  "PLR0912",
+  "PLR0913",
+  "PLR0915",
+  "RUF001",  # ambiguous unicode: Spanish text and the ’ apostrophe are intended
+  "RUF002",
+  "RUF003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "PLC0415"]
+"scripts/**" = ["T201"]
+# Field names are the JSON keys of the contract (camelCase, as in packages/contracts).
+"src/py_lab/models.py" = ["N815"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+mypy_path = "src"
+files = ["src", "tests", "scripts"]
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+# Only the one-off script that writes the .xls fixture uses xlwt (run with uvx, not installed here).
+module = ["xlwt"]
+ignore_missing_imports = true

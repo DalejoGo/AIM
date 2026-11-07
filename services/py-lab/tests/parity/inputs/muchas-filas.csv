@@ -1,0 +1,468 @@
+id;nombre;correo;telefono;fecha;monto;ciudad
+1;jorge gómez;user1@example.com;314 555 0001;24/09/2021;$ 466.331;CALI
+2;raúl de la cruz;user2@example.com;390 555 0002;14/03/2021;$ 204.913;cartagena
+3;luis ortiz;user3@example.com;376 555 0003;24/09/2025;$ 734.335;bogotá
+4;raúl díaz;user4@example.com;356 555 0004;10/07/2021;$ 640.757;cartagena
+5;mateo gómez;user5@example.com;354 555 0005;04/01/2023;$ 514.947;cartagena
+6;jorge de la cruz;user6@example.com;396 555 0006;22/03/2023;$ 440.929;CALI
+7;jorge ortiz;user7@example.com;396 555 0007;24/05/2021;$ 798.319;bogotá
+8;raúl díaz;user8@example.com;314 555 0008;02/07/2025;$ 104.925;cartagena
+9;carlos gómez;user9example.com;398 555 0009;28/05/2021;$ 738.891;bogotá
+10;raúl de la cruz;user10@example.com;334 555 0010;18/11/2025;$ 968.537;bogotá
+11;carlos ortiz;user11@example.com;392 555 0011;16/05/2023;mil;CALI
+12;jorge ortiz;user12@example.com;312 555 0012;04/09/2021;$ 638.343;cartagena
+13;raúl díaz;user13@example.com;555 0013;28/09/2025;$ 462.207;CALI
+14;jorge díaz;user14@example.com;338 555 0014;18/07/2025;$ 408.013;CALI
+15;raúl gómez;user15@example.com;310 555 0015;12/09/2021;$ 746.027;bogotá
+16;raúl de la cruz;user16@example.com;334 555 0016;10/11/2021;$ 728.905;CALI
+17;luis ortiz;user17@example.com;338 555 0017;31/02/2024;$ 287.640;Medellín
+18;sofía del valle;user18example.com;307 555 0018;07/08/2022;$ 437.358;cúcuta
+19;inés lópez;user19@example.com;329 555 0019;09/10/2020;$ 451.060;cúcuta
+20;ana peña;user20@example.com;345 555 0020;07/08/2022;$ 961.074;cúcuta
+21;MARÍA RUIZ;user21@example.com;327 555 0021;05/06/2020;$ 495.000;Medellín
+22;sofía del valle;user22@example.com;325 555 0022;19/12/2022;mil;Medellín
+23;MARÍA del valle;user23@example.com;347 555 0023;11/08/2020;$ 333.862;Medellín
+24;inés lópez;user24@example.com;347 555 0024;25/06/2022;$ 919.916;cúcuta
+25;ana peña;user25@example.com;327 555 0025;23/12/2020;$ 301.114;Medellín
+26;sofía RUIZ;user26@example.com;555 0026;15/12/2024;$ 133.218;cúcuta
+27;inés RUIZ;user27example.com;307 555 0027;21/06/2022;$ 447.672;Medellín
+28;MARÍA del valle;user28@example.com;301 555 0028;11/12/2022;$ 609.990;barranquilla
+29;MARÍA lópez;user29@example.com;341 555 0029;01/10/2020;$ 955.476;cúcuta
+30;ana peña;user30@example.com;365 555 0030;07/04/2022;$ 613.530;barranquilla
+31;sofía RUIZ;user31@example.com;381 555 0031;17/10/2020;$ 727.496;Medellín
+32;MARÍA del valle;user32@example.com;329 555 0032;11/08/2022;$ 533.390;cúcuta
+33;ana lópez;user33@example.com;361 555 0033;05/06/2022;mil;cúcuta
+34;ana lópez;user34@example.com;381 555 0034;31/02/2024;$ 968.217;CALI
+35;luis ortiz;user35@example.com;314 555 0035;04/05/2021;$ 750.527;cartagena
+36;mateo díaz;user36example.com;312 555 0036;18/07/2023;$ 108.477;bogotá
+37;luis gómez;user37@example.com;376 555 0037;04/05/2023;$ 590.147;CALI
+38;mateo de la cruz;user38@example.com;390 555 0038;06/11/2021;$ 548.217;bogotá
+39;mateo ortiz;user39@example.com;555 0039;10/07/2025;$ 544.665;cartagena
+40;raúl ortiz;user40@example.com;336 555 0040;04/09/2025;$ 922.583;CALI
+41;carlos díaz;user41@example.com;334 555 0041;26/07/2021;$ 824.853;CALI
+42;luis gómez;user42@example.com;332 555 0042;20/09/2021;$ 786.739;cartagena
+43;carlos de la cruz;user43@example.com;358 555 0043;22/03/2021;$ 236.297;CALI
+44;raúl ortiz;user44@example.com;314 555 0044;08/05/2023;mil;CALI
+45;jorge ortiz;user45example.com;390 555 0045;20/09/2023;$ 642.983;cartagena
+46;mateo díaz;user46@example.com;356 555 0046;18/07/2025;$ 504.757;bogotá
+47;jorge gómez;user47@example.com;330 555 0047;04/09/2021;$ 590.523;cartagena
+;;;;;;
+48;jorge de la cruz;user48@example.com;398 555 0048;26/11/2023;$ 372.705;CALI
+49;luis ortiz;user49@example.com;352 555 0049;08/05/2025;$ 914.079;bogotá
+50;luis díaz;user50@example.com;350 555 0050;26/11/2023;$ 224.429;CALI
+51;raúl gómez;user51@example.com;392 555 0051;31/02/2024;$ 131.684;cúcuta
+52;sofía peña;user52@example.com;555 0052;25/10/2020;$ 207.932;barranquilla
+53;eva peña;user53@example.com;347 555 0053;11/08/2020;$ 881.906;Medellín
+53;eva peña;user53@example.com;347 555 0053;11/08/2020;$ 881.906;bogotá
+54;inés RUIZ;user54example.com;309 555 0054;09/06/2020;$ 903.280;cúcuta
+55;eva del valle;user55@example.com;327 555 0055;27/04/2022;mil;barranquilla
+56;sofía del valle;user56@example.com;349 555 0056;11/08/2022;$ 929.118;barranquilla
+57;ana lópez;user57@example.com;369 555 0057;01/10/2022;$ 547.036;Medellín
+58;inés peña;user58@example.com;365 555 0058;15/08/2024;$ 733.066;Medellín
+59;ana RUIZ;user59@example.com;325 555 0059;01/10/2022;$ 327.440;barranquilla
+60;MARÍA del valle;user60@example.com;307 555 0060;23/04/2020;$ 241.798;barranquilla
+61;eva lópez;user61@example.com;349 555 0061;17/06/2022;$ 727.828;barranquilla
+62;inés peña;user62@example.com;327 555 0062;03/04/2022;$ 345.346;Medellín
+63;MARÍA RUIZ;user63example.com;307 555 0063;05/06/2022;$ 915.864;Medellín
+64;sofía del valle;user64@example.com;349 555 0064;23/08/2022;$ 765.662;cúcuta
+65;MARÍA lópez;user65@example.com;555 0065;23/12/2024;$ 921.910;cúcuta
+66;inés lópez;user66@example.com;325 555 0066;01/06/2022;mil;Medellín
+67;sofía lópez;user67@example.com;321 555 0067;09/06/2020;$ 775.508;cúcuta
+68;MARÍA peña;user68@example.com;305 555 0068;31/02/2024;$ 966.375;cartagena
+69;mateo díaz;user69@example.com;370 555 0069;18/03/2023;$ 140.661;bogotá
+70;jorge gómez;user70@example.com;318 555 0070;28/05/2023;$ 458.819;bogotá
+71;carlos de la cruz;user71@example.com;334 555 0071;22/07/2023;$ 368.537;cartagena
+72;raúl ortiz;user72example.com;332 555 0072;24/01/2023;$ 890.231;cartagena
+73;mateo díaz;user73@example.com;314 555 0073;18/03/2025;$ 124.277;bogotá
+74;carlos gómez;user74@example.com;318 555 0074;08/09/2023;$ 658.019;CALI
+75;raúl de la cruz;user75@example.com;350 555 0075;18/11/2025;$ 568.489;cartagena
+76;carlos ortiz;user76@example.com;356 555 0076;08/05/2023;$ 982.367;cartagena
+77;mateo díaz;user77@example.com;390 555 0077;02/07/2023;mil;CALI
+78;raúl díaz;user78@example.com;555 0078;12/09/2021;$ 494.759;CALI
+79;carlos díaz;user79@example.com;358 555 0079;22/11/2023;$ 640.589;CALI
+80;jorge gómez;user80@example.com;338 555 0080;24/09/2023;$ 154.099;CALI
+81;jorge de la cruz;user81example.com;372 555 0081;22/03/2025;$ 452.553;bogotá
+82;raúl ortiz;user82@example.com;372 555 0082;24/01/2023;$ 750.791;cartagena
+83;raúl díaz;user83@example.com;394 555 0083;06/07/2021;$ 576.893;cartagena
+84;carlos gómez;user84@example.com;318 555 0084;08/05/2025;$ 410.507;cartagena
+85;luis de la cruz;user85@example.com;350 555 0085;31/02/2024;$ 773.178;Medellín
+86;sofía RUIZ;user86@example.com;347 555 0086;09/02/2022;$ 987.432;Medellín
+87;eva del valle;user87@example.com;301 555 0087;03/04/2020;$ 989.126;Medellín
+88;MARÍA lópez;user88@example.com;305 555 0088;01/02/2024;mil;barranquilla
+89;inés lópez;user89@example.com;309 555 0089;25/10/2024;$ 891.268;barranquilla
+90;ana peña;user90example.com;329 555 0090;19/08/2024;$ 925.162;barranquilla
+91;sofía RUIZ;user91@example.com;555 0091;19/12/2020;$ 269.626;cúcuta
+92;sofía RUIZ;user92@example.com;309 555 0092;21/02/2022;$ 571.224;Medellín
+93;sofía del valle;user93@example.com;347 555 0093;11/12/2020;$ 773.366;Medellín
+94;MARÍA lópez;user94@example.com;365 555 0094;21/06/2020;$ 875.508;barranquilla
+;;;;;;
+95;inés peña;user95@example.com;321 555 0095;15/08/2020;$ 825.178;Medellín
+96;inés RUIZ;user96@example.com;345 555 0096;01/10/2022;$ 431.616;cúcuta
+97;sofía del valle;user97@example.com;383 555 0097;23/08/2024;$ 785.382;cúcuta
+98;inés lópez;user98@example.com;347 555 0098;17/02/2022;$ 855.796;barranquilla
+99;inés peña;user99example.com;369 555 0099;07/04/2024;mil;Medellín
+100;inés peña;user100@example.com;325 555 0100;11/04/2020;$ 349.842;cúcuta
+101;inés RUIZ;user101@example.com;343 555 0101;09/06/2022;$ 135.824;barranquilla
+102;inés del valle;user102@example.com;365 555 0102;31/02/2024;$ 206.555;cartagena
+103;jorge de la cruz;user103@example.com;378 555 0103;22/11/2025;$ 340.881;CALI
+104;carlos ortiz;user104@example.com;555 0104;18/11/2025;$ 924.057;CALI
+105;carlos ortiz;user105@example.com;330 555 0105;20/05/2025;$ 966.343;cartagena
+106;raúl díaz;user106@example.com;398 555 0106;26/07/2023;$ 132.725;CALI
+106;raúl díaz;user106@example.com;398 555 0106;26/07/2023;$ 132.725;bogotá
+107;luis gómez;user107@example.com;356 555 0107;12/01/2025;$ 482.491;bogotá
+108;raúl de la cruz;user108example.com;356 555 0108;26/11/2023;$ 956.161;CALI
+109;jorge ortiz;user109@example.com;332 555 0109;12/05/2021;$ 898.671;cartagena
+110;carlos díaz;user110@example.com;312 555 0110;10/03/2021;mil;bogotá
+111;mateo díaz;user111@example.com;350 555 0111;18/07/2025;$ 384.733;CALI
+112;mateo gómez;user112@example.com;330 555 0112;24/05/2025;$ 934.515;CALI
+113;mateo de la cruz;user113@example.com;372 555 0113;14/11/2025;$ 100.625;CALI
+114;raúl ortiz;user114@example.com;352 555 0114;20/01/2023;$ 402.791;CALI
+115;mateo díaz;user115@example.com;316 555 0115;14/03/2025;$ 544.925;cartagena
+116;raúl gómez;user116@example.com;350 555 0116;20/01/2025;$ 214.163;bogotá
+117;raúl de la cruz;user117example.com;555 0117;04/01/2023;$ 534.555;CALI
+118;carlos de la cruz;user118@example.com;312 555 0118;10/03/2023;$ 448.441;cartagena
+119;luis ortiz;user119@example.com;354 555 0119;31/02/2024;$ 463.536;Medellín
+120;ana del valle;user120@example.com;387 555 0120;03/04/2020;$ 537.214;cúcuta
+121;ana lópez;user121@example.com;307 555 0121;21/10/2020;mil;barranquilla
+122;sofía lópez;user122@example.com;309 555 0122;09/10/2020;$ 923.116;barranquilla
+123;eva peña;user123@example.com;369 555 0123;23/08/2022;$ 389.322;barranquilla
+124;inés RUIZ;user124@example.com;369 555 0124;21/06/2024;$ 547.176;cúcuta
+125;sofía del valle;user125@example.com;341 555 0125;15/04/2020;$ 909.094;Medellín
+126;inés lópez;user126example.com;305 555 0126;09/02/2020;$ 327.868;barranquilla
+127;MARÍA peña;user127@example.com;325 555 0127;19/08/2024;$ 817.802;cúcuta
+128;sofía RUIZ;user128@example.com;389 555 0128;01/10/2024;$ 663.312;cúcuta
+129;inés del valle;user129@example.com;329 555 0129;23/04/2020;$ 393.998;Medellín
+130;eva lópez;user130@example.com;555 0130;07/12/2020;$ 185.734;barranquilla
+131;ana lópez;user131@example.com;341 555 0131;09/10/2024;$ 571.100;Medellín
+132;MARÍA peña;user132@example.com;307 555 0132;23/12/2024;mil;barranquilla
+133;MARÍA peña;user133@example.com;349 555 0133;11/08/2020;$ 981.714;cúcuta
+134;eva RUIZ;user134@example.com;347 555 0134;21/10/2024;$ 283.832;barranquilla
+135;eva del valle;user135example.com;327 555 0135;19/12/2020;$ 661.270;cúcuta
+136;sofía lópez;user136@example.com;345 555 0136;31/02/2024;$ 368.449;CALI
+137;mateo ortiz;user137@example.com;336 555 0137;24/09/2023;$ 694.495;cartagena
+138;mateo díaz;user138@example.com;398 555 0138;14/11/2025;$ 772.197;CALI
+139;carlos gómez;user139@example.com;338 555 0139;12/09/2025;$ 154.395;cartagena
+140;raúl de la cruz;user140@example.com;398 555 0140;14/11/2025;$ 912.113;cartagena
+141;carlos ortiz;user141@example.com;316 555 0141;12/05/2023;$ 494.511;cartagena
+;;;;;;
+142;mateo díaz;user142@example.com;312 555 0142;22/07/2023;$ 268.053;CALI
+143;raúl gómez;user143@example.com;555 0143;14/07/2023;mil;bogotá
+144;mateo díaz;user144example.com;336 555 0144;14/11/2021;$ 928.669;bogotá
+145;raúl gómez;user145@example.com;378 555 0145;28/05/2025;$ 694.483;CALI
+146;raúl de la cruz;user146@example.com;398 555 0146;02/03/2025;$ 840.905;CALI
+147;jorge ortiz;user147@example.com;336 555 0147;12/09/2025;$ 270.543;CALI
+148;luis díaz;user148@example.com;398 555 0148;06/11/2025;$ 616.765;cartagena
+149;carlos gómez;user149@example.com;376 555 0149;08/01/2021;$ 166.211;cartagena
+150;mateo de la cruz;user150@example.com;374 555 0150;18/11/2025;$ 188.713;bogotá
+151;luis ortiz;user151@example.com;390 555 0151;16/01/2021;$ 902.399;CALI
+152;carlos díaz;user152@example.com;396 555 0152;02/03/2025;$ 824.989;cartagena
+153;mateo gómez;user153example.com;314 555 0153;31/02/2024;$ 963.364;barranquilla
+154;inés peña;user154@example.com;381 555 0154;15/08/2020;mil;Medellín
+155;sofía peña;user155@example.com;341 555 0155;15/08/2020;$ 681.466;cúcuta
+156;eva RUIZ;user156@example.com;555 0156;11/04/2022;$ 125.130;barranquilla
+157;eva RUIZ;user157@example.com;345 555 0157;13/10/2022;$ 867.952;barranquilla
+158;eva del valle;user158@example.com;341 555 0158;07/08/2024;$ 473.086;barranquilla
+159;inés lópez;user159@example.com;307 555 0159;13/10/2024;$ 563.180;Medellín
+159;inés lópez;user159@example.com;307 555 0159;13/10/2024;$ 563.180;bogotá
+160;sofía peña;user160@example.com;369 555 0160;19/12/2024;$ 801.474;Medellín
+161;eva RUIZ;user161@example.com;307 555 0161;21/02/2024;$ 519.312;cúcuta
+162;inés del valle;user162example.com;383 555 0162;27/08/2022;$ 141.174;barranquilla
+163;sofía lópez;user163@example.com;367 555 0163;17/10/2024;$ 899.924;barranquilla
+164;sofía peña;user164@example.com;363 555 0164;15/04/2022;$ 841.154;barranquilla
+165;inés RUIZ;user165@example.com;383 555 0165;17/06/2024;mil;barranquilla
+166;MARÍA RUIZ;user166@example.com;343 555 0166;05/06/2024;$ 863.312;barranquilla
+167;sofía del valle;user167@example.com;321 555 0167;15/08/2020;$ 597.606;cúcuta
+168;inés lópez;user168@example.com;303 555 0168;21/06/2024;$ 383.916;barranquilla
+169;ana peña;user169@example.com;555 0169;21/06/2020;$ 363.076;cúcuta
+170;eva peña;user170@example.com;389 555 0170;31/02/2024;$ 982.279;CALI
+171;mateo díaz;user171example.com;372 555 0171;06/11/2021;$ 140.829;bogotá
+172;mateo gómez;user172@example.com;356 555 0172;28/09/2021;$ 486.667;cartagena
+173;jorge de la cruz;user173@example.com;332 555 0173;14/07/2021;$ 400.905;cartagena
+174;raúl ortiz;user174@example.com;396 555 0174;04/05/2025;$ 754.775;bogotá
+175;luis díaz;user175@example.com;396 555 0175;18/03/2021;$ 512.621;cartagena
+176;luis gómez;user176@example.com;312 555 0176;12/05/2023;mil;cartagena
+177;raúl gómez;user177@example.com;332 555 0177;24/01/2021;$ 642.947;CALI
+178;jorge de la cruz;user178@example.com;310 555 0178;14/07/2021;$ 560.697;CALI
+179;raúl ortiz;user179@example.com;314 555 0179;04/09/2021;$ 386.295;CALI
+180;luis díaz;user180example.com;330 555 0180;22/11/2025;$ 484.885;CALI
+181;jorge gómez;user181@example.com;396 555 0181;04/09/2025;$ 726.091;bogotá
+182;raúl de la cruz;user182@example.com;555 0182;20/01/2023;$ 434.179;CALI
+183;mateo de la cruz;user183@example.com;376 555 0183;10/07/2025;$ 748.921;cartagena
+184;mateo ortiz;user184@example.com;358 555 0184;24/09/2021;$ 750.319;cartagena
+185;mateo díaz;user185@example.com;370 555 0185;18/07/2023;$ 932.885;cartagena
+186;luis gómez;user186@example.com;376 555 0186;08/05/2025;$ 922.963;bogotá
+187;carlos de la cruz;user187@example.com;356 555 0187;31/02/2024;mil;Medellín
+188;ana peña;user188@example.com;381 555 0188;11/12/2022;$ 477.922;barranquilla
+;;;;;;
+189;eva RUIZ;user189example.com;369 555 0189;21/06/2020;$ 939.344;Medellín
+190;MARÍA del valle;user190@example.com;329 555 0190;07/12/2022;$ 745.934;cúcuta
+191;sofía lópez;user191@example.com;349 555 0191;05/10/2020;$ 351.940;barranquilla
+192;ana peña;user192@example.com;389 555 0192;19/04/2020;$ 377.410;cúcuta
+193;MARÍA RUIZ;user193@example.com;385 555 0193;01/02/2024;$ 215.648;barranquilla
+194;MARÍA del valle;user194@example.com;327 555 0194;03/04/2024;$ 969.614;cúcuta
+195;sofía lópez;user195@example.com;555 0195;15/08/2020;$ 649.358;Medellín
+196;sofía lópez;user196@example.com;329 555 0196;05/10/2024;$ 359.788;barranquilla
+197;inés peña;user197@example.com;309 555 0197;11/04/2024;$ 521.770;barranquilla
+198;inés RUIZ;user198example.com;301 555 0198;25/06/2020;mil;Medellín
+199;inés RUIZ;user199@example.com;381 555 0199;13/10/2024;$ 151.984;cúcuta
+200;inés del valle;user200@example.com;385 555 0200;15/08/2022;$ 437.630;Medellín
+201;sofía lópez;user201@example.com;325 555 0201;05/02/2022;$ 291.164;cúcuta
+202;eva peña;user202@example.com;301 555 0202;11/08/2024;$ 773.626;Medellín
+203;eva RUIZ;user203@example.com;385 555 0203;01/10/2020;$ 331.352;cúcuta
+204;sofía del valle;user204@example.com;389 555 0204;31/02/2024;$ 306.163;cartagena
+205;raúl de la cruz;user205@example.com;336 555 0205;14/03/2025;$ 244.073;bogotá
+206;luis ortiz;user206@example.com;394 555 0206;16/09/2025;$ 906.879;bogotá
+207;carlos díaz;user207example.com;338 555 0207;10/07/2021;$ 944.317;CALI
+208;raúl gómez;user208@example.com;555 0208;26/11/2023;$ 896.685;CALI
+209;carlos gómez;user209@example.com;358 555 0209;28/05/2023;mil;CALI
+210;raúl gómez;user210@example.com;354 555 0210;20/09/2023;$ 682.083;CALI
+211;raúl de la cruz;user211@example.com;354 555 0211;06/07/2021;$ 640.345;cartagena
+212;jorge ortiz;user212@example.com;314 555 0212;04/05/2021;$ 362.391;cartagena
+212;jorge ortiz;user212@example.com;314 555 0212;04/05/2021;$ 362.391;bogotá
+213;mateo díaz;user213@example.com;370 555 0213;14/03/2023;$ 320.725;bogotá
+214;mateo gómez;user214@example.com;336 555 0214;16/05/2023;$ 130.091;cartagena
+215;jorge de la cruz;user215@example.com;338 555 0215;06/07/2021;$ 904.297;cartagena
+216;mateo ortiz;user216example.com;334 555 0216;28/09/2023;$ 998.711;bogotá
+217;luis díaz;user217@example.com;376 555 0217;26/03/2025;$ 804.957;bogotá
+218;mateo gómez;user218@example.com;316 555 0218;04/05/2023;$ 142.419;cartagena
+219;raúl de la cruz;user219@example.com;378 555 0219;18/03/2023;$ 328.377;cartagena
+220;raúl ortiz;user220@example.com;332 555 0220;08/05/2021;mil;CALI
+221;jorge ortiz;user221@example.com;555 0221;31/02/2024;$ 297.034;cúcuta
+222;ana RUIZ;user222@example.com;363 555 0222;01/06/2022;$ 963.232;barranquilla
+223;sofía del valle;user223@example.com;367 555 0223;03/04/2020;$ 217.902;cúcuta
+224;sofía lópez;user224@example.com;329 555 0224;25/10/2024;$ 459.604;cúcuta
+225;ana peña;user225example.com;387 555 0225;27/08/2020;$ 445.298;barranquilla
+226;inés RUIZ;user226@example.com;347 555 0226;13/06/2022;$ 331.144;cúcuta
+227;MARÍA del valle;user227@example.com;343 555 0227;15/08/2022;$ 645.438;barranquilla
+228;eva lópez;user228@example.com;329 555 0228;17/02/2020;$ 383.588;Medellín
+229;inés peña;user229@example.com;349 555 0229;15/12/2024;$ 117.818;cúcuta
+230;sofía RUIZ;user230@example.com;367 555 0230;13/06/2022;$ 259.808;barranquilla
+231;MARÍA del valle;user231@example.com;347 555 0231;23/04/2022;mil;barranquilla
+232;sofía del valle;user232@example.com;341 555 0232;27/08/2020;$ 701.846;barranquilla
+233;eva lópez;user233@example.com;321 555 0233;01/06/2020;$ 103.468;Medellín
+234;inés peña;user234example.com;555 0234;21/06/2020;$ 703.964;cúcuta
+235;sofía peña;user235@example.com;303 555 0235;07/08/2020;$ 425.498;cúcuta
+;;;;;;
+236;ana RUIZ;user236@example.com;307 555 0236;13/10/2022;$ 771.168;barranquilla
+237;ana del valle;user237@example.com;321 555 0237;19/12/2020;$ 473.054;barranquilla
+238;MARÍA lópez;user238@example.com;327 555 0238;31/02/2024;$ 484.745;CALI
+239;raúl ortiz;user239@example.com;392 555 0239;28/05/2025;$ 822.151;cartagena
+240;mateo díaz;user240@example.com;332 555 0240;26/07/2025;$ 352.965;cartagena
+241;jorge gómez;user241@example.com;334 555 0241;28/05/2021;$ 214.859;CALI
+242;jorge de la cruz;user242@example.com;372 555 0242;02/07/2025;mil;cartagena
+243;luis de la cruz;user243example.com;310 555 0243;22/07/2025;$ 704.217;bogotá
+244;jorge ortiz;user244@example.com;378 555 0244;24/01/2023;$ 458.423;cartagena
+245;mateo díaz;user245@example.com;334 555 0245;06/07/2021;$ 856.285;cartagena
+246;jorge gómez;user246@example.com;310 555 0246;20/01/2021;$ 330.979;bogotá
+247;raúl de la cruz;user247@example.com;555 0247;28/01/2023;$ 942.291;CALI
+248;carlos de la cruz;user248@example.com;390 555 0248;22/11/2021;$ 876.649;CALI
+249;raúl ortiz;user249@example.com;318 555 0249;28/09/2023;$ 814.519;cartagena
+250;luis díaz;user250@example.com;372 555 0250;10/03/2023;$ 748.629;bogotá
+251;luis gómez;user251@example.com;394 555 0251;20/09/2021;$ 826.403;cartagena
+252;mateo de la cruz;user252example.com;334 555 0252;02/11/2023;$ 476.705;CALI
+253;luis ortiz;user253@example.com;376 555 0253;08/05/2021;mil;cartagena
+254;mateo ortiz;user254@example.com;370 555 0254;04/09/2025;$ 258.599;cartagena
+255;mateo díaz;user255@example.com;394 555 0255;31/02/2024;$ 617.510;Medellín
+256;eva lópez;user256@example.com;347 555 0256;09/02/2022;$ 375.292;barranquilla
+257;inés peña;user257@example.com;321 555 0257;03/12/2020;$ 381.914;barranquilla
+258;eva RUIZ;user258@example.com;323 555 0258;25/10/2020;$ 803.504;cúcuta
+259;MARÍA del valle;user259@example.com;347 555 0259;23/12/2020;$ 773.758;Medellín
+260;eva lópez;user260@example.com;555 0260;19/04/2020;$ 165.590;Medellín
+261;inés lópez;user261example.com;301 555 0261;01/06/2024;$ 971.212;barranquilla
+262;inés peña;user262@example.com;307 555 0262;23/08/2022;$ 581.402;cúcuta
+263;ana RUIZ;user263@example.com;363 555 0263;25/10/2024;$ 615.328;cúcuta
+264;sofía del valle;user264@example.com;307 555 0264;19/08/2024;mil;cúcuta
+265;sofía del valle;user265@example.com;325 555 0265;03/12/2022;$ 317.902;Medellín
+265;sofía del valle;user265@example.com;325 555 0265;03/12/2022;$ 317.902;bogotá
+266;sofía lópez;user266@example.com;381 555 0266;21/10/2020;$ 915.084;barranquilla
+267;inés peña;user267@example.com;385 555 0267;27/12/2020;$ 637.402;cúcuta
+268;eva RUIZ;user268@example.com;387 555 0268;17/02/2022;$ 415.264;cúcuta
+269;inés del valle;user269@example.com;305 555 0269;27/08/2024;$ 913.606;cúcuta
+270;MARÍA lópez;user270example.com;305 555 0270;17/06/2020;$ 283.020;cúcuta
+271;eva peña;user271@example.com;341 555 0271;27/08/2022;$ 453.786;Medellín
+272;MARÍA RUIZ;user272@example.com;307 555 0272;31/02/2024;$ 280.525;cartagena
+273;mateo gómez;user273@example.com;555 0273;14/11/2023;$ 484.677;bogotá
+274;mateo gómez;user274@example.com;352 555 0274;24/01/2023;$ 210.755;bogotá
+275;carlos de la cruz;user275@example.com;352 555 0275;02/11/2021;mil;bogotá
+276;carlos de la cruz;user276@example.com;398 555 0276;22/07/2023;$ 696.961;bogotá
+277;mateo ortiz;user277@example.com;318 555 0277;20/01/2025;$ 630.895;cartagena
+278;jorge díaz;user278@example.com;330 555 0278;18/11/2021;$ 532.133;cartagena
+279;raúl gómez;user279example.com;394 555 0279;16/09/2023;$ 706.763;CALI
+280;luis de la cruz;user280@example.com;372 555 0280;26/03/2025;$ 748.545;cartagena
+281;luis ortiz;user281@example.com;318 555 0281;12/01/2023;$ 962.967;cartagena
+282;carlos díaz;user282@example.com;312 555 0282;18/11/2021;$ 632.541;bogotá
+;;;;;;
+283;carlos gómez;user283@example.com;318 555 0283;24/01/2025;$ 106.755;CALI
+284;luis de la cruz;user284@example.com;352 555 0284;14/11/2023;$ 824.881;cartagena
+285;mateo ortiz;user285@example.com;376 555 0285;12/01/2023;$ 726.575;CALI
+286;carlos díaz;user286@example.com;555 0286;04/01/2025;mil;CALI
+287;carlos ortiz;user287@example.com;356 555 0287;24/09/2021;$ 490.151;bogotá
+288;raúl díaz;user288example.com;398 555 0288;18/07/2021;$ 656.565;cartagena
+289;mateo gómez;user289@example.com;350 555 0289;31/02/2024;$ 947.628;cúcuta
+290;sofía peña;user290@example.com;383 555 0290;23/04/2024;$ 233.650;barranquilla
+291;inés RUIZ;user291@example.com;361 555 0291;17/06/2022;$ 243.592;Medellín
+292;eva del valle;user292@example.com;325 555 0292;11/08/2024;$ 753.470;cúcuta
+293;MARÍA lópez;user293@example.com;345 555 0293;25/10/2020;$ 371.796;cúcuta
+294;inés peña;user294@example.com;369 555 0294;11/08/2020;$ 385.562;Medellín
+295;sofía RUIZ;user295@example.com;321 555 0295;21/02/2024;$ 303.032;barranquilla
+296;eva del valle;user296@example.com;327 555 0296;27/04/2024;$ 765.222;Medellín
+297;inés lópez;user297example.com;347 555 0297;17/02/2020;mil;cúcuta
+298;ana lópez;user298@example.com;385 555 0298;21/02/2022;$ 671.772;cúcuta
+299;inés peña;user299@example.com;555 0299;01/10/2020;$ 883.708;Medellín
+300;inés peña;user300@example.com;301 555 0300;19/04/2024;$ 961.514;cúcuta
+301;ana RUIZ;user301@example.com;381 555 0301;17/10/2022;$ 227.176;barranquilla
+302;eva del valle;user302@example.com;365 555 0302;03/04/2022;$ 905.686;Medellín
+303;eva lópez;user303@example.com;343 555 0303;01/10/2022;$ 651.340;Medellín
+304;eva peña;user304@example.com;347 555 0304;19/08/2020;$ 373.786;cúcuta
+305;eva RUIZ;user305@example.com;305 555 0305;09/06/2022;$ 207.064;cúcuta
+306;eva del valle;user306example.com;385 555 0306;31/02/2024;$ 402.603;CALI
+307;mateo de la cruz;user307@example.com;396 555 0307;22/11/2025;$ 780.129;cartagena
+308;mateo ortiz;user308@example.com;376 555 0308;16/05/2025;mil;cartagena
+309;carlos ortiz;user309@example.com;314 555 0309;12/01/2021;$ 694.055;CALI
+310;luis díaz;user310@example.com;394 555 0310;18/07/2025;$ 412.685;cartagena
+311;luis gómez;user311@example.com;316 555 0311;24/01/2021;$ 922.939;cartagena
+312;mateo de la cruz;user312@example.com;555 0312;20/01/2021;$ 970.859;bogotá
+313;carlos de la cruz;user313@example.com;376 555 0313;22/03/2025;$ 852.425;cartagena
+314;carlos ortiz;user314@example.com;370 555 0314;08/01/2021;$ 222.111;CALI
+315;carlos díaz;user315example.com;354 555 0315;26/11/2021;$ 868.445;CALI
+316;luis gómez;user316@example.com;332 555 0316;16/09/2023;$ 498.043;bogotá
+317;jorge de la cruz;user317@example.com;334 555 0317;02/07/2023;$ 728.089;cartagena
+318;carlos ortiz;user318@example.com;318 555 0318;04/09/2023;$ 450.679;bogotá
+318;carlos ortiz;user318@example.com;318 555 0318;04/09/2023;$ 450.679;bogotá
+319;mateo díaz;user319@example.com;358 555 0319;02/03/2021;mil;bogotá
+320;jorge díaz;user320@example.com;394 555 0320;14/03/2023;$ 236.309;bogotá
+321;luis gómez;user321@example.com;312 555 0321;04/05/2021;$ 762.523;cartagena
+322;carlos de la cruz;user322@example.com;392 555 0322;26/07/2025;$ 332.649;bogotá
+323;raúl ortiz;user323@example.com;378 555 0323;31/02/2024;$ 251.040;cúcuta
+324;eva del valle;user324example.com;369 555 0324;07/04/2020;$ 313.630;cúcuta
+325;ana lópez;user325@example.com;555 0325;15/04/2022;$ 225.718;cúcuta
+326;eva lópez;user326@example.com;389 555 0326;21/02/2024;$ 627.308;Medellín
+327;ana peña;user327@example.com;341 555 0327;19/08/2022;$ 525.602;barranquilla
+328;eva RUIZ;user328@example.com;367 555 0328;13/02/2022;$ 299.472;Medellín
+329;MARÍA del valle;user329@example.com;321 555 0329;27/12/2022;$ 421.758;barranquilla
+;;;;;;
+330;inés lópez;user330@example.com;385 555 0330;09/06/2020;mil;barranquilla
+331;inés lópez;user331@example.com;361 555 0331;05/10/2020;$ 519.660;Medellín
+332;eva peña;user332@example.com;369 555 0332;19/08/2024;$ 305.466;cúcuta
+333;inés RUIZ;user333example.com;349 555 0333;25/10/2020;$ 763.704;barranquilla
+334;MARÍA del valle;user334@example.com;327 555 0334;27/08/2024;$ 705.990;barranquilla
+335;inés lópez;user335@example.com;329 555 0335;09/06/2022;$ 947.124;Medellín
+336;inés peña;user336@example.com;363 555 0336;19/12/2020;$ 641.634;barranquilla
+337;MARÍA RUIZ;user337@example.com;347 555 0337;17/10/2022;$ 327.112;Medellín
+338;ana del valle;user338@example.com;555 0338;17/02/2020;$ 927.488;Medellín
+339;ana del valle;user339@example.com;389 555 0339;11/04/2020;$ 193.070;cúcuta
+340;inés lópez;user340@example.com;341 555 0340;31/02/2024;$ 492.593;CALI
+341;luis ortiz;user341@example.com;376 555 0341;08/09/2023;mil;bogotá
+342;raúl ortiz;user342example.com;330 555 0342;28/09/2023;$ 938.207;CALI
+343;luis díaz;user343@example.com;350 555 0343;10/07/2025;$ 416.725;CALI
+344;carlos gómez;user344@example.com;356 555 0344;28/09/2021;$ 362.923;cartagena
+345;mateo de la cruz;user345@example.com;332 555 0345;06/11/2021;$ 388.897;cartagena
+346;jorge ortiz;user346@example.com;314 555 0346;04/01/2025;$ 426.551;cartagena
+347;luis díaz;user347@example.com;398 555 0347;10/11/2021;$ 276.133;CALI
+348;carlos gómez;user348@example.com;314 555 0348;04/01/2023;$ 570.763;cartagena
+349;raúl de la cruz;user349@example.com;336 555 0349;22/03/2021;$ 984.953;cartagena
+350;luis ortiz;user350@example.com;336 555 0350;28/05/2021;$ 626.807;cartagena
+351;mateo díaz;user351example.com;555 0351;08/09/2023;$ 202.047;cartagena
+352;jorge díaz;user352@example.com;334 555 0352;02/07/2021;mil;bogotá
+353;luis díaz;user353@example.com;358 555 0353;06/07/2023;$ 448.133;bogotá
+354;jorge gómez;user354@example.com;358 555 0354;04/09/2025;$ 862.339;cartagena
+355;jorge de la cruz;user355@example.com;396 555 0355;22/07/2025;$ 468.769;bogotá
+356;raúl ortiz;user356@example.com;318 555 0356;24/09/2025;$ 358.639;cartagena
+357;jorge díaz;user357@example.com;374 555 0357;31/02/2024;$ 809.758;Medellín
+358;sofía lópez;user358@example.com;349 555 0358;21/02/2022;$ 295.788;Medellín
+359;MARÍA peña;user359@example.com;321 555 0359;19/12/2024;$ 301.722;barranquilla
+360;eva RUIZ;user360example.com;363 555 0360;17/10/2022;$ 891.232;Medellín
+361;eva del valle;user361@example.com;303 555 0361;27/04/2024;$ 169.062;barranquilla
+362;MARÍA lópez;user362@example.com;383 555 0362;05/10/2022;$ 447.460;barranquilla
+363;ana peña;user363@example.com;361 555 0363;19/12/2024;mil;cúcuta
+364;sofía peña;user364@example.com;555 0364;17/06/2024;$ 415.668;barranquilla
+365;eva peña;user365@example.com;369 555 0365;03/08/2024;$ 257.938;barranquilla
+366;ana RUIZ;user366@example.com;361 555 0366;17/10/2022;$ 331.240;Medellín
+367;ana del valle;user367@example.com;347 555 0367;23/08/2022;$ 581.702;barranquilla
+368;inés lópez;user368@example.com;347 555 0368;05/10/2020;$ 471.412;Medellín
+369;ana peña;user369example.com;383 555 0369;19/08/2024;$ 337.882;barranquilla
+370;MARÍA RUIZ;user370@example.com;343 555 0370;25/06/2024;$ 899.032;cúcuta
+371;eva del valle;user371@example.com;365 555 0371;03/12/2024;$ 625.390;Medellín
+371;eva del valle;user371@example.com;365 555 0371;03/12/2024;$ 625.390;bogotá
+372;inés lópez;user372@example.com;345 555 0372;25/10/2024;$ 543.436;barranquilla
+373;inés peña;user373@example.com;381 555 0373;15/12/2022;$ 777.898;barranquilla
+374;MARÍA RUIZ;user374@example.com;383 555 0374;31/02/2024;mil;bogotá
+375;luis díaz;user375@example.com;356 555 0375;22/03/2021;$ 656.877;CALI
+376;jorge gómez;user376@example.com;330 555 0376;08/09/2023;$ 794.955;CALI
+;;;;;;
+377;jorge de la cruz;user377@example.com;555 0377;20/05/2025;$ 150.427;CALI
+378;raúl de la cruz;user378example.com;336 555 0378;10/03/2025;$ 500.065;bogotá
+379;luis ortiz;user379@example.com;332 555 0379;08/01/2023;$ 158.263;CALI
+380;jorge díaz;user380@example.com;352 555 0380;06/07/2025;$ 448.661;bogotá
+381;carlos gómez;user381@example.com;358 555 0381;20/05/2023;$ 162.027;bogotá
+382;jorge de la cruz;user382@example.com;338 555 0382;02/03/2021;$ 980.081;CALI
+383;jorge ortiz;user383@example.com;370 555 0383;24/09/2023;$ 706.711;cartagena
+384;carlos díaz;user384@example.com;350 555 0384;02/03/2021;$ 328.309;bogotá
+385;carlos gómez;user385@example.com;314 555 0385;28/01/2023;mil;CALI
+386;luis gómez;user386@example.com;374 555 0386;08/05/2021;$ 898.107;cartagena
+387;carlos de la cruz;user387example.com;398 555 0387;18/11/2023;$ 684.705;cartagena
+388;luis ortiz;user388@example.com;312 555 0388;12/09/2025;$ 290.079;cartagena
+389;carlos díaz;user389@example.com;374 555 0389;22/11/2021;$ 800.109;cartagena
+390;carlos gómez;user390@example.com;555 0390;26/07/2025;$ 868.357;CALI
+391;mateo gómez;user391@example.com;390 555 0391;31/02/2024;$ 255.612;cúcuta
+392;sofía peña;user392@example.com;325 555 0392;15/04/2020;$ 369.994;Medellín
+393;inés RUIZ;user393@example.com;301 555 0393;05/02/2022;$ 295.592;barranquilla
+394;ana del valle;user394@example.com;361 555 0394;11/08/2020;$ 281.454;Medellín
+395;inés lópez;user395@example.com;329 555 0395;17/02/2020;$ 811.468;barranquilla
+396;MARÍA peña;user396example.com;323 555 0396;03/08/2022;mil;cúcuta
+397;eva peña;user397@example.com;325 555 0397;27/08/2020;$ 665.882;Medellín
+398;sofía RUIZ;user398@example.com;301 555 0398;17/02/2024;$ 135.808;barranquilla
+399;inés del valle;user399@example.com;345 555 0399;27/08/2022;$ 969.158;Medellín
+400;inés lópez;user400@example.com;303 555 0400;05/06/2024;$ 539.380;barranquilla
+401;ana peña;user401@example.com;347 555 0401;07/12/2020;$ 661.522;barranquilla
+402;inés RUIZ;user402@example.com;321 555 0402;01/06/2020;$ 875.016;barranquilla
+403;sofía del valle;user403@example.com;555 0403;25/02/2022;$ 863.920;barranquilla
+404;ana del valle;user404@example.com;363 555 0404;15/04/2024;$ 161.806;cúcuta
+405;sofía lópez;user405example.com;383 555 0405;25/02/2024;$ 751.612;cúcuta
+406;eva peña;user406@example.com;321 555 0406;19/04/2022;$ 105.658;Medellín
+407;eva RUIZ;user407@example.com;349 555 0407;05/10/2022;mil;Medellín
+408;inés RUIZ;user408@example.com;327 555 0408;31/02/2024;$ 176.893;cartagena
+409;carlos gómez;user409@example.com;316 555 0409;28/01/2025;$ 162.019;bogotá
+410;mateo de la cruz;user410@example.com;396 555 0410;22/03/2023;$ 944.745;bogotá
+411;mateo ortiz;user411@example.com;394 555 0411;20/09/2025;$ 894.967;bogotá
+412;luis díaz;user412@example.com;312 555 0412;02/11/2021;$ 816.125;bogotá
+413;raúl gómez;user413@example.com;338 555 0413;08/09/2021;$ 262.731;CALI
+414;luis de la cruz;user414example.com;394 555 0414;06/11/2025;$ 828.505;cartagena
+415;raúl ortiz;user415@example.com;338 555 0415;16/09/2023;$ 846.191;CALI
+416;luis díaz;user416@example.com;555 0416;12/01/2021;$ 286.335;bogotá
+417;mateo díaz;user417@example.com;374 555 0417;10/11/2021;$ 928.549;CALI
+418;raúl gómez;user418@example.com;394 555 0418;08/01/2023;mil;cartagena
+419;jorge gómez;user419@example.com;350 555 0419;28/01/2021;$ 210.939;CALI
+420;jorge de la cruz;user420@example.com;318 555 0420;14/07/2021;$ 592.001;bogotá
+421;carlos ortiz;user421@example.com;350 555 0421;24/01/2023;$ 782.743;cartagena
+422;jorge díaz;user422@example.com;336 555 0422;26/03/2023;$ 752.341;CALI
+423;raúl gómez;user423example.com;338 555 0423;12/05/2021;$ 762.307;cartagena
+;;;;;;
+424;mateo de la cruz;user424@example.com;374 555 0424;26/11/2021;$ 580.393;bogotá
+424;mateo de la cruz;user424@example.com;374 555 0424;26/11/2021;$ 580.393;bogotá
+425;luis ortiz;user425@example.com;358 555 0425;31/02/2024;$ 835.872;barranquilla
+426;eva del valle;user426@example.com;385 555 0426;11/04/2022;$ 717.094;barranquilla
+427;sofía lópez;user427@example.com;303 555 0427;01/02/2024;$ 691.948;Medellín
+428;sofía peña;user428@example.com;321 555 0428;03/12/2022;$ 501.834;Medellín
+429;sofía RUIZ;user429@example.com;555 0429;19/04/2020;mil;barranquilla
+430;inés peña;user430@example.com;389 555 0430;23/08/2020;$ 121.698;cúcuta
+431;ana RUIZ;user431@example.com;385 555 0431;21/06/2022;$ 803.896;barranquilla
+432;MARÍA del valle;user432example.com;307 555 0432;15/12/2024;$ 821.870;cúcuta
+433;ana lópez;user433@example.com;363 555 0433;21/10/2020;$ 867.836;barranquilla
+434;sofía peña;user434@example.com;305 555 0434;27/12/2020;$ 793.426;Medellín
+435;eva RUIZ;user435@example.com;305 555 0435;17/06/2024;$ 767.384;Medellín
+436;MARÍA del valle;user436@example.com;363 555 0436;15/04/2020;$ 853.654;barranquilla
+437;ana lópez;user437@example.com;345 555 0437;05/02/2022;$ 739.220;barranquilla
+438;inés peña;user438@example.com;323 555 0438;15/08/2022;$ 953.402;barranquilla
+439;MARÍA RUIZ;user439@example.com;301 555 0439;01/06/2024;$ 807.776;barranquilla
+440;inés del valle;user440@example.com;367 555 0440;11/08/2022;mil;cúcuta
+441;MARÍA del valle;user441example.com;343 555 0441;07/04/2020;$ 757.574;barranquilla
+442;sofía lópez;user442@example.com;555 0442;31/02/2024;$ 998.827;bogotá
+443;carlos de la cruz;user443@example.com;376 555 0443;02/07/2023;$ 512.241;cartagena
+444;luis ortiz;user444@example.com;374 555 0444;24/05/2025;$ 834.671;cartagena
+445;mateo díaz;user445@example.com;372 555 0445;26/03/2025;$ 632.909;bogotá
+446;luis gómez;user446@example.com;312 555 0446;16/01/2025;$ 750.939;CALI
+447;luis de la cruz;user447@example.com;318 555 0447;18/07/2025;$ 904.353;cartagena
+448;luis ortiz;user448@example.com;332 555 0448;08/05/2023;$ 102.799;bogotá
+449;jorge díaz;user449@example.com;354 555 0449;18/07/2025;$ 636.029;CALI
+450;luis gómez;user450example.com;314 555 0450;28/09/2025;$ 726.915;bogotá

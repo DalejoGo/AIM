@@ -1,0 +1,261 @@
+{
+  "ok": true,
+  "result": {
+    "delimiter": ",",
+    "totalRows": 10,
+    "columns": [
+      {
+        "index": 0,
+        "label": "Nombre, completo",
+        "key": "nombre_completo",
+        "type": "text",
+        "titleCase": true,
+        "reason": "default",
+        "sampled": 9,
+        "matched": 9
+      },
+      {
+        "index": 1,
+        "label": "correo",
+        "key": "correo",
+        "type": "email",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 9,
+        "matched": 8
+      },
+      {
+        "index": 2,
+        "label": "Monto \"total\"",
+        "key": "monto_total",
+        "type": "amount",
+        "titleCase": false,
+        "reason": "header",
+        "sampled": 8,
+        "matched": 7
+      },
+      {
+        "index": 3,
+        "label": "nota",
+        "key": "nota",
+        "type": "text",
+        "titleCase": false,
+        "reason": "default",
+        "sampled": 8,
+        "matched": 8
+      }
+    ],
+    "emptyRows": [
+      11
+    ],
+    "duplicates": [],
+    "valid": [
+      {
+        "rowNumber": 4,
+        "raw": {
+          "nombre_completo": "Gómez, Ana",
+          "correo": "ana@example.com",
+          "monto_total": "1,200.50",
+          "nota": "línea 1\nlínea 2"
+        },
+        "clean": {
+          "nombre_completo": "Gómez, Ana",
+          "correo": "ana@example.com",
+          "monto_total": 1200.5,
+          "nota": "línea 1 línea 2"
+        },
+        "changed": [
+          "monto_total",
+          "nota"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 5,
+        "raw": {
+          "nombre_completo": "Ruiz \"el mono\" Carlos",
+          "correo": "carlos@example.com",
+          "monto_total": "950",
+          "nota": "sin problema"
+        },
+        "clean": {
+          "nombre_completo": "Ruiz \"el Mono\" Carlos",
+          "correo": "carlos@example.com",
+          "monto_total": 950,
+          "nota": "sin problema"
+        },
+        "changed": [
+          "nombre_completo"
+        ],
+        "errors": []
+      },
+      {
+        "rowNumber": 10,
+        "raw": {
+          "nombre_completo": "Vargas",
+          "correo": "vargas@example.com",
+          "monto_total": "20",
+          "nota": "y"
+        },
+        "clean": {
+          "nombre_completo": "Vargas",
+          "correo": "vargas@example.com",
+          "monto_total": 20,
+          "nota": "y"
+        },
+        "changed": [],
+        "errors": []
+      },
+      {
+        "rowNumber": 12,
+        "raw": {
+          "nombre_completo": "Mejía",
+          "correo": "mejia@example.com",
+          "monto_total": "30",
+          "nota": "nota con \"comillas\""
+        },
+        "clean": {
+          "nombre_completo": "Mejía",
+          "correo": "mejia@example.com",
+          "monto_total": 30,
+          "nota": "nota con \"comillas\""
+        },
+        "changed": [],
+        "errors": []
+      }
+    ],
+    "invalid": [
+      {
+        "rowNumber": 6,
+        "raw": {
+          "nombre_completo": "Díaz Luisa",
+          "correo": "luisa@example.com",
+          "monto_total": "  \"300\"",
+          "nota": "ok"
+        },
+        "clean": {
+          "nombre_completo": "Díaz Luisa",
+          "correo": "luisa@example.com",
+          "monto_total": "\"300\"",
+          "nota": "ok"
+        },
+        "changed": [
+          "monto_total"
+        ],
+        "errors": [
+          {
+            "key": "monto_total",
+            "label": "Monto \"total\"",
+            "message": "No se entiende «\"300\"» como monto. Usa puntos para los miles y coma para los decimales (1.200.000,50), o solo el punto decimal (1200000.5)."
+          }
+        ]
+      },
+      {
+        "rowNumber": 7,
+        "raw": {
+          "nombre_completo": "Pérez\"Juan",
+          "correo": "juan@example.com",
+          "monto_total": "100",
+          "nota": "mal cerrada"
+        },
+        "clean": {
+          "nombre_completo": "Pérez\"juan",
+          "correo": "juan@example.com",
+          "monto_total": 100,
+          "nota": "mal cerrada"
+        },
+        "changed": [
+          "nombre_completo"
+        ],
+        "errors": [
+          {
+            "key": "",
+            "label": "Fila",
+            "message": "Hay comillas sin cerrar en esta fila. Revisa que cada comilla que abre tenga su pareja."
+          }
+        ]
+      },
+      {
+        "rowNumber": 8,
+        "raw": {
+          "nombre_completo": "solo",
+          "correo": "dos",
+          "monto_total": "",
+          "nota": ""
+        },
+        "clean": {
+          "nombre_completo": "Solo",
+          "correo": "dos",
+          "monto_total": null,
+          "nota": null
+        },
+        "changed": [
+          "nombre_completo"
+        ],
+        "errors": [
+          {
+            "key": "",
+            "label": "Fila",
+            "message": "La fila tiene 2 campos y el encabezado tiene 4. Revisa si falta un separador entre dos valores."
+          }
+        ]
+      },
+      {
+        "rowNumber": 9,
+        "raw": {
+          "nombre_completo": "Torres",
+          "correo": "torres@example.com",
+          "monto_total": "10",
+          "nota": "x"
+        },
+        "clean": {
+          "nombre_completo": "Torres",
+          "correo": "torres@example.com",
+          "monto_total": 10,
+          "nota": "x"
+        },
+        "changed": [],
+        "errors": [
+          {
+            "key": "",
+            "label": "Fila",
+            "message": "La fila tiene 5 campos con datos y el encabezado tiene 4. Revisa si sobra un separador, por ejemplo una coma dentro de un monto sin comillas."
+          }
+        ]
+      },
+      {
+        "rowNumber": 13,
+        "raw": {
+          "nombre_completo": "Ríos",
+          "correo": "rios@example.com",
+          "monto_total": "40",
+          "nota": "sin cierre\nesto queda dentro del campo"
+        },
+        "clean": {
+          "nombre_completo": "Ríos",
+          "correo": "rios@example.com",
+          "monto_total": 40,
+          "nota": "sin cierre esto queda dentro del campo"
+        },
+        "changed": [
+          "nota"
+        ],
+        "errors": [
+          {
+            "key": "",
+            "label": "Fila",
+            "message": "Hay comillas sin cerrar en esta fila. Revisa que cada comilla que abre tenga su pareja."
+          }
+        ]
+      }
+    ],
+    "changedCells": 7,
+    "changesByType": {
+      "email": 0,
+      "phone": 0,
+      "date": 0,
+      "amount": 2,
+      "text": 5
+    }
+  }
+}

@@ -6,7 +6,16 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/dist", "!**/node_modules", "!**/.turbo", "!**/.astro", "!**/drizzle"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/node_modules",
+      "!**/.turbo",
+      "!**/.astro",
+      "!**/drizzle",
+      "!services/py-lab/contract/*.schema.json",
+      "!services/py-lab/tests/parity/expected"
+    ]
   },
   "formatter": {
     "indentStyle": "space",

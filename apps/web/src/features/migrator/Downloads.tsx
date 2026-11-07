@@ -9,6 +9,8 @@ interface Props {
   sourceName: string
   /** Called with the file name once the browser starts the download, to announce it. */
   onDownloaded: (fileName: string) => void
+  /** The source was an Excel workbook: the clean CSV uses commas, not "the file's" separator. */
+  fromWorkbook?: boolean
 }
 
 function saveCsv(fileName: string, csv: string): void {
@@ -23,7 +25,7 @@ function saveCsv(fileName: string, csv: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-export function Downloads({ result, sourceName, onDownloaded }: Props) {
+export function Downloads({ result, sourceName, onDownloaded, fromWorkbook = false }: Props) {
   const headingId = useId()
   const noteId = useId()
 
@@ -63,8 +65,8 @@ export function Downloads({ result, sourceName, onDownloaded }: Props) {
       <div id={noteId} class="prose-measure grid gap-2 text-step--1 text-muted">
         <p>
           Los datos limpios traen {plural(result.valid.length, 'fila válida', 'filas válidas')} con los
-          nombres de columna normalizados, separadas por {delimiterName(result.delimiter)} como tu archivo.
-          Los montos van con punto decimal y sin separador de miles.
+          nombres de columna normalizados, separadas por {delimiterName(result.delimiter)}
+          {fromWorkbook ? '' : ' como tu archivo'}. Los montos van con punto decimal y sin separador de miles.
         </p>
         <p>
           El archivo de errores trae {plural(result.invalid.length, 'fila', 'filas')} tal como venían, con su

@@ -19,8 +19,9 @@ export const CF_ANALYTICS_REPORT_ORIGIN = 'https://cloudflareinsights.com'
 
 export interface CspOptions {
   /**
-   * Extra origins the browser may call with fetch, e.g. the API Playground on Render
-   * (PUBLIC_PLAYGROUND_API_URL). Empty values are ignored; anything else must be an http(s) URL.
+   * Extra origins the browser may call with fetch: the API Playground (PUBLIC_PLAYGROUND_API_URL) and the
+   * migrator's Python engine (PUBLIC_PYLAB_API_URL), both on Render. Empty values are ignored; anything else
+   * must be an http(s) URL.
    */
   connectTo?: (string | undefined)[]
   /** Production builds with a Web Analytics token: allow its beacon to report page views. */
@@ -33,7 +34,9 @@ export function cspOrigin(url: string): string {
   try {
     parsed = new URL(url)
   } catch {
-    throw new Error(`CSP: "${url}" is not an absolute URL (check PUBLIC_PLAYGROUND_API_URL).`)
+    throw new Error(
+      `CSP: "${url}" is not an absolute URL (check PUBLIC_PLAYGROUND_API_URL and PUBLIC_PYLAB_API_URL).`,
+    )
   }
   if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
     throw new Error(`CSP: "${url}" must use https (or http locally).`)
