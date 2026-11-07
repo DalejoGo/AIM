@@ -1,6 +1,6 @@
 # CONTINUAR.md — Retomar el proyecto desde otro computador
 
-Punto de partida para seguir trabajando en AIM desde otro equipo (por ejemplo, en casa), con o sin Claude. Resume qué está hecho, dónde vive cada cosa, cómo preparar el equipo y qué falta. Actualizado: **2026-11-06**.
+Punto de partida para seguir trabajando en AIM desde otro equipo (por ejemplo, en casa), con o sin Claude. Resume qué está hecho, dónde vive cada cosa, cómo preparar el equipo y qué falta. Actualizado: **2026-11-07**.
 
 ## 1. Estado actual
 
@@ -11,8 +11,8 @@ Punto de partida para seguir trabajando en AIM desde otro equipo (por ejemplo, e
 | Panel privado | https://aimweb-9hc.pages.dev/admin/ | Validado por David: código por correo y lista de contactos |
 | Base de datos | Neon, proyecto **AIM** (`aws-us-east-1`), base `neondb` | Migraciones 0000–0004 |
 | API Playground (NestJS) | https://aimweb-api.onrender.com (Render, servicio `aimweb-api`, plan Free) | En vivo; se duerme sin uso |
-| n8n de la automatización | https://aimweb-n8n.onrender.com (Render, servicio `aimweb-n8n`, plan Free) | En `render.yaml` (DEC-021); sin estado y sin secretos |
-| Migrador en Python (FastAPI) | https://aimweb-pylab.onrender.com (Render, servicio `aimweb-pylab`, plan Free) | En `render.yaml` (DEC-022); no guarda archivos |
+| n8n de la automatización | https://aimweb-n8n.onrender.com (Render, servicio `aimweb-n8n`, plan Free) | En vivo (2026-11-07); sin estado y sin secretos (DEC-021) |
+| Migrador en Python (FastAPI) | https://aimweb-pylab.onrender.com (Render, servicio `aimweb-pylab`, plan Free) | En vivo (2026-11-07); no guarda archivos (DEC-022) |
 | Repositorio | https://github.com/DalejoGo/AIM (rama `main`, público) | CI en GitHub Actions: 1.258 pruebas unitarias (incluye 119 de Python y 14 del flujo de n8n) + 262 E2E |
 | Calidad en producción | Lighthouse (`docs/RENDIMIENTO.md`) | Rendimiento 98–99 móvil / 100 escritorio; accesibilidad, buenas prácticas y SEO 100 |
 | Seguridad | CSP estricta (DEC-019) + cabeceras en `_headers` | Sin `unsafe-inline` ni `unsafe-eval` |
@@ -106,7 +106,8 @@ El id del proyecto de Neon sale de `neon projects list`. Editar precios, textos,
 
 - [ ] Comprar `aimweb.dev` cuando se pueda y conectarlo (pasos en `docs/DESPLIEGUE.md`).
 - [ ] Revisión final de textos (lista en `docs/PLAN.md`, sección 8): precios, tiempos, preguntas frecuentes, privacidad y las reglas del flujo de n8n.
-- [ ] Si Render no creó solos `aimweb-n8n` y `aimweb-pylab`: Blueprint `AIMWEB` → **Manual Sync** (pasos en `docs/DESPLIEGUE.md`).
+- [ ] Probar en vivo la Automatización en vivo (requiere Turnstile, no se puede automatizar) y el motor de Python del Migrador con un Excel propio.
+- [ ] Opcional: pedir a GitHub Support que borre de la caché el commit viejo `d36fda5` (el historial se reescribió el 2026-11-07 para quitar el nombre de un cliente; ver `docs/DESPLIEGUE.md`).
 
 ### Desarrollo (siguiente fase)
 
