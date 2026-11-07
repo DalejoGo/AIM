@@ -1,6 +1,8 @@
 packages:
   - apps/*
   - packages/*
+  # The n8n flow and the engine that runs it on the edge (automations/README.md).
+  - automations
   # Python services; their package.json scripts call uv (services/py-lab/README.md).
   - services/*
 

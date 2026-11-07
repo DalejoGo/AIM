@@ -2,19 +2,27 @@ import type { AutomationOutcome, AutomationStepEvent } from '@aim/contracts'
 import { batch, computed, signal } from '@preact/signals'
 import type { RunEvent, RunOptions, RunRequest } from './client'
 import type { Problem } from './errors'
-import { announceStep, formatMs, OUTCOME_LABELS, type StepsSoFar, stepStatuses, TIER_LABELS } from './steps'
-
-/** The gap between two steps appearing, so each one can be read; their real times are shown as they came. */
-export const STEP_PACE_MS = 350
-/** How often the wait for n8n to wake up is redrawn. */
-export const WAKE_TICK_MS = 1_000
+import {
+  announceStep,
+  formatMs,
+  formatSeconds,
+  OUTCOME_LABELS,
+  type StepsSoFar,
+  stepStatuses,
+  TIER_LABELS,
+} from './steps'
 
 /**
- * idle: nothing sent yet; sending: waiting for the API's answer; waking: n8n is asleep and the API is waking
- * it; running: n8n accepted the run and the steps arrive; done; failed: problem says why; stopped: the visitor
- * stopped it.
+ * The gap between two steps appearing. The flow runs in under a millisecond, so every step arrives at once;
+ * this cascade lets the eye follow them. Each step still shows the real time it took.
  */
-export type Phase = 'idle' | 'sending' | 'waking' | 'running' | 'done' | 'failed' | 'stopped'
+export const STEP_PACE_MS = 120
+
+/**
+ * idle: nothing sent yet; sending: waiting for the API's answer; running: the API created the run and the
+ * steps arrive; done; failed: problem says why; stopped: the visitor stopped it.
+ */
+export type Phase = 'idle' | 'sending' | 'running' | 'done' | 'failed' | 'stopped'
 
 export type StartRun = (
   request: RunRequest,
@@ -31,11 +39,19 @@ export interface AutomationRunDeps {
 
 export type SubmitResult = 'sent' | 'ignored'
 
+export interface RunResult {
+  outcome: AutomationOutcome
+  /** How long the flow took, as the API measured it. */
+  totalMs: number
+  /** Measured here: from the visitor's submit until the result was shown. */
+  clickToResultMs: number
+}
+
 type Queued = { kind: 'step'; event: AutomationStepEvent } | { kind: 'final'; apply: () => void }
 
 /**
- * State of the automation demo without DOM: the run's phase, the wait for n8n, the steps as they are revealed
- * (one every STEP_PACE_MS at most), the result and what went wrong. The component renders it and moves focus.
+ * State of the automation demo without DOM: the run's phase, the steps as they are revealed (one every
+ * STEP_PACE_MS at most), the result and what went wrong. The component renders it and moves focus.
  */
 export function createAutomationRun({
   start,
@@ -45,16 +61,12 @@ export function createAutomationRun({
   const phase = signal<Phase>('idle')
   const runId = signal<string | null>(null)
   const steps = signal<StepsSoFar>({})
-  const result = signal<{ outcome: AutomationOutcome; totalMs: number } | null>(null)
+  const result = signal<RunResult | null>(null)
   const problem = signal<Problem | null>(null)
-  /** How long n8n has been waking up, redrawn every second while it does. */
-  const wakeMs = signal(0)
-  /** How long n8n took to wake up, once it did; null when it was awake. */
-  const wokeAfterMs = signal<number | null>(null)
-  /** What the live region says: the wait, each step and the result. Not every tick. */
+  /** What the live region says: the request, each step and the result. */
   const announcement = signal('')
 
-  const busy = computed(() => ['sending', 'waking', 'running'].includes(phase.value))
+  const busy = computed(() => ['sending', 'running'].includes(phase.value))
   const statuses = computed(() => {
     const run =
       phase.value === 'running'
@@ -73,16 +85,8 @@ export function createAutomationRun({
   let queue: Queued[] = []
   let paceTimer: ReturnType<typeof setTimeout> | null = null
   let lastReveal = Number.NEGATIVE_INFINITY
-  let wakeTimer: ReturnType<typeof setInterval> | null = null
-  /** The API's last report of the wait, and when it arrived here. */
-  let wakeBase: { serverMs: number; at: number } | null = null
-
-  const currentWake = () => (wakeBase ? wakeBase.serverMs + Math.max(0, clock() - wakeBase.at) : 0)
-
-  function stopWakeTimer() {
-    if (wakeTimer !== null) clearInterval(wakeTimer)
-    wakeTimer = null
-  }
+  /** When the visitor submitted the current run. */
+  let sentAt = 0
 
   function clearQueue() {
     if (paceTimer !== null) clearTimeout(paceTimer)
@@ -138,32 +142,9 @@ export function createAutomationRun({
   function onEvent(event: RunEvent) {
     switch (event.type) {
       case 'run':
-        runId.value = event.runId
-        break
-      case 'waking': {
-        const first = wakeBase === null
-        wakeBase = { serverMs: event.elapsedMs, at: clock() }
         batch(() => {
-          phase.value = 'waking'
-          wakeMs.value = event.elapsedMs
-          if (first) {
-            announcement.value =
-              'El servidor gratuito de n8n estaba dormido. Despertarlo tarda de 1 a 2 minutos; la demo sigue sola.'
-          }
-        })
-        if (wakeTimer === null) {
-          wakeTimer = setInterval(() => {
-            wakeMs.value = currentWake()
-          }, WAKE_TICK_MS)
-        }
-        break
-      }
-      case 'started':
-        stopWakeTimer()
-        batch(() => {
-          if (wakeBase) wokeAfterMs.value = currentWake()
+          runId.value = event.runId
           phase.value = 'running'
-          announcement.value = 'n8n recibió la solicitud. El flujo está corriendo.'
         })
         break
       case 'step':
@@ -172,12 +153,18 @@ export function createAutomationRun({
       case 'done':
         enqueue({
           kind: 'final',
-          apply: () =>
+          apply: () => {
+            const next: RunResult = {
+              outcome: event.outcome,
+              totalMs: event.totalMs,
+              clickToResultMs: Math.max(0, clock() - sentAt),
+            }
             batch(() => {
-              result.value = { outcome: event.outcome, totalMs: event.totalMs }
+              result.value = next
               phase.value = 'done'
-              announcement.value = summary(steps.value, event.outcome, event.totalMs)
-            }),
+              announcement.value = summary(steps.value, next)
+            })
+          },
         })
         break
     }
@@ -189,17 +176,14 @@ export function createAutomationRun({
     const abort = new AbortController()
     controller = abort
     clearQueue()
-    stopWakeTimer()
-    wakeBase = null
     lastReveal = Number.NEGATIVE_INFINITY
+    sentAt = clock()
     batch(() => {
       phase.value = 'sending'
       runId.value = null
       steps.value = {}
       result.value = null
       problem.value = null
-      wakeMs.value = 0
-      wokeAfterMs.value = null
       announcement.value = 'Enviando la solicitud de prueba…'
     })
     try {
@@ -214,7 +198,6 @@ export function createAutomationRun({
         kind: 'final',
         apply: () =>
           batch(() => {
-            stopWakeTimer()
             problem.value = found
             phase.value = 'failed'
             announcement.value = ''
@@ -224,7 +207,6 @@ export function createAutomationRun({
       // Only an abort rejects: the visitor stopped the run. Whatever it still delivers is dropped.
       if (current !== generation) return 'sent'
       generation++
-      stopWakeTimer()
       flush()
       batch(() => {
         phase.value = 'stopped'
@@ -236,7 +218,7 @@ export function createAutomationRun({
     return 'sent'
   }
 
-  /** Closes the stream: the API stops waking n8n and polling the steps as soon as the connection ends. */
+  /** Closes the stream. */
   function stop() {
     controller?.abort()
   }
@@ -247,16 +229,12 @@ export function createAutomationRun({
     controller?.abort()
     controller = null
     clearQueue()
-    stopWakeTimer()
-    wakeBase = null
     batch(() => {
       phase.value = 'idle'
       runId.value = null
       steps.value = {}
       result.value = null
       problem.value = null
-      wakeMs.value = 0
-      wokeAfterMs.value = null
       announcement.value = ''
     })
   }
@@ -267,8 +245,6 @@ export function createAutomationRun({
     steps,
     result,
     problem,
-    wakeMs,
-    wokeAfterMs,
     announcement,
     busy,
     statuses,
@@ -280,8 +256,8 @@ export function createAutomationRun({
 
 export type AutomationRun = ReturnType<typeof createAutomationRun>
 
-/** The sentence read when the run ends: the outcome, its priority and how long it took. */
-export function summary(steps: StepsSoFar, outcome: AutomationOutcome, totalMs: number): string {
+/** The sentence read when the run ends: the outcome, its priority, how long the flow took and the wait. */
+export function summary(steps: StepsSoFar, { outcome, totalMs, clickToResultMs }: RunResult): string {
   const tier = steps.scored ? `, ${TIER_LABELS[steps.scored.data.tier].toLowerCase()}` : ''
-  return `Listo: ${OUTCOME_LABELS[outcome].toLowerCase()}${tier}. El flujo tardó ${formatMs(totalMs)}.`
+  return `Listo: ${OUTCOME_LABELS[outcome].toLowerCase()}${tier}. El flujo tardó ${formatMs(totalMs)}; del clic al resultado, ${formatSeconds(clickToResultMs)}.`
 }

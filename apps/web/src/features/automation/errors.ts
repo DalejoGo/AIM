@@ -11,19 +11,15 @@ export type ProblemKind =
   | 'invalid'
   /** Turnstile refused the token or could not be checked: a new verification fixes it. */
   | 'captcha'
-  /** 429 for this visitor or 503 daily_limit for everyone. */
-  | 'limited'
-  /** 503 automation_unavailable, or no API behind /api at all (404). */
+  /** No API behind /api at all (404): this deploy has no automation. */
   | 'paused'
-  /** Error events of the stream: n8n did not wake up or refused the webhook, the flow took too long… */
-  | 'n8n_unreachable'
-  | 'timeout'
+  /** An `error` event of the stream: the flow failed on the server. */
   | 'internal'
   /** No connection, or it dropped during the run. */
   | 'network'
   /** The stream ended without `done` or `error`. */
   | 'interrupted'
-  /** Anything else the server answered (403 origin, 5xx, an unexpected body). */
+  /** Anything else the server answered (403 origin, 413, 5xx, an unexpected body). */
   | 'server'
 
 export interface Problem {
@@ -31,8 +27,6 @@ export interface Problem {
   message: string
   /** Field errors of a 400, by path (`lead.email`). */
   fields: Record<string, string[]>
-  /** Seconds to wait (429, daily limit), when the API said it. */
-  retryAfter: number | null
 }
 
 /** Client codes of AutomationStreamError. */
@@ -60,29 +54,15 @@ export const TEXTS = {
   paused: 'La demo de automatización está en pausa.',
   unknown: 'Algo falló al ejecutar la demo. Inténtalo de nuevo en unos minutos.',
   stream: {
-    n8n_unreachable: 'No pudimos despertar el servidor de n8n. Inténtalo de nuevo en unos minutos.',
-    timeout: 'n8n no terminó el flujo a tiempo. Inténtalo de nuevo en unos minutos.',
     internal: 'Algo falló de nuestro lado durante la ejecución. Inténtalo de nuevo en unos minutos.',
   } satisfies Record<AutomationErrorCode, string>,
-  rateLimited: (wait: string | null) =>
-    wait === null
-      ? 'Ejecutaste la demo varias veces seguidas. Espera unos minutos y vuelve a intentarlo.'
-      : `Ejecutaste la demo varias veces seguidas. Vuelve a intentarlo en ${wait}.`,
 }
 
-/** "5 minutos", "2 horas". */
-export function waitText(seconds: number): string {
-  const minutes = Math.max(1, Math.ceil(seconds / 60))
-  if (minutes < 60) return `${minutes} ${minutes === 1 ? 'minuto' : 'minutos'}`
-  const hours = Math.ceil(minutes / 60)
-  return `${hours} ${hours === 1 ? 'hora' : 'horas'}`
-}
-
-const problem = (
-  kind: ProblemKind,
-  message: string,
-  extra: Partial<Pick<Problem, 'fields' | 'retryAfter'>> = {},
-): Problem => ({ kind, message, fields: extra.fields ?? {}, retryAfter: extra.retryAfter ?? null })
+const problem = (kind: ProblemKind, message: string, fields: Problem['fields'] = {}): Problem => ({
+  kind,
+  message,
+  fields,
+})
 
 /** An `error` event of the stream. */
 export function streamErrorProblem(code: AutomationErrorCode, message: string): Problem {
@@ -96,16 +76,13 @@ function httpProblem(error: ApiRequestError): Problem {
   const { status, code, retryAfter } = error
   const own = !genericBody(error) && error.code !== 'invalid_response'
   if (status === 0) return problem('network', TEXTS.network)
-  if (status === 400) return problem('invalid', error.message, { fields: error.fields })
+  if (status === 400) return problem('invalid', error.message, error.fields)
   if (code === 'captcha_failed' || code === 'captcha_unavailable') return problem('captcha', error.message)
-  if (status === 429 || code === 'daily_limit') {
-    const message = own ? error.message : TEXTS.rateLimited(retryAfter === null ? null : waitText(retryAfter))
-    return problem('limited', message, { retryAfter })
-  }
-  // 404: this deploy has no automation behind /api. Either way the visitor needs the other channels.
-  if (code === 'automation_unavailable' || status === 404) return problem('paused', TEXTS.paused)
+  // 404: this deploy has no automation behind /api. The visitor needs the other channels.
+  if (status === 404) return problem('paused', TEXTS.paused)
   if (code === 'invalid_response') return problem('server', TEXTS.invalid)
-  return problem('server', own ? error.message : messageForStatus(status))
+  // Anything else (413, 5xx, a proxy's 429…): the API's own message, or a generic one for the status.
+  return problem('server', own ? error.message : messageForStatus(status, retryAfter))
 }
 
 /** Maps whatever the client threw to the problem the island shows. */

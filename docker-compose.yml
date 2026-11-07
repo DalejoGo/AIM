@@ -1,18 +1,6 @@
 # Local services only. Ports bind to 127.0.0.1 and differ from the agencia project's so both can run at once.
 name: aim
 
-x-n8n: &n8n
-  build: ./automations
-  image: aim-n8n:local
-  environment: &n8n-env
-    # The site + API of `pnpm dev:full` (127.0.0.1:8789 on the host; Docker Desktop on WSL2 reaches it here).
-    AIM_SITE_ORIGIN: ${AIM_SITE_ORIGIN:-http://host.docker.internal:8789}
-    N8N_WEBHOOK_URL: http://127.0.0.1:5679/
-    # host.docker.internal is a private address, which the SSRF protection would block (on in Render).
-    N8N_SSRF_PROTECTION_ENABLED: 'false'
-  extra_hosts: ['host.docker.internal:host-gateway']
-  ports: ['127.0.0.1:5679:5678']
-
 services:
   postgres:
     image: postgres:17.6-alpine
@@ -36,24 +24,22 @@ services:
     image: axllent/mailpit:v1.27
     ports: ['127.0.0.1:1026:1025', '127.0.0.1:8026:8025']
 
-  # Phase 4: the Lab's "Automatización en vivo" (docs/AUTOMATIZACION.md, automations/README.md).
-  # The same image as Render: stateless, webhook only, no editor. With `pnpm dev:full` running:
-  #   docker compose --profile automations up -d --build n8n
-  n8n:
-    <<: *n8n
-    profiles: [automations]
-
-  # The same image with the n8n editor, to change the flow and export it (automations/README.md).
-  # Uses the same port: run either n8n or n8n-editor.
+  # The n8n editor, to design the Lab's "Automatización en vivo" flow and export it to the repo
+  # (automations/README.md). The site runs the exported flow itself (DEC-023); n8n does not run in production.
   #   docker compose --profile n8n-editor up -d --build n8n-editor   → http://localhost:5679
   n8n-editor:
-    <<: *n8n
+    build: ./automations
+    image: aim-n8n:local
     profiles: [n8n-editor]
     environment:
-      <<: *n8n-env
       AIM_N8N_MODE: editor
       N8N_EDITOR_BASE_URL: http://localhost:5679/
       N8N_SECURE_COOKIE: 'false'
+      # Required by the image. The report nodes post here only if you run the whole flow from the editor.
+      AIM_SITE_ORIGIN: http://host.docker.internal:8789
+      N8N_SSRF_PROTECTION_ENABLED: 'false'
+    extra_hosts: ['host.docker.internal:host-gateway']
+    ports: ['127.0.0.1:5679:5678']
     volumes: [n8n-editor:/home/node/.n8n]
 
 volumes:

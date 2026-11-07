@@ -23,8 +23,6 @@ import {
 } from './lead'
 import { RunPanel } from './RunPanel'
 import { createAutomationRun, type StartRun } from './run'
-import { WakeNotice } from './WakeNotice'
-import { createWakeWatch, fetchStatus } from './wake'
 
 export interface AutomationDemoProps {
   /** The services of src/content/services, in their order: the lead's "service" options. */
@@ -42,7 +40,6 @@ const LOAD_FAILED: Problem = {
   kind: 'server',
   message: 'No se pudo cargar esta parte de la demo. Recarga la página e inténtalo de nuevo.',
   fields: {},
-  retryAfter: null,
 }
 
 /** The client (and zod with it) loads only when the visitor runs the flow. */
@@ -56,7 +53,10 @@ const start: StartRun = async (request, options) => {
   return client.runAutomation(request, options)
 }
 
-/** Lab demo "Automatización en vivo": a test lead goes through a real n8n flow, step by step. */
+/**
+ * Lab demo "Automatización en vivo": a test lead goes through the flow designed in n8n
+ * (automations/workflows/lead-demo.json), which the site's API runs, step by step.
+ */
 export function AutomationDemo({
   services,
   turnstileSiteKey,
@@ -64,8 +64,6 @@ export function AutomationDemo({
   workflowUrl,
 }: AutomationDemoProps) {
   const run = useMemo(() => createAutomationRun({ start }), [])
-  // Opening the page already wakes n8n up on Render, while the visitor reads and fills in the form.
-  const wake = useMemo(() => createWakeWatch({ check: (signal) => fetchStatus(signal) }), [])
   const form = useSignal<LeadForm>(EMPTY_FORM)
   const errors = useSignal<LeadErrors>({})
   /** How many examples were loaded: the button cycles through them. */
@@ -73,7 +71,7 @@ export function AutomationDemo({
   const token = useSignal<string | null>(null)
   const resetKey = useSignal(0)
   const missingToken = useSignal(false)
-  /** A problem that belongs next to the form (verification, rate limits) rather than in the run. */
+  /** A problem that belongs next to the form (the verification) rather than in the run. */
   const formProblem = useSignal<string | null>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const resultRef = useRef<HTMLDivElement>(null)
@@ -91,17 +89,6 @@ export function AutomationDemo({
   }, [phase])
 
   useEffect(() => () => run.stop(), [run])
-
-  useEffect(() => {
-    const onVisibility = () => void wake.setPageHidden(document.visibilityState === 'hidden')
-    onVisibility()
-    void wake.start()
-    document.addEventListener('visibilitychange', onVisibility)
-    return () => {
-      document.removeEventListener('visibilitychange', onVisibility)
-      wake.stop()
-    }
-  }, [wake])
 
   function update(field: LeadField, value: string) {
     form.value = { ...form.value, [field]: value }
@@ -132,7 +119,7 @@ export function AutomationDemo({
       errors.value = found
       if (Object.keys(found).length > 0) focusFirstError(found)
       else formProblem.value = problem.message
-    } else if (problem.kind === 'captcha' || problem.kind === 'limited') {
+    } else if (problem.kind === 'captcha') {
       formProblem.value = problem.message
       setTimeout(() => alertRef.current?.focus(), 0)
     }
@@ -154,8 +141,6 @@ export function AutomationDemo({
       focusSoon(TURNSTILE_ID)
       return
     }
-    // The run reports its own wait for n8n (`waking` events) from here on.
-    wake.stop()
     // Each Turnstile token is good for one run: ask for the next one now.
     token.value = null
     resetKey.value += 1
@@ -182,8 +167,8 @@ export function AutomationDemo({
             Solicitud de prueba
           </h2>
           <p class="text-step--1 text-muted">
-            Llena el formulario como si fueras un cliente. n8n lo valida, lo califica, decide la ruta y
-            redacta la respuesta.
+            Llena el formulario como si fueras un cliente. El flujo valida la solicitud, la califica, decide
+            la ruta, redacta la respuesta y la registra.
           </p>
         </div>
 
@@ -193,15 +178,13 @@ export function AutomationDemo({
             <strong class="font-semibold">
               Usa datos de prueba: el correo no se envía, solo se muestra.
             </strong>{' '}
-            La ejecución y sus pasos se borran en una hora.{' '}
+            La solicitud se procesa en memoria y no se guarda.{' '}
             <a href="/privacidad/" class="link">
               Política de privacidad
             </a>
             .
           </p>
         </div>
-
-        <WakeNotice watch={wake} />
 
         <div class="grid gap-2">
           <div>

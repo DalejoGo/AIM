@@ -1,11 +1,10 @@
-// Structure of automations/workflows/lead-demo.json against docs/AUTOMATIZACION.md (§2–3), without Docker.
-// The expressions themselves run in the image build: scripts/prepare-image.sh fails unless the seven steps
-// reach a stand-in of the site in order.
+// Structure of workflows/lead-demo.json against docs/AUTOMATIZACION.md, without Docker. What the expressions
+// compute is checked by parity.test.ts (the edge's flow against a recording of a real n8n).
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { describe, it } from 'node:test'
+import { describe, it } from 'vitest'
 
-const workflow = JSON.parse(readFileSync(new URL('./workflows/lead-demo.json', import.meta.url), 'utf8'))
+const workflow = JSON.parse(readFileSync(new URL('../workflows/lead-demo.json', import.meta.url), 'utf8'))
 const byName = new Map(workflow.nodes.map((node) => [node.name, node]))
 const ofType = (type) => workflow.nodes.filter((node) => node.type === `n8n-nodes-base.${type}`)
 const reports = ofType('httpRequest')

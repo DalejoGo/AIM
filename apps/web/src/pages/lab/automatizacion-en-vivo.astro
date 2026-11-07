@@ -16,26 +16,30 @@ const workflowUrl = sourceFile('automations/workflows/lead-demo.json')
     <h2 id="automation-proves" class="text-step-1 font-semibold">Qué demuestra</h2>
     <ul class="prose-measure grid list-disc gap-1.5 pl-5">
       <li>
-        <strong class="font-semibold">Webhooks:</strong> la API de este sitio dispara un flujo de n8n real y n8n reporta
-        cada paso de vuelta.
+        <strong class="font-semibold">Diseñado en n8n:</strong> el flujo se arma y se prueba en n8n y se exporta como
+        JSON al repositorio. El sitio lee sus reglas de ese archivo.
       </li>
       <li>
-        <strong class="font-semibold">Tiempo real con SSE:</strong> ves cada paso apenas ocurre, sin recargar ni
-        consultar a cada rato.
+        <strong class="font-semibold">Rápido:</strong> la API del sitio, en Cloudflare, lo ejecuta en milisegundos, sin
+        un servidor que despertar, y te envía cada paso con Server-Sent Events.
       </li>
       <li>
-        <strong class="font-semibold">n8n sin secretos:</strong> no conoce la base de datos ni guarda llaves; solo
-        recibe un token que vence en 5 minutos y sirve para una ejecución.
+        <strong class="font-semibold">Probado contra n8n real:</strong> las pruebas comparan cada paso con lo que n8n
+        respondió para los mismos contactos de prueba.
       </li>
       <li>
-        <strong class="font-semibold">Protección contra abuso:</strong> verificación de Turnstile en cada ejecución,
-        límite por conexión y cupo diario.
+        <strong class="font-semibold">Nada se guarda:</strong> tu solicitud se procesa en memoria y el correo que redacta
+        el flujo nunca se envía.
+      </li>
+      <li>
+        <strong class="font-semibold">Protección contra bots:</strong> cada ejecución pasa por la verificación de
+        Turnstile.
       </li>
     </ul>
     <p class="text-step--1">
       <a href={workflowUrl} target="_blank" rel="noopener noreferrer" class="link"
         >Mira el flujo de n8n en GitHub<span class="sr-only"> (se abre en otra pestaña)</span></a
-      >: es el mismo JSON que corre en el servidor.
+      >: es el JSON exportado de n8n del que el sitio toma sus reglas.
     </p>
   </section>
   <noscript>

@@ -1,0 +1,154 @@
+[
+  {
+    "id": "hot-corporate",
+    "runId": "0b7c6a2e-5f1d-4c3a-9e8b-7a6d5c4b3a21",
+    "lead": {
+      "name": "Laura Pérez",
+      "company": "Café La Montaña",
+      "email": "laura@cafelamontana.co",
+      "service": "automation",
+      "serviceTitle": "Automatizaciones",
+      "budget": "500-2000",
+      "timeline": "month",
+      "message": "Queremos que los pedidos de WhatsApp lleguen solos a una hoja y avisen al equipo de despachos."
+    }
+  },
+  {
+    "id": "max-score",
+    "runId": "f3a1c2d4-8b7e-4f6a-9c5d-1e2f3a4b5c6d",
+    "lead": {
+      "name": "Andrés Felipe Rojas",
+      "company": "Logística Andina S.A.S.",
+      "email": "arojas@logisticaandina.com.co",
+      "service": "automation",
+      "serviceTitle": "Automatizaciones",
+      "budget": "gt5000",
+      "timeline": "urgent",
+      "message": "Tenemos tres bodegas y cada una lleva el inventario en un Excel distinto. Necesitamos consolidarlo todos los días, avisar cuando un producto baje del mínimo y generar las órdenes de compra para aprobación."
+    }
+  },
+  {
+    "id": "warm-personal-email",
+    "runId": "9d8c7b6a-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "lead": {
+      "name": "Camila Torres",
+      "company": "Estudio Torres",
+      "email": "camila.torres@gmail.com",
+      "service": "app",
+      "serviceTitle": "Aplicativos web",
+      "budget": "2000-5000",
+      "timeline": "flexible",
+      "message": "Quiero una app para agendar citas de mi estudio de diseño."
+    }
+  },
+  {
+    "id": "cold-short-message",
+    "runId": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+    "lead": {
+      "name": "Pedro",
+      "company": "Ferretería El Tornillo",
+      "email": "pedro@hotmail.com",
+      "service": "web",
+      "serviceTitle": "Páginas web",
+      "budget": "lt500",
+      "timeline": "flexible",
+      "message": "Necesito una página."
+    }
+  },
+  {
+    "id": "rejected-links",
+    "runId": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e",
+    "lead": {
+      "name": "Promo Bot",
+      "company": "Ofertas",
+      "email": "ventas@ofertas-ya.com",
+      "service": "content",
+      "serviceTitle": "Blogs y contenido web",
+      "budget": "unknown",
+      "timeline": "urgent",
+      "message": "Mira https://ofertas-ya.com y http://clic.example/1 y también www.otro-sitio.net para más."
+    }
+  },
+  {
+    "id": "two-links-allowed",
+    "runId": "3c4d5e6f-7a8b-4c9d-8e0f-1a2b3c4d5e6f",
+    "lead": {
+      "name": "Valentina Ruiz",
+      "company": "Ruiz & Asociados",
+      "email": "valentina@ruizasociados.co",
+      "service": "web",
+      "serviceTitle": "Páginas web",
+      "budget": "500-2000",
+      "timeline": "urgent",
+      "message": "Nos gustan https://ejemplo.co y www.referencia.com; queremos algo parecido para el bufete."
+    }
+  },
+  {
+    "id": "no-company",
+    "runId": "4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a",
+    "lead": {
+      "name": "María José Gómez",
+      "email": "mariajo@outlook.com",
+      "service": "chatbot",
+      "serviceTitle": "Chatbots",
+      "budget": "unknown",
+      "timeline": "month",
+      "message": "Me gustaría un chatbot que responda las preguntas frecuentes de mi tienda en Instagram y WhatsApp."
+    }
+  },
+  {
+    "id": "subdomain-personal-email",
+    "runId": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+    "lead": {
+      "name": "Ana",
+      "company": "Panadería Ana",
+      "email": "ana@mail.yahoo.com.co",
+      "service": "automation",
+      "serviceTitle": "Automatizaciones",
+      "budget": "unknown",
+      "timeline": "urgent",
+      "message": "Quiero que los pedidos del formulario lleguen a mi correo y a una hoja de cálculo."
+    }
+  },
+  {
+    "id": "multiline-emoji",
+    "runId": "6f7a8b9c-0d1e-4f2a-9b3c-4d5e6f7a8b9c",
+    "lead": {
+      "name": "Sebastián  Ñúñez",
+      "company": "Ñapa Café ☕",
+      "email": "sebas@napacafe.co",
+      "service": "content",
+      "serviceTitle": "Blogs y contenido web",
+      "budget": "lt500",
+      "timeline": "month",
+      "message": "Hola 👋\n\nQueremos un blog con recetas.\nY publicar dos veces por semana."
+    }
+  },
+  {
+    "id": "exactly-80-characters",
+    "runId": "7a8b9c0d-1e2f-4a3b-8c4d-5e6f7a8b9c0d",
+    "lead": {
+      "name": "Julián Castro",
+      "company": "Castro Ingeniería",
+      "email": "julian@castroing.co",
+      "service": "app",
+      "serviceTitle": "Aplicativos web",
+      "budget": "2000-5000",
+      "timeline": "month",
+      "message": "Necesitamos un portal para que los clientes vean el avance de sus obras al día.."
+    }
+  },
+  {
+    "id": "rejected-personal-no-company",
+    "runId": "8b9c0d1e-2f3a-4b4c-9d5e-6f7a8b9c0d1e",
+    "lead": {
+      "name": "Spam",
+      "email": "spam@icloud.com",
+      "service": "web",
+      "serviceTitle": "Páginas web",
+      "budget": "lt500",
+      "timeline": "flexible",
+      "message": "https://a.example https://b.example https://c.example"
+    }
+  }
+]

@@ -149,35 +149,19 @@ La imagen usa `node:22.23.4-alpine3.24` fijada por digest (descargada del espejo
 
 **Si el límite por IP se agota para todos a la vez**, la API está tomando la IP del proxy y no la del visitante: revisa cuántos proxies hay delante y ajusta `trust proxy` en `apps/api/src/app.ts` (hoy es 1).
 
-## Automatización en vivo (n8n en Render)
+## Automatización en vivo
 
-El n8n de la demo **Automatización en vivo** (DEC-021) corre en **Render, plan gratuito**, como el servicio `aimweb-n8n` de `render.yaml`. El protocolo entre el sitio y n8n está en `docs/AUTOMATIZACION.md`; cómo editar el flujo, en `automations/README.md`.
+Desde el 2026-11-07 (DEC-023) el flujo de la demo **Automatización en vivo** corre **dentro del sitio**, en Cloudflare: se publica con `pnpm deploy:web` como el resto de la API y no necesita ningún servicio aparte. n8n queda solo para diseñar el flujo en local (`automations/README.md`); el contrato está en `docs/AUTOMATIZACION.md`.
 
-- **URL:** https://aimweb-n8n.onrender.com (servicio `aimweb-n8n`, creado por el Blueprint `AIMWEB`; en vivo desde el 2026-11-07, verificado: `/healthz/readiness`, webhook `202`, rutas de administración `404`). Si cambia, actualiza `AUTOMATION_N8N_URL` en `apps/web/wrangler.jsonc` y vuelve a publicar el sitio.
-- **Sin estado y sin secretos:** la imagen ya trae el flujo importado y publicado, y el webhook registrado (`automations/scripts/prepare-image.sh`). Al arrancar solo corre `n8n start`. El editor, el registro del dueño y la API pública quedan cerrados desde internet; solo responden `/healthz`, `/healthz/readiness` y `POST /webhook/aim-lead-demo`.
-- **El build prueba el flujo:** al construir la imagen se ejecuta el flujo completo contra un sitio de mentira; si los siete pasos no llegan en orden, el build falla y Render no publica.
-- **Única variable:** `AIM_SITE_ORIGIN` (a dónde reporta cada paso). Render pone `PORT` y `RENDER_EXTERNAL_URL`.
-- **Medido con 0,1 CPU y 512 MB (como Render Free):** listo en 57–77 s tras despertar; la primera llamada tarda 6–8 s y el flujo completo 3–6 s; memoria de 340–400 MB. El sitio espera hasta `AUTOMATION_WAKE_TIMEOUT_SECONDS` (180 s) mostrando el tiempo.
-- **Versión:** n8n 2.45.2 fijada por digest (publicada el 2026-10-22, canal beta en ese momento). Pasar a la estable 2.45.4 o más nueva cuando cumpla los 14 días de DEC-002 (desde el 2026-11-09): cambia la etiqueta y el digest en `automations/Dockerfile`; el build vuelve a probar el flujo.
+- **Sin variables ni base de datos propias:** usa la llave de Turnstile del sitio y nada más. La migración 0005 borró sus tablas de Neon.
+- **Cambiar las reglas:** editarlas en n8n, exportar (`bash automations/scripts/editor-sync.sh export`), hacer commit y volver a publicar el sitio.
 
-Se publica solo en cada push a `main` que toque `automations/` y pase la CI (`autoDeployTrigger: checksPass` + `buildFilter`).
+### Lo que hace David (una vez): borrar el n8n de Render
 
-### Probar la imagen en local
+El servicio `aimweb-n8n` salió de `render.yaml`, pero Render no borra los servicios que se quitan del Blueprint. Ya no recibe tráfico, así que se queda dormido y no gasta horas; borrarlo es solo orden:
 
-```bash
-pnpm dev:full                                             # sitio + API en http://127.0.0.1:8789
-docker compose --profile automations up -d --build n8n    # n8n en http://127.0.0.1:5679
-```
-
-Con `AUTOMATION_N8N_URL=http://127.0.0.1:5679` en `apps/web/.dev.vars`, la demo de `/lab/automatizacion-en-vivo/` usa ese n8n. Apagarlo: `docker compose --profile automations rm -sf n8n` (**nunca** `down -v`: borra también el Postgres local).
-
-### Lo que hace David (una vez) para los dos servicios nuevos
-
-Los servicios `aimweb-n8n` y `aimweb-pylab` ya están en `render.yaml`. Si Render no los creó solo tras el push:
-
-1. En https://dashboard.render.com → **Blueprints** → `AIMWEB`.
-2. Si muestra cambios pendientes, pulsa **Manual Sync** (o **Sync**) y confirma la creación de `aimweb-n8n` y `aimweb-pylab` (Docker, plan Free, Virginia).
-3. Cuando ambos digan **Live**, abre `https://aimweb-n8n.onrender.com/healthz/readiness` y `https://aimweb-pylab.onrender.com/health`: deben responder `{"status":"ok"...}`. Si Render les puso otro nombre, avísale a Claude la URL real.
+1. En https://dashboard.render.com abre el servicio `aimweb-n8n`.
+2. **Settings** → al final, **Delete Web Service** → escribe el nombre para confirmar.
 
 ## Migrador en Python (FastAPI en Render)
 
@@ -213,4 +197,5 @@ curl http://localhost:8000/health          # y http://localhost:8000/docs en el 
 
 - 2026-11-06: primer despliegue. Wrangler 4.152 envía `pages project create` a Workers por defecto, y los Workers quedan bajo el subdominio de la cuenta (`*.workers.dev`), que deja ver el nombre del cliente de la agencia. Se borraron esos dos Workers y el proyecto se creó como Pages clásico (una sola vez con `--force`; las publicaciones siguientes no lo necesitan).
 - 2026-11-07: el primer build de `aimweb-n8n` en Render falló con `429 Too Many Requests`: Render construye desde IP compartidas que agotan el límite de descargas anónimas de Docker Hub. Las imágenes base ahora salen de registros sin ese límite y con **el mismo digest**: n8n de `ghcr.io/n8n-io/n8n`, Python y Node de `public.ecr.aws/docker/library/…`; además se quitó `# syntax=docker/dockerfile:1`, que también se descargaba de Docker Hub (BuildKit ya trae `RUN --mount`). Si vuelve a pasar con otra imagen, usa su copia en uno de esos registros o en `mirror.gcr.io`.
+- 2026-11-07: la Automatización en vivo dejó de usar n8n en Render (DEC-023): despertar el servicio gratuito tardaba hasta 2 minutos y David pidió que la demo respondiera en menos de 2 segundos. El flujo corre ahora en el edge; `aimweb-n8n` salió del Blueprint.
 - 2026-11-07: se reescribió el historial de Git (`git filter-repo --replace-text`) para quitar el subdominio de Workers que dejaba ver el nombre de un cliente, y se hizo push forzado (`main` pasó de `f4dce7c` a `a169f1c`). GitHub conserva un tiempo el commit viejo `d36fda5` si se abre por su código exacto; borrarlo del todo requiere pedirlo a GitHub Support. Otra copia local del repo debe clonarse de nuevo o hacer `git fetch` + `git reset --hard origin/main`.

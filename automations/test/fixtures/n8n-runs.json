@@ -1,0 +1,951 @@
+{
+  "fingerprint": "40eb8de8d66e2ce0",
+  "n8n": "2.45.2",
+  "runs": [
+    {
+      "id": "hot-corporate",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "1"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": true
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 75,
+            "tier": "hot",
+            "factors": [
+              {
+                "label": "Presupuesto: 500 a 2.000 USD",
+                "points": 15
+              },
+              {
+                "label": "Plazo: de 1 a 2 meses",
+                "points": 15
+              },
+              {
+                "label": "Servicio: Automatizaciones",
+                "points": 20
+              },
+              {
+                "label": "Correo corporativo",
+                "points": 10
+              },
+              {
+                "label": "Mensaje detallado",
+                "points": 15
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "call",
+            "label": "Llamada en menos de 24 horas",
+            "sla": "24 horas"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "Laura, hablemos de tu proyecto de Automatizaciones",
+            "body": "Hola, Laura:\n\nGracias por escribirnos desde Café La Montaña. Leímos tu mensaje sobre Automatizaciones y creemos que podemos ayudarte.\n\nPor lo que nos cuentas, lo mejor es conversarlo: te llamaremos en menos de 24 horas para entender tu proceso y proponerte un primer paso concreto.\n\nSi quieres adelantar algo, responde a este correo con cualquier detalle o ejemplo que te parezca útil.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-0B7C6A2E"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "max-score",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "2"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": true
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 100,
+            "tier": "hot",
+            "factors": [
+              {
+                "label": "Presupuesto: más de 5.000 USD",
+                "points": 35
+              },
+              {
+                "label": "Plazo: urgente (menos de 2 semanas)",
+                "points": 20
+              },
+              {
+                "label": "Servicio: Automatizaciones",
+                "points": 20
+              },
+              {
+                "label": "Correo corporativo",
+                "points": 10
+              },
+              {
+                "label": "Mensaje detallado",
+                "points": 15
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "call",
+            "label": "Llamada en menos de 24 horas",
+            "sla": "24 horas"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "Andrés, hablemos de tu proyecto de Automatizaciones",
+            "body": "Hola, Andrés:\n\nGracias por escribirnos desde Logística Andina S.A.S.. Leímos tu mensaje sobre Automatizaciones y creemos que podemos ayudarte.\n\nPor lo que nos cuentas, lo mejor es conversarlo: te llamaremos en menos de 24 horas para entender tu proceso y proponerte un primer paso concreto.\n\nSi quieres adelantar algo, responde a este correo con cualquier detalle o ejemplo que te parezca útil.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-F3A1C2D4"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "warm-personal-email",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "3"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": false
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 50,
+            "tier": "warm",
+            "factors": [
+              {
+                "label": "Presupuesto: 2.000 a 5.000 USD",
+                "points": 25
+              },
+              {
+                "label": "Plazo: flexible",
+                "points": 5
+              },
+              {
+                "label": "Servicio: Aplicativos web",
+                "points": 20
+              },
+              {
+                "label": "Correo personal",
+                "points": 0
+              },
+              {
+                "label": "Mensaje breve",
+                "points": 0
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "proposal",
+            "label": "Propuesta por correo en 48 horas",
+            "sla": "48 horas"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "Camila, preparamos tu propuesta de Aplicativos web",
+            "body": "Hola, Camila:\n\nGracias por escribirnos desde Estudio Torres. Ya revisamos lo que necesitas en Aplicativos web.\n\nEn las próximas 48 horas te enviaremos por correo una propuesta con alcance, tiempos y un estimado de inversión. Si algo no te cuadra, la ajustamos contigo.\n\nSi mientras tanto se te ocurre algo más, solo responde a este correo.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-9D8C7B6A"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cold-short-message",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "4"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": false
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": false
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 22,
+            "tier": "cold",
+            "factors": [
+              {
+                "label": "Presupuesto: menos de 500 USD",
+                "points": 5
+              },
+              {
+                "label": "Plazo: flexible",
+                "points": 5
+              },
+              {
+                "label": "Servicio: Páginas web",
+                "points": 12
+              },
+              {
+                "label": "Correo personal",
+                "points": 0
+              },
+              {
+                "label": "Mensaje breve",
+                "points": 0
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "nurture",
+            "label": "Secuencia de contenido útil",
+            "sla": "Primer envío en 7 días"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "Pedro, gracias por tu interés en Páginas web",
+            "body": "Hola, Pedro:\n\nGracias por escribirnos desde Ferretería El Tornillo. Nos alegra que estés pensando en Páginas web.\n\nPara que des el siguiente paso con calma, en los próximos días te compartiremos contenido útil: ejemplos, preguntas frecuentes y buenas prácticas.\n\nCuando quieras conversar, responde a este correo y lo agendamos.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-1A2B3C4D"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rejected-links",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "5"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": false,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": true
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": false
+              }
+            ]
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "rejected"
+          }
+        }
+      ]
+    },
+    {
+      "id": "two-links-allowed",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "6"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": true
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 72,
+            "tier": "hot",
+            "factors": [
+              {
+                "label": "Presupuesto: 500 a 2.000 USD",
+                "points": 15
+              },
+              {
+                "label": "Plazo: urgente (menos de 2 semanas)",
+                "points": 20
+              },
+              {
+                "label": "Servicio: Páginas web",
+                "points": 12
+              },
+              {
+                "label": "Correo corporativo",
+                "points": 10
+              },
+              {
+                "label": "Mensaje detallado",
+                "points": 15
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "call",
+            "label": "Llamada en menos de 24 horas",
+            "sla": "24 horas"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "Valentina, hablemos de tu proyecto de Páginas web",
+            "body": "Hola, Valentina:\n\nGracias por escribirnos desde Ruiz & Asociados. Leímos tu mensaje sobre Páginas web y creemos que podemos ayudarte.\n\nPor lo que nos cuentas, lo mejor es conversarlo: te llamaremos en menos de 24 horas para entender tu proceso y proponerte un primer paso concreto.\n\nSi quieres adelantar algo, responde a este correo con cualquier detalle o ejemplo que te parezca útil.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-3C4D5E6F"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "no-company",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "7"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": false
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": false
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 52,
+            "tier": "warm",
+            "factors": [
+              {
+                "label": "Presupuesto: por definir",
+                "points": 10
+              },
+              {
+                "label": "Plazo: de 1 a 2 meses",
+                "points": 15
+              },
+              {
+                "label": "Servicio: Chatbots",
+                "points": 12
+              },
+              {
+                "label": "Correo personal",
+                "points": 0
+              },
+              {
+                "label": "Mensaje detallado",
+                "points": 15
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "proposal",
+            "label": "Propuesta por correo en 48 horas",
+            "sla": "48 horas"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "María, preparamos tu propuesta de Chatbots",
+            "body": "Hola, María:\n\nGracias por escribirnos. Ya revisamos lo que necesitas en Chatbots.\n\nEn las próximas 48 horas te enviaremos por correo una propuesta con alcance, tiempos y un estimado de inversión. Si algo no te cuadra, la ajustamos contigo.\n\nSi mientras tanto se te ocurre algo más, solo responde a este correo.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-4D5E6F7A"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "subdomain-personal-email",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "8"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": false
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 65,
+            "tier": "warm",
+            "factors": [
+              {
+                "label": "Presupuesto: por definir",
+                "points": 10
+              },
+              {
+                "label": "Plazo: urgente (menos de 2 semanas)",
+                "points": 20
+              },
+              {
+                "label": "Servicio: Automatizaciones",
+                "points": 20
+              },
+              {
+                "label": "Correo personal",
+                "points": 0
+              },
+              {
+                "label": "Mensaje detallado",
+                "points": 15
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "proposal",
+            "label": "Propuesta por correo en 48 horas",
+            "sla": "48 horas"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "Ana, preparamos tu propuesta de Automatizaciones",
+            "body": "Hola, Ana:\n\nGracias por escribirnos desde Panadería Ana. Ya revisamos lo que necesitas en Automatizaciones.\n\nEn las próximas 48 horas te enviaremos por correo una propuesta con alcance, tiempos y un estimado de inversión. Si algo no te cuadra, la ajustamos contigo.\n\nSi mientras tanto se te ocurre algo más, solo responde a este correo.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-5E6F7A8B"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "multiline-emoji",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "9"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": true
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 42,
+            "tier": "warm",
+            "factors": [
+              {
+                "label": "Presupuesto: menos de 500 USD",
+                "points": 5
+              },
+              {
+                "label": "Plazo: de 1 a 2 meses",
+                "points": 15
+              },
+              {
+                "label": "Servicio: Blogs y contenido web",
+                "points": 12
+              },
+              {
+                "label": "Correo corporativo",
+                "points": 10
+              },
+              {
+                "label": "Mensaje breve",
+                "points": 0
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "proposal",
+            "label": "Propuesta por correo en 48 horas",
+            "sla": "48 horas"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "Sebastián, preparamos tu propuesta de Blogs y contenido web",
+            "body": "Hola, Sebastián:\n\nGracias por escribirnos desde Ñapa Café ☕. Ya revisamos lo que necesitas en Blogs y contenido web.\n\nEn las próximas 48 horas te enviaremos por correo una propuesta con alcance, tiempos y un estimado de inversión. Si algo no te cuadra, la ajustamos contigo.\n\nSi mientras tanto se te ocurre algo más, solo responde a este correo.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-6F7A8B9C"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "exactly-80-characters",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "10"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": true,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": true
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": true
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": true
+              }
+            ]
+          }
+        },
+        {
+          "step": "scored",
+          "data": {
+            "score": 85,
+            "tier": "hot",
+            "factors": [
+              {
+                "label": "Presupuesto: 2.000 a 5.000 USD",
+                "points": 25
+              },
+              {
+                "label": "Plazo: de 1 a 2 meses",
+                "points": 15
+              },
+              {
+                "label": "Servicio: Aplicativos web",
+                "points": 20
+              },
+              {
+                "label": "Correo corporativo",
+                "points": 10
+              },
+              {
+                "label": "Mensaje detallado",
+                "points": 15
+              }
+            ]
+          }
+        },
+        {
+          "step": "routed",
+          "data": {
+            "route": "call",
+            "label": "Llamada en menos de 24 horas",
+            "sla": "24 horas"
+          }
+        },
+        {
+          "step": "drafted",
+          "data": {
+            "subject": "Julián, hablemos de tu proyecto de Aplicativos web",
+            "body": "Hola, Julián:\n\nGracias por escribirnos desde Castro Ingeniería. Leímos tu mensaje sobre Aplicativos web y creemos que podemos ayudarte.\n\nPor lo que nos cuentas, lo mejor es conversarlo: te llamaremos en menos de 24 horas para entender tu proceso y proponerte un primer paso concreto.\n\nSi quieres adelantar algo, responde a este correo con cualquier detalle o ejemplo que te parezca útil.\n\nUn saludo,\nAIM Desarrollo y Automatizaciones"
+          }
+        },
+        {
+          "step": "recorded",
+          "data": {
+            "reference": "AIM-7A8B9C0D"
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rejected-personal-no-company",
+      "steps": [
+        {
+          "step": "received",
+          "data": {
+            "execution": "11"
+          }
+        },
+        {
+          "step": "validated",
+          "data": {
+            "valid": false,
+            "checks": [
+              {
+                "id": "corporate_email",
+                "label": "Correo corporativo",
+                "ok": false
+              },
+              {
+                "id": "detailed_message",
+                "label": "Mensaje con detalle",
+                "ok": true
+              },
+              {
+                "id": "company_given",
+                "label": "Empresa indicada",
+                "ok": false
+              },
+              {
+                "id": "no_suspicious_links",
+                "label": "Sin enlaces sospechosos",
+                "ok": false
+              }
+            ]
+          }
+        },
+        {
+          "step": "done",
+          "data": {
+            "outcome": "rejected"
+          }
+        }
+      ]
+    }
+  ]
+}

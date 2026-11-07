@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { type RunEvent, type RunRequest, runAutomation } from './client'
-import { TEXTS, toProblem, waitText } from './errors'
+import { TEXTS, toProblem } from './errors'
 import { EVENTS } from './fixtures'
 
 const REQUEST: RunRequest = {
@@ -60,14 +60,11 @@ describe('runAutomation', () => {
       eventStream([
         sse('run', { runId: RUN_ID }),
         ': ping\n\n',
-        sse('waking', { elapsedMs: 0 }),
         // A chunk may end anywhere, even inside an event.
-        sse('waking', { elapsedMs: 6000 }).slice(0, 10),
-        sse('waking', { elapsedMs: 6000 }).slice(10),
-        sse('started', {}),
-        sse('step', EVENTS.received),
+        sse('step', EVENTS.received).slice(0, 10),
+        sse('step', EVENTS.received).slice(10),
         sse('step', EVENTS.done),
-        sse('done', { outcome: 'accepted', totalMs: 900 }),
+        sse('done', { outcome: 'accepted', totalMs: 0 }),
         sse('step', EVENTS.validated),
       ]),
     )
@@ -75,12 +72,9 @@ describe('runAutomation', () => {
     expect(problem).toBeNull()
     expect(events).toEqual([
       { type: 'run', runId: RUN_ID },
-      { type: 'waking', elapsedMs: 0 },
-      { type: 'waking', elapsedMs: 6000 },
-      { type: 'started' },
       { type: 'step', event: EVENTS.received },
       { type: 'step', event: EVENTS.done },
-      { type: 'done', outcome: 'accepted', totalMs: 900 },
+      { type: 'done', outcome: 'accepted', totalMs: 0 },
     ])
     expect(calls).toHaveLength(1)
     expect(calls[0]?.path).toBe('/api/automation/runs')
@@ -104,29 +98,32 @@ describe('runAutomation', () => {
     expect(events.map((e) => e.type)).toEqual(['run', 'done'])
   })
 
-  it.each([
-    ['n8n_unreachable', 'El servidor de n8n no despertó a tiempo.'],
-    ['timeout', 'n8n no terminó el flujo a tiempo.'],
-    ['internal', 'Algo falló de nuestro lado.'],
-  ] as const)('resolves an error event %s with its message', async (code, message) => {
+  it('resolves an error event with its message', async () => {
+    const message = 'Algo falló de nuestro lado.'
     const { events, problem } = await run(() =>
-      eventStream([sse('run', { runId: RUN_ID }), sse('error', { code, message })]),
+      eventStream([sse('run', { runId: RUN_ID }), sse('error', { code: 'internal', message })]),
     )
     expect(events).toEqual([{ type: 'run', runId: RUN_ID }])
-    expect(problem).toEqual({ kind: code, message, fields: {}, retryAfter: null })
+    expect(problem).toEqual({ kind: 'internal', message, fields: {} })
   })
 
   it.each([
     ['a step that breaks the contract', sse('step', { step: 'scored', data: { score: 400 }, atMs: 1 })],
     ['data that is not JSON', 'event: run\ndata: {nope\n\n'],
     ['an unknown error code', sse('error', { code: 'boom', message: 'x' })],
+    [
+      'a received step of the old n8n protocol',
+      sse('step', { step: 'received', data: { execution: '1' }, atMs: 0 }),
+    ],
   ])('treats %s as an invalid answer', async (_, chunk) => {
     const { problem } = await run(() => eventStream([chunk]))
     expect(problem).toMatchObject({ kind: 'server', message: TEXTS.invalid })
   })
 
   it('says the run was cut when the stream ends without done', async () => {
-    const { problem } = await run(() => eventStream([sse('run', { runId: RUN_ID }), sse('started', {})]))
+    const { problem } = await run(() =>
+      eventStream([sse('run', { runId: RUN_ID }), sse('step', EVENTS.received)]),
+    )
     expect(problem).toMatchObject({ kind: 'interrupted', message: TEXTS.interrupted })
   })
 
@@ -180,7 +177,6 @@ describe('HTTP errors before the stream', () => {
       kind: 'invalid',
       message: 'Revisa los datos marcados e inténtalo de nuevo.',
       fields: { 'lead.email': ['Escribe un correo válido.'] },
-      retryAfter: null,
     })
   })
 
@@ -194,40 +190,17 @@ describe('HTTP errors before the stream', () => {
     expect(problem).toMatchObject({ kind: 'captcha', message: 'No pudimos confirmar que eres una persona.' })
   })
 
-  it('keeps the API message and Retry-After of a 429', async () => {
-    const problem = await fails(
-      json(
-        429,
-        { error: 'rate_limited', message: 'Ya ejecutaste la demo 3 veces.' },
-        { 'Retry-After': '420' },
-      ),
-    )
-    expect(problem).toEqual({
-      kind: 'limited',
-      message: 'Ya ejecutaste la demo 3 veces.',
-      fields: {},
-      retryAfter: 420,
-    })
-  })
-
-  it('writes its own message for a 429 that is not the API’s', async () => {
+  it('reports a 429 from something in front of the API with the generic message and its wait', async () => {
     const problem = await fails(new Response('Too many', { status: 429, headers: { 'Retry-After': '120' } }))
-    expect(problem).toMatchObject({
-      kind: 'limited',
-      message: TEXTS.rateLimited('2 minutos'),
-      retryAfter: 120,
+    expect(problem).toEqual({
+      kind: 'server',
+      message: 'Hiciste demasiados intentos. Espera 2 minutos e inténtalo de nuevo.',
+      fields: {},
     })
   })
 
-  it('treats the daily cap as a limit', async () => {
-    const problem = await fails(json(503, { error: 'daily_limit', message: 'La demo llegó a su límite.' }))
-    expect(problem).toMatchObject({ kind: 'limited', message: 'La demo llegó a su límite.' })
-  })
-
-  it.each([
-    ['503 automation_unavailable', json(503, { error: 'automation_unavailable', message: 'No disponible.' })],
-    ['404 (no API here)', json(404, { error: 'not_found', message: 'Esta ruta de la API no existe.' })],
-  ])('pauses the demo on %s', async (_, response) => {
+  it('pauses the demo on a 404 (no API here)', async () => {
+    const response = json(404, { error: 'not_found', message: 'Esta ruta de la API no existe.' })
     expect(await fails(response)).toMatchObject({ kind: 'paused', message: TEXTS.paused })
   })
 
@@ -236,6 +209,11 @@ describe('HTTP errors before the stream', () => {
       '403 forbidden_origin',
       json(403, { error: 'forbidden_origin', message: 'Solo desde el sitio.' }),
       'Solo desde el sitio.',
+    ],
+    [
+      '413 payload_too_large',
+      json(413, { error: 'payload_too_large', message: 'La solicitud es demasiado grande.' }),
+      'La solicitud es demasiado grande.',
     ],
     ['a 500 with the API body', json(500, { error: 'internal', message: 'Algo falló.' }), 'Algo falló.'],
     [
@@ -249,13 +227,6 @@ describe('HTTP errors before the stream', () => {
 })
 
 describe('errors', () => {
-  it('rounds waits to minutes, then hours', () => {
-    expect(waitText(30)).toBe('1 minuto')
-    expect(waitText(420)).toBe('7 minutos')
-    expect(waitText(3600)).toBe('1 hora')
-    expect(waitText(7200)).toBe('2 horas')
-  })
-
   it('maps anything unknown to a generic problem', () => {
     expect(toProblem(new Error('x'))).toMatchObject({ kind: 'server', message: TEXTS.unknown })
   })

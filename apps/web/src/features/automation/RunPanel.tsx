@@ -7,15 +7,14 @@ import {
   CircleX,
   ExternalLink,
   LoaderCircle,
-  Moon,
 } from 'lucide-preact'
 import type { RefObject } from 'preact'
 import { NEW_TAB, PausedNotice } from '../assistant/parts'
 import type { AutomationRun } from './run'
 import { StepDetails } from './StepDetails'
 import {
-  formatElapsed,
   formatMs,
+  formatSeconds,
   OUTCOME_LABELS,
   STATUS_TEXT,
   STEP_INFO,
@@ -34,7 +33,7 @@ interface RunPanelProps {
   onRetry: () => void
 }
 
-/** The run: where it stands (sending, waking n8n, the result or the problem), then the seven steps. */
+/** The run: where it stands (sending, the result or the problem), then the seven steps. */
 export function RunPanel({ run, workflowUrl, whatsappUrl, titleRef, resultRef, onRetry }: RunPanelProps) {
   const phase = run.phase.value
   return (
@@ -44,10 +43,10 @@ export function RunPanel({ run, workflowUrl, whatsappUrl, titleRef, resultRef, o
     >
       <div class="grid gap-2">
         <h2 id={RUN_TITLE_ID} ref={titleRef} tabIndex={-1} class="text-step-2 font-semibold">
-          Ejecución en n8n
+          Ejecución del flujo
         </h2>
         <p class="text-step--1 text-muted">
-          Cada paso aparece cuando n8n lo reporta, con el tiempo real desde que empezó el flujo.
+          Cada paso aparece con el tiempo que tomó desde que empezó el flujo.
         </p>
       </div>
 
@@ -61,7 +60,6 @@ export function RunPanel({ run, workflowUrl, whatsappUrl, titleRef, resultRef, o
           Enviando la solicitud…
         </p>
       )}
-      {phase === 'waking' && <Waking ms={run.wakeMs.value} />}
 
       <div ref={resultRef} tabIndex={-1} class="grid min-w-0 gap-4 empty:hidden">
         {phase === 'done' && <Result run={run} workflowUrl={workflowUrl} />}
@@ -74,33 +72,11 @@ export function RunPanel({ run, workflowUrl, whatsappUrl, titleRef, resultRef, o
   )
 }
 
-/** The honest wait: Render's free plan puts n8n to sleep and the first request wakes it up. */
-function Waking({ ms }: { ms: number }) {
-  return (
-    <div class="grid gap-2 rounded-xl border border-line bg-ink p-4">
-      <p class="flex gap-2 font-semibold">
-        <Moon size={20} class="mt-0.5 shrink-0 text-brand" aria-hidden="true" />
-        El servidor gratuito de n8n estaba dormido; despertarlo tarda 1–2 minutos.
-      </p>
-      <p class="flex items-center gap-2 text-step--1">
-        <LoaderCircle size={16} class="shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" />
-        <span>
-          Esperando: <span class="font-semibold tabular-nums">{formatElapsed(ms)}</span>
-        </span>
-      </p>
-      <p class="text-step--1 text-muted">
-        Puedes quedarte en esta página: el flujo arranca solo apenas n8n responda.
-      </p>
-    </div>
-  )
-}
-
 function Result({ run, workflowUrl }: { run: AutomationRun; workflowUrl: string }) {
   const result = run.result.value
   const steps = run.steps.value
   if (!result) return null
   const accepted = result.outcome === 'accepted'
-  const woke = run.wokeAfterMs.value
   return (
     <div class="grid gap-3 rounded-xl border border-line bg-ink p-4">
       <p class="flex items-center gap-2 text-step-1 font-semibold">
@@ -114,8 +90,10 @@ function Result({ run, workflowUrl }: { run: AutomationRun; workflowUrl: string 
       <dl class="grid gap-1 text-step--1 sm:grid-cols-[auto_1fr] sm:gap-x-4">
         {steps.received && (
           <>
-            <dt class="text-muted">Prueba de que corrió en n8n</dt>
-            <dd class="font-semibold tabular-nums">Ejecución n8n #{steps.received.data.execution}</dd>
+            <dt class="text-muted">Flujo</dt>
+            <dd>
+              <span class="font-semibold">{steps.received.data.flow}</span> (diseñado en n8n)
+            </dd>
           </>
         )}
         {steps.recorded && (
@@ -126,13 +104,12 @@ function Result({ run, workflowUrl }: { run: AutomationRun; workflowUrl: string 
         )}
         <dt class="text-muted">Duración del flujo</dt>
         <dd class="tabular-nums">{formatMs(result.totalMs)}</dd>
-        {woke !== null && (
-          <>
-            <dt class="text-muted">Despertar n8n</dt>
-            <dd class="tabular-nums">{formatElapsed(woke)}</dd>
-          </>
-        )}
+        <dt class="text-muted">Del clic al resultado</dt>
+        <dd class="font-semibold tabular-nums">{formatSeconds(result.clickToResultMs)}</dd>
       </dl>
+      <p class="text-step--1 text-muted">
+        Lo mide tu navegador: incluye la red y la pausa corta entre pasos para que puedas leerlos.
+      </p>
       <p class="text-step--1">
         <a
           href={workflowUrl}
@@ -158,8 +135,8 @@ interface FailureProps {
 /** What stopped the run, as an alert. */
 function Failure({ run, whatsappUrl, onRetry }: FailureProps) {
   const problem = run.problem.value
-  // Field errors, the verification and the limits are shown next to the form, where they are fixed.
-  if (!problem || problem.kind === 'invalid' || problem.kind === 'captcha' || problem.kind === 'limited') {
+  // Field errors and the verification are shown next to the form, where they are fixed.
+  if (!problem || problem.kind === 'invalid' || problem.kind === 'captcha') {
     return null
   }
   if (problem.kind === 'paused') {
@@ -187,7 +164,7 @@ const STATUS_CLASS: Record<StepStatus, string> = {
   skipped: 'text-muted',
 }
 
-/** The seven steps, in order. A step's panel shows what n8n reported once it arrives. */
+/** The seven steps, in order. A step's panel shows what the flow reported once it arrives. */
 function Timeline({ run }: { run: AutomationRun }) {
   const statuses = run.statuses.value
   const steps = run.steps.value
@@ -234,7 +211,9 @@ function TimelineStep({ step, number, status, last, event }: TimelineStepProps) 
           </h3>
           {event ? (
             <span class="text-step--1 text-muted tabular-nums">
-              <span class="sr-only">A los </span>+{formatMs(event.atMs)}
+              <span class="sr-only">Desde el inicio: </span>
+              {event.atMs >= 1 ? '+' : ''}
+              {formatMs(event.atMs)}
             </span>
           ) : (
             <span class="text-step--1 text-muted" aria-hidden="true">

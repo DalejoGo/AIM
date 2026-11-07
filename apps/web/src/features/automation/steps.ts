@@ -9,7 +9,7 @@ import { AUTOMATION_STEPS } from '@aim/contracts/limits'
 export const STEPS: readonly AutomationStep[] = AUTOMATION_STEPS
 
 export const STEP_INFO: Record<AutomationStep, { title: string; description: string }> = {
-  received: { title: 'Recibido', description: 'n8n recibe la solicitud por un webhook.' },
+  received: { title: 'Recibido', description: 'La API del sitio recibe la solicitud.' },
   validated: { title: 'Validado', description: 'Revisa las reglas del negocio.' },
   scored: { title: 'Calificado', description: 'Suma puntos por presupuesto, plazo, servicio y detalle.' },
   routed: { title: 'Enrutado', description: 'Decide qué sigue y en cuánto tiempo.' },
@@ -67,20 +67,19 @@ export const STATUS_TEXT: Record<StepStatus, string> = {
 }
 
 const seconds = new Intl.NumberFormat('es-CO', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-const wholeSeconds = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 })
 
-/** A step's time since the run started: "0,4 s", "12,3 s". */
+/** Times of the flow, which usually runs in under a millisecond: "menos de 1 ms", "3 ms", "1,2 s". */
 export function formatMs(ms: number): string {
-  return `${seconds.format(Math.max(0, ms) / 1000)} s`
+  const whole = Math.round(Math.max(0, ms))
+  if (whole < 1) return 'menos de 1 ms'
+  if (whole < 1000) return `${whole} ms`
+  return `${seconds.format(whole / 1000)} s`
 }
 
-/** The wait while n8n wakes up: "8 s", "1 min 05 s". */
-export function formatElapsed(ms: number): string {
-  const total = Math.max(0, Math.floor(ms / 1000))
-  if (total < 60) return `${wholeSeconds.format(total)} s`
-  const minutes = Math.floor(total / 60)
-  const rest = String(total % 60).padStart(2, '0')
-  return `${minutes} min ${rest} s`
+/** What the visitor waited, from the click to the result: "0,8 s", "1,4 s" (formatMs under 0,1 s). */
+export function formatSeconds(ms: number): string {
+  if (ms < 100) return formatMs(ms)
+  return `${seconds.format(ms / 1000)} s`
 }
 
 /** Points with their sign, as the factors list shows them: "+15", "−5", "0". */
@@ -95,7 +94,7 @@ export function announceStep(event: AutomationStepEvent): string {
   const title = STEP_INFO[event.step].title
   switch (event.step) {
     case 'received':
-      return `${title}: ejecución de n8n número ${event.data.execution}.`
+      return `${title}: flujo ${event.data.flow}.`
     case 'validated': {
       const passed = event.data.checks.filter((check) => check.ok).length
       const verdict = event.data.valid ? 'válida' : 'no válida'

@@ -30,11 +30,9 @@ export interface RunRequest {
   lead: AutomationLeadInput
 }
 
-/** What the run reports, in order: `run`, `waking`…, `started`, `step`…, then `done` (or a problem). */
+/** What the run reports, in order: `run`, `step`…, then `done` (or a problem). */
 export type RunEvent =
   | { type: 'run'; runId: string }
-  | { type: 'waking'; elapsedMs: number }
-  | { type: 'started' }
   | { type: 'step'; event: AutomationStepEvent }
   | { type: 'done'; outcome: AutomationOutcome; totalMs: number }
 
@@ -74,13 +72,6 @@ async function readRun(response: Response, { signal, onEvent }: RunOptions): Pro
       switch (sse.event) {
         case 'run':
           onEvent({ type: 'run', runId: parse('run', sse.data).runId })
-          break
-        case 'waking':
-          onEvent({ type: 'waking', elapsedMs: parse('waking', sse.data).elapsedMs })
-          break
-        case 'started':
-          parse('started', sse.data)
-          onEvent({ type: 'started' })
           break
         case 'step':
           onEvent({ type: 'step', event: parse('step', sse.data) })

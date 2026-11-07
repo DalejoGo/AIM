@@ -3,16 +3,15 @@ import {
   AUTOMATION_BUDGETS,
   AUTOMATION_ERROR_CODES,
   AUTOMATION_LEAD_LIMITS,
-  AUTOMATION_STATUS_STATES,
   AUTOMATION_STEPS,
   AUTOMATION_TIMELINES,
 } from './limits'
 import { SERVICE_IDS } from './services'
 
-// Lab "Automatización en vivo" (docs/AUTOMATIZACION.md, the contract between the page, the edge and n8n):
+// Lab "Automatización en vivo" (docs/AUTOMATIZACION.md, the contract between the page and the edge):
 // 1. the browser's POST /api/automation/runs and the payloads of its SSE events,
-// 2. the edge's webhook to n8n,
-// 3. n8n's report of each step to POST /api/automation/runs/:runId/events.
+// 2. the flow's input and its steps. The flow is designed in n8n (automations/workflows/lead-demo.json) and the
+//    edge runs it (@aim/automations); each step has the shape of what n8n's report nodes send.
 
 // \p{Cc} = control characters. Postgres rejects NUL in text and the rest only hide content.
 const CONTROL = /\p{Cc}/gu
@@ -42,7 +41,7 @@ export type AutomationBudget = z.infer<typeof AutomationBudget>
 export const AutomationTimeline = z.enum(AUTOMATION_TIMELINES, { error: TIMELINE })
 export type AutomationTimeline = z.infer<typeof AutomationTimeline>
 
-/** The test lead the visitor fills in. Cleaned before the limits apply, so they count what n8n receives. */
+/** The test lead the visitor fills in. Cleaned before the limits apply, so they count what the flow receives. */
 export const AutomationLead = z.object({
   name: z
     .string({ error: NAME })
@@ -81,18 +80,18 @@ export const AutomationRunRequest = z.object({
 })
 export type AutomationRunRequest = z.infer<typeof AutomationRunRequest>
 
-// --- Steps (n8n → edge, and edge → browser) -------------------------------------------------------
+// --- Steps (the flow → the browser) ---------------------------------------------------------------
 
 export const AutomationStep = z.enum(AUTOMATION_STEPS)
 export type AutomationStep = z.infer<typeof AutomationStep>
 
-/** Short visible text that n8n writes (labels, SLA): one line, never empty. */
+/** Short visible text that the flow writes (labels, SLA): one line, never empty. */
 const label = (max: number) => z.string().trim().min(1).max(max)
 
-/** `received`: n8n's `$execution.id`, proof that a real n8n runs the flow. */
-export const AutomationReceived = z.object({ execution: z.string().regex(/^[A-Za-z0-9_-]{1,64}$/) })
+/** `received`: the name of the n8n workflow that defines the flow ("Contacto → lead calificado"). */
+export const AutomationReceived = z.object({ flow: label(120) })
 
-/** One business rule n8n checked (the edge already checked the format). */
+/** One business rule the flow checked (the contract already checked the format). */
 export const AutomationCheck = z.object({
   id: z.string().regex(/^[A-Za-z0-9_-]{1,40}$/),
   label: label(120),
@@ -160,7 +159,7 @@ const STEP_DATA = {
 const report = <S extends AutomationStep>(name: S) =>
   z.object({ step: z.literal(name), data: STEP_DATA[name] })
 
-/** Body of n8n's POST /api/automation/runs/:runId/events. Unknown keys are dropped, never stored. */
+/** One step of the flow, with the shape of what n8n's report node sends. Unknown keys are dropped. */
 export const AutomationStepReport = z.discriminatedUnion('step', [
   report('received'),
   report('validated'),
@@ -179,7 +178,7 @@ const milliseconds = z.number().int().nonnegative()
 
 const event = <S extends AutomationStep>(name: S) => report(name).extend({ atMs: milliseconds })
 
-/** SSE `step`: a step as n8n reported it; `atMs` = milliseconds since the run started. */
+/** SSE `step`: one step of the flow; `atMs` = milliseconds since the flow started. */
 export const AutomationStepEvent = z.discriminatedUnion('step', [
   event('received'),
   event('validated'),
@@ -197,14 +196,6 @@ export type AutomationStepEvent = z.infer<typeof AutomationStepEvent>
 export const AutomationRunEvent = z.object({ runId: z.uuid() })
 export type AutomationRunEvent = z.infer<typeof AutomationRunEvent>
 
-/** `waking`: n8n is still asleep (Render's free plan); one per health check. */
-export const AutomationWakingEvent = z.object({ elapsedMs: milliseconds })
-export type AutomationWakingEvent = z.infer<typeof AutomationWakingEvent>
-
-/** `started`: n8n accepted the webhook. */
-export const AutomationStartedEvent = z.object({})
-export type AutomationStartedEvent = z.infer<typeof AutomationStartedEvent>
-
 /** `done`: after the `done` step. */
 export const AutomationDoneEvent = z.object({ outcome: AutomationOutcome, totalMs: milliseconds })
 export type AutomationDoneEvent = z.infer<typeof AutomationDoneEvent>
@@ -219,36 +210,14 @@ export type AutomationErrorEvent = z.infer<typeof AutomationErrorEvent>
 /** Every event of the stream, by name: the browser checks each payload with its schema. */
 export const AutomationStreamEvents = {
   run: AutomationRunEvent,
-  waking: AutomationWakingEvent,
-  started: AutomationStartedEvent,
   step: AutomationStepEvent,
   done: AutomationDoneEvent,
   error: AutomationErrorEvent,
 } as const
 export type AutomationStreamEventName = keyof typeof AutomationStreamEvents
 
-// --- GET /api/automation/status ------------------------------------------------------------------
+// --- The flow's input ---------------------------------------------------------------------------
 
-export const AutomationStatusState = z.enum(AUTOMATION_STATUS_STATES)
-export type AutomationStatusState = z.infer<typeof AutomationStatusState>
-
-/** Asked when the page opens, so n8n wakes up while the visitor fills in the form. */
-export const AutomationStatus = z.object({ state: AutomationStatusState })
-export type AutomationStatus = z.infer<typeof AutomationStatus>
-
-// --- Edge → n8n ---------------------------------------------------------------------------------
-
-/** The lead as n8n receives it: the visitor's fields, cleaned, and the service's visible name. */
-export const AutomationWebhookLead = AutomationLead.extend({ serviceTitle: z.string().min(1).max(80) })
-export type AutomationWebhookLead = z.infer<typeof AutomationWebhookLead>
-
-/**
- * Body of POST {AUTOMATION_N8N_URL}/webhook/{AUTOMATION_WEBHOOK_PATH}. n8n sends `callbackToken` back as
- * `Authorization: Bearer` with each step; it is the only credential n8n ever holds.
- */
-export const AutomationWebhookPayload = z.object({
-  runId: z.uuid(),
-  callbackToken: z.string().min(1).max(2048),
-  lead: AutomationWebhookLead,
-})
-export type AutomationWebhookPayload = z.infer<typeof AutomationWebhookPayload>
+/** What the flow receives: the visitor's lead, cleaned, and the service's visible name. */
+export const AutomationFlowLead = AutomationLead.extend({ serviceTitle: z.string().min(1).max(80) })
+export type AutomationFlowLead = z.infer<typeof AutomationFlowLead>

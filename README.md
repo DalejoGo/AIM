@@ -37,7 +37,7 @@ pnpm dev                # web http://localhost:4321, api http://localhost:3000/d
 | `packages/contracts` | Esquemas Zod compartidos |
 | `packages/config` | tsconfig compartidos |
 | `services/py-lab` | Demos en Python (Fase 4) |
-| `automations` | Flujos n8n (Fase 4) |
+| `automations` | Flujo n8n de la Automatización en vivo y su motor para el edge (Fase 4) |
 | `scripts/ci` | Lógica de CI; el YAML solo la invoca |
 
 ## Verificación

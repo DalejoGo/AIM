@@ -10,7 +10,7 @@ export const CODE_REVIEW_LANGUAGES = ['typescript', 'javascript', 'python', 'sql
 /** POST /api/assistant/review: the longest fragment, in UTF-16 units (what a textarea's maxlength counts). */
 export const CODE_REVIEW_MAX_LENGTH = 4000
 
-// Lab "Automatización en vivo" (docs/AUTOMATIZACION.md): the form's choices and limits, and the steps n8n reports.
+// Lab "Automatización en vivo" (docs/AUTOMATIZACION.md): the form's choices and limits, and the flow's steps.
 
 /** Budget of the test lead, in USD: under 500, 500–2000, 2000–5000, over 5000 or not known yet. */
 export const AUTOMATION_BUDGETS = ['lt500', '500-2000', '2000-5000', 'gt5000', 'unknown'] as const
@@ -28,7 +28,7 @@ export const AUTOMATION_LEAD_LIMITS = {
   messageMax: 1000,
 } as const
 
-/** The steps n8n reports, in order. A rejected lead goes from `validated` straight to `done`. */
+/** The flow's steps, in order. A rejected lead goes from `validated` straight to `done`. */
 export const AUTOMATION_STEPS = [
   'received',
   'validated',
@@ -40,10 +40,4 @@ export const AUTOMATION_STEPS = [
 ] as const
 
 /** Codes of the SSE `error` event of POST /api/automation/runs. */
-export const AUTOMATION_ERROR_CODES = ['n8n_unreachable', 'timeout', 'internal'] as const
-
-/**
- * GET /api/automation/status: `ready` when n8n can take a run now, `waking` while Render boots it (the check
- * itself wakes it up) and `disabled` when the demo is off.
- */
-export const AUTOMATION_STATUS_STATES = ['ready', 'waking', 'disabled'] as const
+export const AUTOMATION_ERROR_CODES = ['internal'] as const

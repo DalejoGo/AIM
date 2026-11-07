@@ -81,7 +81,7 @@
       }
     },
     {
-      "includes": ["scripts/**"],
+      "includes": ["scripts/**", "automations/scripts/**"],
       "linter": {
         "rules": {
           "suspicious": {

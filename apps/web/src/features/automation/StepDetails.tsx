@@ -2,13 +2,13 @@ import type { AutomationStepEvent } from '@aim/contracts'
 import { CircleCheck, CircleX } from 'lucide-preact'
 import { formatPoints, TIER_LABELS } from './steps'
 
-/** What n8n reported in one step. Everything is rendered as text: nothing from the flow becomes HTML. */
+/** What the flow reported in one step. Everything is rendered as text: nothing from the flow becomes HTML. */
 export function StepDetails({ event }: { event: AutomationStepEvent }) {
   switch (event.step) {
     case 'received':
       return (
         <p class="text-step--1">
-          Ejecución n8n <span class="font-semibold tabular-nums">#{event.data.execution}</span>
+          Flujo <span class="font-semibold">{event.data.flow}</span>
         </p>
       )
     case 'validated':

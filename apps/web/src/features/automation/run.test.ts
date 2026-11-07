@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { RunEvent, RunRequest } from './client'
 import type { Problem } from './errors'
-import { EVENTS } from './fixtures'
+import { EVENTS, FLOW_NAME } from './fixtures'
 import { createAutomationRun, STEP_PACE_MS, type StartRun, summary } from './run'
 import { STEPS } from './steps'
 
@@ -52,7 +52,8 @@ afterEach(() => {
 })
 
 describe('createAutomationRun', () => {
-  it('goes from sending to running and reveals one step every 350 ms, then the result', async () => {
+  it('goes from sending to running and reveals one step every 120 ms, then the result', async () => {
+    expect(STEP_PACE_MS).toBe(120)
     const script = scripted()
     const run = createAutomationRun({ start: script.start })
     const sent = run.submit(REQUEST)
@@ -60,20 +61,21 @@ describe('createAutomationRun', () => {
     expect(run.phase.value).toBe('sending')
     expect(run.busy.value).toBe(true)
     expect(run.announcement.value).toBe('Enviando la solicitud de prueba…')
+    // The API answers after 150 ms.
+    await vi.advanceTimersByTimeAsync(150)
     script.emit({ type: 'run', runId: 'run-1' })
-    script.emit({ type: 'started' })
     expect(run.phase.value).toBe('running')
     expect(run.runId.value).toBe('run-1')
     expect(run.statuses.value.received).toBe('active')
 
-    // Every step arrives at once (n8n is fast): they still appear one by one.
+    // Every step arrives at once (the flow runs in under a millisecond): they still appear one by one.
     for (const event of allSteps()) script.emit(event)
-    script.emit({ type: 'done', outcome: 'accepted', totalMs: 900 })
+    script.emit({ type: 'done', outcome: 'accepted', totalMs: 0 })
     script.finish()
     await sent
 
     expect(Object.keys(run.steps.value)).toEqual(['received'])
-    expect(run.announcement.value).toBe('Recibido: ejecución de n8n número 1042.')
+    expect(run.announcement.value).toBe(`Recibido: flujo ${FLOW_NAME}.`)
     expect(run.statuses.value.validated).toBe('active')
 
     await vi.advanceTimersByTimeAsync(STEP_PACE_MS - 1)
@@ -86,64 +88,32 @@ describe('createAutomationRun', () => {
     expect(Object.keys(run.steps.value)).toEqual([...STEPS])
     expect(run.phase.value).toBe('done')
     expect(run.busy.value).toBe(false)
-    expect(run.result.value).toEqual({ outcome: 'accepted', totalMs: 900 })
-    expect(run.announcement.value).toBe('Listo: solicitud aceptada, prioridad alta. El flujo tardó 0,9 s.')
+    // From the submit: 150 ms of network, then six gaps of 120 ms.
+    expect(run.result.value).toEqual({ outcome: 'accepted', totalMs: 0, clickToResultMs: 870 })
+    expect(run.announcement.value).toBe(
+      'Listo: solicitud aceptada, prioridad alta. El flujo tardó menos de 1 ms; del clic al resultado, 0,9 s.',
+    )
     expect(Object.values(run.statuses.value)).toEqual(Array(7).fill('done'))
-    // The real times stay as n8n reported them.
-    expect(run.steps.value.done?.atMs).toBe(900)
+    // The real times stay as the API reported them.
+    expect(run.steps.value.done?.atMs).toBe(1)
   })
 
   it('shows steps as soon as they come when they are slower than the pace', async () => {
     const script = scripted()
     const run = createAutomationRun({ start: script.start })
     void run.submit(REQUEST)
-    script.emit({ type: 'started' })
+    script.emit({ type: 'run', runId: 'run-1' })
     script.emit({ type: 'step', event: EVENTS.received })
     await vi.advanceTimersByTimeAsync(2_000)
     script.emit({ type: 'step', event: EVENTS.validated })
     expect(Object.keys(run.steps.value)).toEqual(['received', 'validated'])
   })
 
-  it('counts the wait while n8n wakes up and keeps how long it took', async () => {
-    const script = scripted()
-    const run = createAutomationRun({ start: script.start })
-    void run.submit(REQUEST)
-    script.emit({ type: 'run', runId: 'run-1' })
-    script.emit({ type: 'waking', elapsedMs: 0 })
-
-    expect(run.phase.value).toBe('waking')
-    expect(run.announcement.value).toContain('El servidor gratuito de n8n estaba dormido')
-    const announced = run.announcement.value
-    await vi.advanceTimersByTimeAsync(3_000)
-    expect(run.wakeMs.value).toBe(3_000)
-    // The API's own count resyncs it.
-    script.emit({ type: 'waking', elapsedMs: 6_500 })
-    expect(run.wakeMs.value).toBe(6_500)
-    expect(run.announcement.value).toBe(announced)
-    await vi.advanceTimersByTimeAsync(2_000)
-    expect(run.wakeMs.value).toBe(8_500)
-
-    await vi.advanceTimersByTimeAsync(500)
-    script.emit({ type: 'started' })
-    expect(run.phase.value).toBe('running')
-    expect(run.wokeAfterMs.value).toBe(9_000)
-    await vi.advanceTimersByTimeAsync(5_000)
-    expect(run.wakeMs.value).toBe(8_500)
-  })
-
-  it('does not report a wake when n8n was already awake', async () => {
-    const script = scripted()
-    const run = createAutomationRun({ start: script.start })
-    void run.submit(REQUEST)
-    script.emit({ type: 'started' })
-    expect(run.wokeAfterMs.value).toBeNull()
-  })
-
   it('skips the steps of a rejected lead', async () => {
     const script = scripted()
     const run = createAutomationRun({ start: script.start, paceMs: 0 })
     const sent = run.submit(REQUEST)
-    script.emit({ type: 'started' })
+    script.emit({ type: 'run', runId: 'run-1' })
     script.emit({ type: 'step', event: EVENTS.received })
     script.emit({
       type: 'step',
@@ -154,7 +124,7 @@ describe('createAutomationRun', () => {
     })
     expect(run.statuses.value.done).toBe('active')
     script.emit({ type: 'step', event: { ...EVENTS.done, data: { outcome: 'rejected' } } })
-    script.emit({ type: 'done', outcome: 'rejected', totalMs: 300 })
+    script.emit({ type: 'done', outcome: 'rejected', totalMs: 2 })
     script.finish()
     await sent
 
@@ -168,17 +138,19 @@ describe('createAutomationRun', () => {
       'skipped',
       'done',
     ])
-    expect(run.announcement.value).toBe('Listo: solicitud rechazada. El flujo tardó 0,3 s.')
+    expect(run.announcement.value).toBe(
+      'Listo: solicitud rechazada. El flujo tardó 2 ms; del clic al resultado, menos de 1 ms.',
+    )
   })
 
   it('fails after the steps that came before the problem are shown', async () => {
     const script = scripted()
     const run = createAutomationRun({ start: script.start })
     const sent = run.submit(REQUEST)
-    script.emit({ type: 'started' })
+    script.emit({ type: 'run', runId: 'run-1' })
     script.emit({ type: 'step', event: EVENTS.received })
     script.emit({ type: 'step', event: EVENTS.validated })
-    const problem: Problem = { kind: 'timeout', message: 'n8n no terminó.', fields: {}, retryAfter: null }
+    const problem: Problem = { kind: 'internal', message: 'Algo falló.', fields: {} }
     script.finish(problem)
     await sent
 
@@ -188,32 +160,26 @@ describe('createAutomationRun', () => {
     expect(run.problem.value).toEqual(problem)
     expect(Object.keys(run.steps.value)).toEqual(['received', 'validated'])
     expect(run.statuses.value.scored).toBe('pending')
+    expect(run.result.value).toBeNull()
   })
 
-  it('fails at once when the API refuses the run, and stops the wake counter', async () => {
+  it('fails at once when the API refuses the run', async () => {
     const script = scripted()
     const run = createAutomationRun({ start: script.start })
     const sent = run.submit(REQUEST)
-    script.emit({ type: 'waking', elapsedMs: 0 })
-    const problem: Problem = {
-      kind: 'n8n_unreachable',
-      message: 'No despertó.',
-      fields: {},
-      retryAfter: null,
-    }
+    const problem: Problem = { kind: 'captcha', message: 'Verifica otra vez.', fields: {} }
     script.finish(problem)
     await sent
     expect(run.phase.value).toBe('failed')
-    const shown = run.wakeMs.value
-    await vi.advanceTimersByTimeAsync(5_000)
-    expect(run.wakeMs.value).toBe(shown)
+    expect(run.busy.value).toBe(false)
+    expect(run.problem.value).toEqual(problem)
   })
 
   it('stops: aborts the request, shows what had arrived and ignores the rest', async () => {
     const script = scripted()
     const run = createAutomationRun({ start: script.start })
     const sent = run.submit(REQUEST)
-    script.emit({ type: 'started' })
+    script.emit({ type: 'run', runId: 'run-1' })
     script.emit({ type: 'step', event: EVENTS.received })
     script.emit({ type: 'step', event: EVENTS.validated })
     run.stop()
@@ -233,7 +199,7 @@ describe('createAutomationRun', () => {
     const run = createAutomationRun({ start: script.start, paceMs: 0 })
     const first = run.submit(REQUEST)
     expect(await run.submit(REQUEST)).toBe('ignored')
-    script.emit({ type: 'started' })
+    script.emit({ type: 'run', runId: 'run-1' })
     script.emit({ type: 'step', event: EVENTS.received })
     script.emit({ type: 'done', outcome: 'accepted', totalMs: 1 })
     script.finish()
@@ -244,7 +210,7 @@ describe('createAutomationRun', () => {
     expect(run.steps.value).toEqual({})
     expect(run.result.value).toBeNull()
     expect(run.phase.value).toBe('sending')
-    script.finish({ kind: 'limited', message: 'Espera.', fields: {}, retryAfter: 60 })
+    script.finish({ kind: 'captcha', message: 'Verifica otra vez.', fields: {} })
     await second
     expect(run.phase.value).toBe('failed')
   })
@@ -253,7 +219,7 @@ describe('createAutomationRun', () => {
     const script = scripted()
     const run = createAutomationRun({ start: script.start, paceMs: 0 })
     void run.submit(REQUEST)
-    script.emit({ type: 'started' })
+    script.emit({ type: 'run', runId: 'run-1' })
     run.reset()
     expect(run.phase.value).toBe('idle')
     script.emit({ type: 'step', event: EVENTS.received })
@@ -262,10 +228,14 @@ describe('createAutomationRun', () => {
 })
 
 describe('summary', () => {
-  it('says the outcome, the priority when there is one, and the time', () => {
-    expect(summary({ scored: EVENTS.scored }, 'accepted', 1234)).toBe(
-      'Listo: solicitud aceptada, prioridad alta. El flujo tardó 1,2 s.',
+  it('says the outcome, the priority when there is one, the flow time and the wait', () => {
+    expect(
+      summary({ scored: EVENTS.scored }, { outcome: 'accepted', totalMs: 0, clickToResultMs: 812 }),
+    ).toBe(
+      'Listo: solicitud aceptada, prioridad alta. El flujo tardó menos de 1 ms; del clic al resultado, 0,8 s.',
     )
-    expect(summary({}, 'rejected', 300)).toBe('Listo: solicitud rechazada. El flujo tardó 0,3 s.')
+    expect(summary({}, { outcome: 'rejected', totalMs: 3, clickToResultMs: 1_460 })).toBe(
+      'Listo: solicitud rechazada. El flujo tardó 3 ms; del clic al resultado, 1,5 s.',
+    )
   })
 })

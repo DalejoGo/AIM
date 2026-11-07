@@ -4,18 +4,19 @@ import { SAMPLE_LEADS, toLead } from '../src/features/automation/lead'
 import { fakeTurnstile, TOKEN_PREFIX } from './fakes'
 
 // The Lab demo "Automatización en vivo" against a simulated /api/automation/runs and a fake Turnstile. The runs
-// are SSE bodies like the ones apps/edge writes (docs/AUTOMATIZACION.md): `run`, `waking`…, `started`, one
-// `step` per step n8n reports, then `done` or `error`.
+// are SSE bodies like the ones apps/edge writes (docs/AUTOMATIZACION.md): `run`, one `step` per step of the
+// flow, then `done` or `error`. The flow runs in under a millisecond, so its times are 0 or 1.
 
 const PAGE = '/lab/automatizacion-en-vivo/'
 const RUN_ID = '0b7c6a2e-5f1d-4c3a-9e8b-7a6d5c4b3a21'
 const WORKFLOW = 'https://github.com/DalejoGo/AIM/blob/main/automations/workflows/lead-demo.json'
+const FLOW = 'Contacto → lead calificado'
 const tokenPattern = new RegExp(`^${TOKEN_PREFIX}-\\d+$`)
 
 const sse = (event: string, data: unknown) => `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`
 
 const STEPS = {
-  received: { step: 'received', data: { execution: '1042' }, atMs: 140 },
+  received: { step: 'received', data: { flow: FLOW }, atMs: 0 },
   validated: {
     step: 'validated',
     data: {
@@ -27,7 +28,7 @@ const STEPS = {
         { id: 'links', label: 'Sin enlaces sospechosos', ok: true },
       ],
     },
-    atMs: 260,
+    atMs: 0,
   },
   scored: {
     step: 'scored',
@@ -42,12 +43,12 @@ const STEPS = {
         { label: 'Mensaje con detalle', points: 15 },
       ],
     },
-    atMs: 390,
+    atMs: 0,
   },
   routed: {
     step: 'routed',
     data: { route: 'call', label: 'Llamada', sla: 'Llamada en menos de 24 horas' },
-    atMs: 480,
+    atMs: 0,
   },
   drafted: {
     step: 'drafted',
@@ -55,25 +56,23 @@ const STEPS = {
       subject: 'Laura, hablemos de tu automatización',
       body: 'Hola Laura:\n\nGracias por escribir a AIM. <b>Te llamamos</b> en menos de 24 horas.',
     },
-    atMs: 610,
+    atMs: 1,
   },
-  recorded: { step: 'recorded', data: { reference: 'AIM-0B7C6A2E' }, atMs: 720 },
-  done: { step: 'done', data: { outcome: 'accepted' }, atMs: 805 },
+  recorded: { step: 'recorded', data: { reference: 'AIM-0B7C6A2E' }, atMs: 1 },
+  done: { step: 'done', data: { outcome: 'accepted' }, atMs: 1 },
 }
 
 const accepted = () =>
   [
     sse('run', { runId: RUN_ID }),
-    sse('started', {}),
     ...Object.values(STEPS).map((step) => sse('step', step)),
-    sse('done', { outcome: 'accepted', totalMs: 805 }),
+    sse('done', { outcome: 'accepted', totalMs: 1 }),
   ].join('')
 
 const rejected = () =>
   [
     sse('run', { runId: RUN_ID }),
-    sse('started', {}),
-    sse('step', { step: 'received', data: { execution: '1043' }, atMs: 120 }),
+    sse('step', STEPS.received),
     sse('step', {
       step: 'validated',
       data: {
@@ -83,10 +82,10 @@ const rejected = () =>
           { id: 'links', label: 'Sin enlaces sospechosos', ok: false },
         ],
       },
-      atMs: 230,
+      atMs: 0,
     }),
-    sse('step', { step: 'done', data: { outcome: 'rejected' }, atMs: 300 }),
-    sse('done', { outcome: 'rejected', totalMs: 300 }),
+    sse('step', { step: 'done', data: { outcome: 'rejected' }, atMs: 0 }),
+    sse('done', { outcome: 'rejected', totalMs: 0 }),
   ].join('')
 
 interface Reply {
@@ -111,35 +110,6 @@ async function mockRuns(page: Page, reply: (n: number) => Reply): Promise<unknow
   })
   return calls
 }
-
-/**
- * Answers GET /api/automation/status with `reply(n)` for the n-th check (the page asks on load and every 5 s
- * while n8n wakes up). Registered again in a test, it replaces the default of the setup.
- */
-async function mockStatus(
-  page: Page,
-  reply: (n: number) => Reply | 'abort',
-): Promise<{ count: () => number }> {
-  let count = 0
-  await page.route('**/api/automation/status', async (route) => {
-    const answer = reply(++count)
-    if (answer === 'abort') return route.abort('connectionfailed')
-    await route.fulfill({
-      status: answer.status ?? 200,
-      contentType: 'application/json',
-      body: JSON.stringify(answer.json ?? {}),
-    })
-  })
-  return { count: () => count }
-}
-
-const WAKING_TEXT = 'Despertando n8n en el servidor gratuito…'
-const READY_TEXT = 'n8n está listo: tu ejecución arrancará al instante.'
-const wakeNotice = (page: Page) =>
-  page
-    .getByRole('region', { name: 'Solicitud de prueba' })
-    .getByRole('status')
-    .filter({ hasText: /Despertando n8n|n8n está listo/ })
 
 interface LiveStream {
   /** Waits until the page opened the stream. */
@@ -205,7 +175,7 @@ const field = (page: Page, label: string) => page.getByLabel(label, { exact: tru
 const sampleButton = (page: Page) => page.getByRole('button', { name: 'Llenar con datos de ejemplo' })
 const runButton = (page: Page) => page.getByRole('button', { name: /^Ejecutar (el flujo|otra vez)$/ })
 const step = (page: Page, name: string) => page.locator(`li[data-step="${name}"]`)
-const runSection = (page: Page) => page.getByRole('region', { name: 'Ejecución en n8n' })
+const runSection = (page: Page) => page.getByRole('region', { name: 'Ejecución del flujo' })
 
 /** Opens the page and waits for the fake widget's token. */
 async function open(page: Page) {
@@ -222,72 +192,24 @@ async function runSample(page: Page, n: number) {
 
 test.beforeEach(async ({ page }) => {
   await fakeTurnstile(page)
-  // The page asks whether n8n is awake as soon as it opens; by default it is.
-  await mockStatus(page, () => ({ json: { state: 'ready' } }))
-})
-
-test.describe('early wake-up of n8n', () => {
-  test('starts waking n8n when the page opens, counts the wait and says when it is ready', async ({
-    page,
-  }) => {
-    await page.clock.install()
-    const status = await mockStatus(page, (n) => ({ json: { state: n === 1 ? 'waking' : 'ready' } }))
-    await open(page)
-
-    await expect(wakeNotice(page)).toContainText(WAKING_TEXT)
-    await expect(wakeNotice(page)).toContainText('puedes ir llenando el formulario')
-    await expect(wakeNotice(page)).toContainText(/0:0\d/)
-    expect(status.count()).toBe(1)
-    await expectNoSeriousA11yIssues(page)
-
-    await page.clock.fastForward(5_000)
-    await expect(wakeNotice(page)).toHaveText(READY_TEXT)
-    expect(status.count()).toBe(2)
-    await page.clock.fastForward(30_000)
-    expect(status.count()).toBe(2)
-    await expectNoSeriousA11yIssues(page)
-  })
-
-  test('stops asking once a run starts: the run reports its own wait', async ({ page }) => {
-    await page.clock.install()
-    const status = await mockStatus(page, () => ({ json: { state: 'waking' } }))
-    await mockRuns(page, () => ({ sse: accepted() }))
-    await open(page)
-    await expect(wakeNotice(page)).toContainText(WAKING_TEXT)
-
-    await runSample(page, 1)
-    await expect(wakeNotice(page)).toHaveCount(0)
-    const asked = status.count()
-    await page.clock.fastForward(30_000)
-    expect(status.count()).toBe(asked)
-  })
-
-  for (const [name, reply] of [
-    ['the demo is disabled', { json: { state: 'disabled' } }],
-    ['the API fails', { status: 500, json: { error: 'internal', message: 'Algo falló.' } }],
-    ['there is no connection', 'abort'],
-  ] as const) {
-    test(`shows nothing when ${name}`, async ({ page }) => {
-      const status = await mockStatus(page, () => reply)
-      await open(page)
-      await expect.poll(() => status.count()).toBe(1)
-      await expect(page.getByText(WAKING_TEXT)).toHaveCount(0)
-      await expect(page.getByText(READY_TEXT)).toHaveCount(0)
-      await expect(wakeNotice(page)).toHaveCount(0)
-      await expectNoSeriousA11yIssues(page)
-    })
-  }
 })
 
 test('presents the demo: what it proves, the test-data notice, the flow on GitHub and the seven steps', async ({
   page,
 }) => {
+  // The page calls no API until the visitor runs the flow.
+  const apiCalls: string[] = []
+  page.on('request', (request) => {
+    if (new URL(request.url()).pathname.startsWith('/api/automation')) apiCalls.push(request.url())
+  })
   await open(page)
   await expect(page.getByRole('heading', { level: 1, name: 'Automatización en vivo' })).toBeVisible()
   const proves = page.getByRole('region', { name: 'Qué demuestra' })
-  await expect(proves.getByRole('listitem')).toHaveCount(4)
-  await expect(proves).toContainText('Webhooks')
-  await expect(proves).toContainText('n8n sin secretos')
+  await expect(proves.getByRole('listitem')).toHaveCount(5)
+  await expect(proves).toContainText('Diseñado en n8n')
+  await expect(proves).toContainText('Probado contra n8n real')
+  await expect(proves).toContainText('Nada se guarda')
+  await expect(proves).not.toContainText('Webhooks')
   await expect(proves.getByRole('link', { name: /Mira el flujo de n8n en GitHub/ })).toHaveAttribute(
     'href',
     WORKFLOW,
@@ -307,6 +229,7 @@ test('presents the demo: what it proves, the test-data notice, the flow on GitHu
     'Chatbots',
     'Blogs y contenido web',
   ])
+  expect(apiCalls).toEqual([])
   await expectNoSeriousA11yIssues(page)
 })
 
@@ -333,25 +256,26 @@ test('runs the hot example: the steps light up one by one with their panels and 
   await open(page)
   await runSample(page, 1)
 
-  await expect(runSection(page).getByRole('heading', { name: 'Ejecución en n8n' })).toBeFocused({
+  await expect(runSection(page).getByRole('heading', { name: 'Ejecución del flujo' })).toBeFocused({
     timeout: 1000,
   })
-  // Paced: the first step shows before the last one.
   await expect(step(page, 'received')).toHaveAttribute('data-status', 'done')
-  await expect(step(page, 'received')).toContainText('Ejecución n8n #1042')
-  await expect(step(page, 'received')).toContainText('+0,1 s')
+  await expect(step(page, 'received')).toContainText(`Flujo ${FLOW}`)
+  await expect(step(page, 'received')).toContainText('menos de 1 ms')
+  await expect(step(page, 'drafted')).toContainText('+1 ms')
   await expect(step(page, 'done')).toHaveAttribute('data-status', 'done')
 
   const result = runSection(page).locator('[tabindex="-1"]').filter({ hasText: 'Solicitud aceptada' })
   await expect(result).toBeFocused()
-  await expect(result).toContainText('Ejecución n8n #1042')
-  await expect(result).toContainText('AIM-0B7C6A2E')
-  await expect(result).toContainText('0,8 s')
+  await expect(result.locator('dt:text-is("Flujo") + dd')).toHaveText(`${FLOW} (diseñado en n8n)`)
+  await expect(result.locator('dt:text-is("Referencia") + dd')).toHaveText('AIM-0B7C6A2E')
+  await expect(result.locator('dt:text-is("Duración del flujo") + dd')).toHaveText('1 ms')
+  // Measured by the browser, from the click until the result showed up.
+  await expect(result.locator('dt:text-is("Del clic al resultado") + dd')).toHaveText(/^\d+,\d s$/)
   await expect(result.getByRole('link', { name: /Ver el flujo de n8n en GitHub/ })).toHaveAttribute(
     'href',
     WORKFLOW,
   )
-  await expect(result).not.toContainText('Despertar n8n')
 
   await expect(step(page, 'validated').getByRole('listitem')).toHaveCount(4)
   await expect(step(page, 'validated')).toContainText('4 de 4 reglas cumplidas')
@@ -366,7 +290,7 @@ test('runs the hot example: the steps light up one by one with their panels and 
   await expect(preview).toContainText('<b>Te llamamos</b>')
   await expect(preview.locator('b')).toHaveCount(0)
   await expect(page.getByRole('status').filter({ hasText: 'Listo:' })).toHaveText(
-    'Listo: solicitud aceptada, prioridad alta. El flujo tardó 0,8 s.',
+    /^Listo: solicitud aceptada, prioridad alta\. El flujo tardó 1 ms; del clic al resultado, \d+,\d s\.$/,
   )
 
   const sample = SAMPLE_LEADS[0]
@@ -382,6 +306,9 @@ test('runs the rejected example: validation fails and the middle steps are skipp
   await runSample(page, 3)
 
   await expect(runSection(page).getByText('Solicitud rechazada', { exact: true })).toBeVisible()
+  const result = runSection(page).locator('[tabindex="-1"]').filter({ hasText: 'Solicitud rechazada' })
+  await expect(result.locator('dt:text-is("Duración del flujo") + dd')).toHaveText('menos de 1 ms')
+  await expect(result.locator('dt:text-is("Del clic al resultado") + dd')).toHaveText(/^\d+,\d s$/)
   await expect(step(page, 'validated')).toContainText('No cumple: Sin enlaces sospechosos')
   await expect(step(page, 'validated')).toContainText('La solicitud no pasó la validación')
   for (const name of ['scored', 'routed', 'drafted', 'recorded']) {
@@ -392,83 +319,39 @@ test('runs the rejected example: validation fails and the middle steps are skipp
   expect((calls[0] as { lead: { company?: string } }).lead.company).toBeUndefined()
 })
 
-test('says honestly that n8n is waking up, counts the wait, then runs the flow', async ({ page }) => {
-  const live = await liveRuns(page)
-  await open(page)
-  await runSample(page, 2)
-  await live.opened()
-  await live.push(sse('run', { runId: RUN_ID }) + sse('waking', { elapsedMs: 42_000 }))
-
-  const waking = runSection(page).getByText(
-    'El servidor gratuito de n8n estaba dormido; despertarlo tarda 1–2 minutos.',
-  )
-  await expect(waking).toBeVisible()
-  await expect(runSection(page)).toContainText(/Esperando: 4\d s/)
-  await expect(page.getByRole('button', { name: 'Detener' })).toBeVisible()
-  await expect(page.getByRole('status').filter({ hasText: 'estaba dormido' })).toBeAttached()
-  await expectNoSeriousA11yIssues(page)
-
-  await live.push(sse('waking', { elapsedMs: 78_000 }))
-  await expect(runSection(page)).toContainText(/Esperando: 1 min 1\d s/)
-
-  await live.push(
-    sse('started', {}) +
-      sse('step', STEPS.received) +
-      sse('step', { ...STEPS.done, data: { outcome: 'accepted' }, atMs: 200 }) +
-      sse('done', { outcome: 'accepted', totalMs: 200 }),
-  )
-  await live.close()
-  await expect(waking).toHaveCount(0)
-  const result = runSection(page).locator('[tabindex="-1"]').filter({ hasText: 'Solicitud aceptada' })
-  await expect(result).toContainText('Despertar n8n')
-  await expect(result).toContainText(/1 min 1\d s/)
-})
-
-test('"Detener" closes the run while n8n wakes up', async ({ page }) => {
+test('"Detener" closes a run that is still open and keeps the steps that arrived', async ({ page }) => {
   const live = await liveRuns(page)
   await open(page)
   await runSample(page, 1)
   await live.opened()
-  await live.push(sse('run', { runId: RUN_ID }) + sse('waking', { elapsedMs: 6000 }))
+  await live.push(sse('run', { runId: RUN_ID }) + sse('step', STEPS.received))
+  await expect(step(page, 'received')).toHaveAttribute('data-status', 'done')
+  await expect(step(page, 'validated')).toHaveAttribute('data-status', 'active')
   await page.getByRole('button', { name: 'Detener' }).click()
 
   await expect(runSection(page).getByText('Detuviste la ejecución.')).toBeVisible()
   expect(await live.aborted()).toBe(true)
+  await expect(step(page, 'received')).toHaveAttribute('data-status', 'done')
+  await expect(step(page, 'validated')).toHaveAttribute('data-status', 'pending')
   await expect(runButton(page)).toBeEnabled()
 })
 
-test('shows the steps that arrived and then the error when the flow times out', async ({ page }) => {
+test('shows the steps that arrived and then the error when the flow fails', async ({ page }) => {
+  const message = 'Algo falló de nuestro lado durante la ejecución. Inténtalo de nuevo en unos minutos.'
   await mockRuns(page, () => ({
     sse:
       sse('run', { runId: RUN_ID }) +
-      sse('started', {}) +
       sse('step', STEPS.received) +
-      sse('error', {
-        code: 'timeout',
-        message: 'n8n no terminó el flujo a tiempo. Inténtalo de nuevo en unos minutos.',
-      }),
+      sse('error', { code: 'internal', message }),
   }))
   await open(page)
   await runSample(page, 1)
 
   const alert = runSection(page).getByRole('alert')
-  await expect(alert).toHaveText('n8n no terminó el flujo a tiempo. Inténtalo de nuevo en unos minutos.')
+  await expect(alert).toHaveText(message)
   await expect(step(page, 'received')).toHaveAttribute('data-status', 'done')
   await expect(step(page, 'validated')).toHaveAttribute('data-status', 'pending')
   await expect(runButton(page)).toHaveText('Ejecutar otra vez')
-})
-
-test('says n8n could not be woken up', async ({ page }) => {
-  const message = 'El servidor de n8n no despertó a tiempo. Inténtalo de nuevo en unos minutos.'
-  await mockRuns(page, () => ({
-    sse:
-      sse('run', { runId: RUN_ID }) +
-      sse('waking', { elapsedMs: 0 }) +
-      sse('error', { code: 'n8n_unreachable', message }),
-  }))
-  await open(page)
-  await runSample(page, 1)
-  await expect(runSection(page).getByRole('alert')).toHaveText(message)
   await expectNoSeriousA11yIssues(page)
 })
 
@@ -498,24 +381,15 @@ test.describe('refusals before the run', () => {
       'No pudimos confirmar que eres una persona.',
     ],
     [
-      'the visitor limit says how long to wait',
-      {
-        status: 429,
-        headers: { 'Retry-After': '420' },
-        json: {
-          error: 'rate_limited',
-          message: 'Ya ejecutaste la demo 3 veces hace poco. Vuelve a intentarlo en 7 minutos.',
-        },
-      },
-      'Ya ejecutaste la demo 3 veces hace poco. Vuelve a intentarlo en 7 minutos.',
-    ],
-    [
-      'the daily cap',
+      'a verification that could not be checked asks for it again',
       {
         status: 503,
-        json: { error: 'daily_limit', message: 'La demo llegó a su límite de ejecuciones por hoy.' },
+        json: {
+          error: 'captcha_unavailable',
+          message: 'No pudimos revisar la verificación de seguridad. Inténtalo de nuevo.',
+        },
       },
-      'La demo llegó a su límite de ejecuciones por hoy.',
+      'No pudimos revisar la verificación de seguridad. Inténtalo de nuevo.',
     ],
   ] as const) {
     test(name, async ({ page }) => {
@@ -531,10 +405,12 @@ test.describe('refusals before the run', () => {
     })
   }
 
-  test('a paused demo points to WhatsApp and the contact form', async ({ page }) => {
+  test('a deploy without the API (404) pauses the demo and points to WhatsApp and the contact form', async ({
+    page,
+  }) => {
     await mockRuns(page, () => ({
-      status: 503,
-      json: { error: 'automation_unavailable', message: 'No disponible.' },
+      status: 404,
+      json: { error: 'not_found', message: 'Esta ruta de la API no existe.' },
     }))
     await open(page)
     await runSample(page, 1)

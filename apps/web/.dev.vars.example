@@ -22,12 +22,3 @@ ASSISTANT_DAILY_LIMIT=300
 # --- Lab "Seguridad en acción" (rate-limit demo, GET /api/lab/burst) ---
 LAB_BURST_LIMIT=10
 LAB_BURST_WINDOW_SECONDS=60
-
-# --- Lab "Automatización en vivo" (docs/AUTOMATIZACION.md): n8n from docker-compose.yml ---
-# Empty turns the demo off (POST /api/automation/runs answers 503).
-AUTOMATION_N8N_URL=http://127.0.0.1:5679
-AUTOMATION_WEBHOOK_PATH=aim-lead-demo
-AUTOMATION_DAILY_LIMIT=150
-AUTOMATION_WAKE_TIMEOUT_SECONDS=180
-AUTOMATION_BURST_LIMIT=3
-AUTOMATION_BURST_WINDOW_SECONDS=600

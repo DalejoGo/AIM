@@ -1,20 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import {
-  AUTOMATION_STATUS_STATES,
   AUTOMATION_STEPS,
   AutomationDoneEvent,
   AutomationErrorEvent,
+  AutomationFlowLead,
   AutomationLead,
   AutomationRunRequest,
-  AutomationStatus,
   AutomationStepEvent,
   AutomationStepReport,
   AutomationStreamEvents,
-  AutomationWakingEvent,
-  AutomationWebhookPayload,
 } from './index'
 
-// docs/AUTOMATIZACION.md is the contract between the page, the edge and n8n: these tests pin its bounds.
+// docs/AUTOMATIZACION.md is the contract between the page and the edge: these tests pin its bounds.
 
 const lead = {
   name: 'Laura Pérez',
@@ -117,7 +114,7 @@ describe('AutomationRunRequest', () => {
 })
 
 const REPORTS = {
-  received: { execution: '1234' },
+  received: { flow: 'Contacto → lead calificado' },
   validated: {
     valid: true,
     checks: [
@@ -150,16 +147,16 @@ describe('AutomationStepReport', () => {
   it('drops keys the protocol does not have', () => {
     const parsed = AutomationStepReport.parse({
       step: 'received',
-      data: { execution: '7', secret: 'x' },
+      data: { flow: 'Contacto → lead calificado', secret: 'x' },
       extra: true,
     })
-    expect(parsed).toEqual({ step: 'received', data: { execution: '7' } })
+    expect(parsed).toEqual({ step: 'received', data: { flow: 'Contacto → lead calificado' } })
   })
 
   it.each([
     ['an unknown step', { step: 'sent', data: {} }],
     ['data of another step', { step: 'scored', data: REPORTS.routed }],
-    ['a numeric execution', { step: 'received', data: { execution: 1234 } }],
+    ['an empty flow name', { step: 'received', data: { flow: ' ' } }],
     ['a score over 100', { step: 'scored', data: { ...REPORTS.scored, score: 101 } }],
     ['a fractional score', { step: 'scored', data: { ...REPORTS.scored, score: 70.5 } }],
     ['an unknown tier', { step: 'scored', data: { ...REPORTS.scored, tier: 'lukewarm' } }],
@@ -189,48 +186,28 @@ describe('SSE events', () => {
     expect(AutomationStepEvent.safeParse({ step: 'scored', data: REPORTS.scored }).success).toBe(false)
   })
 
-  it('describes waking, done and error', () => {
-    expect(AutomationWakingEvent.parse({ elapsedMs: 6000 })).toEqual({ elapsedMs: 6000 })
+  it('describes done and error', () => {
     expect(AutomationDoneEvent.parse({ outcome: 'rejected', totalMs: 1500 })).toEqual({
       outcome: 'rejected',
       totalMs: 1500,
     })
-    for (const code of ['n8n_unreachable', 'timeout', 'internal']) {
-      expect(AutomationErrorEvent.safeParse({ code, message: 'Algo falló.' }).success).toBe(true)
-    }
-    expect(AutomationErrorEvent.safeParse({ code: 'other', message: 'x' }).success).toBe(false)
+    expect(AutomationErrorEvent.safeParse({ code: 'internal', message: 'Algo falló.' }).success).toBe(true)
+    expect(AutomationErrorEvent.safeParse({ code: 'n8n_unreachable', message: 'x' }).success).toBe(false)
   })
 
   it('names a schema for every event of the stream', () => {
-    expect(Object.keys(AutomationStreamEvents)).toEqual(['run', 'waking', 'started', 'step', 'done', 'error'])
+    expect(Object.keys(AutomationStreamEvents)).toEqual(['run', 'step', 'done', 'error'])
     expect(
       AutomationStreamEvents.run.safeParse({ runId: '0b7c6a2e-5f1d-4c3a-9e8b-7a6d5c4b3a21' }).success,
     ).toBe(true)
     expect(AutomationStreamEvents.run.safeParse({ runId: 'run-1' }).success).toBe(false)
-    expect(AutomationStreamEvents.started.parse({})).toEqual({})
   })
 })
 
-describe('AutomationWebhookPayload', () => {
-  it('carries the run, its token and the lead with the service name', () => {
-    const payload = {
-      runId: '0b7c6a2e-5f1d-4c3a-9e8b-7a6d5c4b3a21',
-      callbackToken: 'header.payload.signature',
-      lead: { ...lead, serviceTitle: 'Automatizaciones' },
-    }
-    expect(AutomationWebhookPayload.parse(payload)).toEqual(payload)
-    const { serviceTitle: _, ...withoutTitle } = payload.lead
-    expect(AutomationWebhookPayload.safeParse({ ...payload, lead: withoutTitle }).success).toBe(false)
-  })
-})
-
-describe('AutomationStatus', () => {
-  it('is ready, waking or disabled', () => {
-    expect([...AUTOMATION_STATUS_STATES]).toEqual(['ready', 'waking', 'disabled'])
-    for (const state of AUTOMATION_STATUS_STATES) {
-      expect(AutomationStatus.parse({ state })).toEqual({ state })
-    }
-    expect(AutomationStatus.safeParse({ state: 'asleep' }).success).toBe(false)
-    expect(AutomationStatus.safeParse({}).success).toBe(false)
+describe('AutomationFlowLead', () => {
+  it('is the cleaned lead with the service name', () => {
+    const flowLead = { ...lead, serviceTitle: 'Automatizaciones' }
+    expect(AutomationFlowLead.parse(flowLead)).toEqual(flowLead)
+    expect(AutomationFlowLead.safeParse(lead).success).toBe(false)
   })
 })

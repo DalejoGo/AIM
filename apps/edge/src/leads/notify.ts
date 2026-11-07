@@ -7,7 +7,7 @@ import { log } from '../lib/log'
 
 export type LeadNotice = Pick<Lead, 'id' | 'name' | 'email' | 'phone' | 'service' | 'message' | 'quote'>
 
-/** Same names as the service pages (apps/web/src/content/services); the automation demo sends them to n8n. */
+/** Same names as the service pages (apps/web/src/content/services); the automation demo's flow shows them too. */
 export const SERVICE_LABELS: Record<Lead['service'], string> = {
   web: 'Páginas web',
   app: 'Aplicativos web',

@@ -18,7 +18,10 @@ case "${1:-}" in
     "${compose[@]}" cp n8n-editor:/tmp/lead-demo.json "$tmp"
     node automations/scripts/normalize-workflow.mjs "$tmp" "$file"
     pnpm exec biome format --write "$file" >/dev/null
-    node --test automations/workflow.test.mjs
+    # What a real n8n answers for the test leads, then the edge's flow against it (docs/AUTOMATIZACION.md §3).
+    pnpm --filter @aim/automations record:n8n
+    pnpm exec biome format --write automations/test/fixtures/n8n-runs.json >/dev/null
+    pnpm --filter @aim/automations test
     echo "Listo: $file (revisa el diff y haz commit)."
     ;;
   import)
