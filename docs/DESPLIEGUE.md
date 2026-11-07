@@ -145,7 +145,7 @@ docker run --rm -p 3000:10000 -e PORT=10000 -e API_CORS_ORIGINS=http://localhost
 curl http://localhost:3000/api/v1/health          # y http://localhost:3000/docs en el navegador
 ```
 
-La imagen usa `node:22.23.4-alpine3.24` fijada por digest, instala con `--frozen-lockfile` y corre como el usuario `node` (no root). Para subir de versión de Node, cambia la etiqueta y el digest del `ARG NODE_IMAGE` (respetando los 14 días de DEC-002).
+La imagen usa `node:22.23.4-alpine3.24` fijada por digest (descargada del espejo público de AWS, `public.ecr.aws/docker/library`, ver Historial), instala con `--frozen-lockfile` y corre como el usuario `node` (no root). Para subir de versión de Node, cambia la etiqueta y el digest del `ARG NODE_IMAGE` (respetando los 14 días de DEC-002).
 
 **Si el límite por IP se agota para todos a la vez**, la API está tomando la IP del proxy y no la del visitante: revisa cuántos proxies hay delante y ajusta `trust proxy` en `apps/api/src/app.ts` (hoy es 1).
 
@@ -211,4 +211,5 @@ curl http://localhost:8000/health          # y http://localhost:8000/docs en el 
 
 ## Historial
 
-- 2026-11-06: primer despliegue. Wrangler 4.152 envía `pages project create` a Workers por defecto, y los Workers quedan bajo el subdominio de la cuenta (`subdominio-de-la-cuenta.workers.dev`), que deja ver el nombre del cliente de la agencia. Se borraron esos dos Workers y el proyecto se creó como Pages clásico (una sola vez con `--force`; las publicaciones siguientes no lo necesitan).
+- 2026-11-06: primer despliegue. Wrangler 4.152 envía `pages project create` a Workers por defecto, y los Workers quedan bajo el subdominio de la cuenta (`*.workers.dev`), que deja ver el nombre del cliente de la agencia. Se borraron esos dos Workers y el proyecto se creó como Pages clásico (una sola vez con `--force`; las publicaciones siguientes no lo necesitan).
+- 2026-11-07: el primer build de `aimweb-n8n` en Render falló con `429 Too Many Requests`: Render construye desde IP compartidas que agotan el límite de descargas anónimas de Docker Hub. Las imágenes base ahora salen de registros sin ese límite y con **el mismo digest**: n8n de `ghcr.io/n8n-io/n8n`, Python y Node de `public.ecr.aws/docker/library/…`; además se quitó `# syntax=docker/dockerfile:1`, que también se descargaba de Docker Hub (BuildKit ya trae `RUN --mount`). Si vuelve a pasar con otra imagen, usa su copia en uno de esos registros o en `mirror.gcr.io`.

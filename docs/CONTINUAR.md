@@ -13,7 +13,7 @@ Punto de partida para seguir trabajando en AIM desde otro equipo (por ejemplo, e
 | API Playground (NestJS) | https://aimweb-api.onrender.com (Render, servicio `aimweb-api`, plan Free) | En vivo; se duerme sin uso |
 | n8n de la automatización | https://aimweb-n8n.onrender.com (Render, servicio `aimweb-n8n`, plan Free) | En `render.yaml` (DEC-021); sin estado y sin secretos |
 | Migrador en Python (FastAPI) | https://aimweb-pylab.onrender.com (Render, servicio `aimweb-pylab`, plan Free) | En `render.yaml` (DEC-022); no guarda archivos |
-| Repositorio | https://github.com/DalejoGo/AIM (rama `main`, público) | CI en GitHub Actions: 1.228 pruebas unitarias (incluye 119 de Python y 14 del flujo de n8n) + 252 E2E |
+| Repositorio | https://github.com/DalejoGo/AIM (rama `main`, público) | CI en GitHub Actions: 1.258 pruebas unitarias (incluye 119 de Python y 14 del flujo de n8n) + 262 E2E |
 | Calidad en producción | Lighthouse (`docs/RENDIMIENTO.md`) | Rendimiento 98–99 móvil / 100 escritorio; accesibilidad, buenas prácticas y SEO 100 |
 | Seguridad | CSP estricta (DEC-019) + cabeceras en `_headers` | Sin `unsafe-inline` ni `unsafe-eval` |
 | Visitas | Cloudflare Web Analytics, sin cookies (DEC-020) | Panel de Cloudflare → Analytics & Logs → Web Analytics → `aimweb-9hc.pages.dev` |

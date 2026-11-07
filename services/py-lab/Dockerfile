@@ -1,9 +1,10 @@
-# syntax=docker/dockerfile:1
 # py-lab (FastAPI) for Render's free plan: 512 MB of RAM and 0.1 CPU. Build with this folder as the context:
 #   docker build -t aim-pylab services/py-lab
 # Images pinned by digest (DEC-002: both pushed more than 14 days ago).
 # python:3.12.15-slim-trixie, pushed 2026-10-21. uv 0.8.23, released 2025-10-04 (same version as CI).
-ARG PYTHON_IMAGE=python:3.12.15-slim-trixie@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
+# The official Docker Hub image through AWS's public mirror (same digest): Render's shared build IPs hit Docker Hub's
+# anonymous pull limit.
+ARG PYTHON_IMAGE=public.ecr.aws/docker/library/python:3.12.15-slim-trixie@sha256:a0f57064cbdcd6285fa45f51237ab0b35ea8ebaed06a1f5973e89e19dfb86704
 ARG UV_IMAGE=ghcr.io/astral-sh/uv:0.8.23@sha256:94390f20a83e2de83f63b2dadcca2efab2e6798f772edab52bf545696c86bdb4
 
 FROM ${UV_IMAGE} AS uv

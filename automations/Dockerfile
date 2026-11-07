@@ -3,8 +3,10 @@
 # boot only runs `n8n start` (each extra n8n command costs about a minute on Render Free's 0.1 CPU).
 # Build context: automations/. Details: automations/README.md.
 
-# n8n 2.45.2, published 2026-10-22 (DEC-002). The digest is the multi-arch index (same on Docker Hub).
-FROM docker.n8n.io/n8nio/n8n:2.45.2@sha256:fd7f4dc4617e9113c499ba62a6c58f17df2dce3dd82028e357485947af383041
+# n8n 2.45.2, published 2026-10-22 (DEC-002). The digest is the multi-arch index, identical on docker.n8n.io and
+# Docker Hub. Pulled from GitHub's registry: Render builds from shared IPs that hit Docker Hub's anonymous pull
+# limit (429 Too Many Requests on the first deploy, 2026-11-07).
+FROM ghcr.io/n8n-io/n8n:2.45.2@sha256:fd7f4dc4617e9113c499ba62a6c58f17df2dce3dd82028e357485947af383041
 
 # Settings shared by the build and every boot. scripts/entrypoint.sh adds the per-mode ones.
 ENV GENERIC_TIMEZONE=America/Bogota \

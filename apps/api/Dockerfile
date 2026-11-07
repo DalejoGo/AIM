@@ -1,8 +1,9 @@
-# syntax=docker/dockerfile:1
 # API Playground (NestJS) for Render (DEC-014). Build from the monorepo root:
 #   docker build -f apps/api/Dockerfile -t aim-api .
 # Node 22.23.4 was released 2026-10-20 (DEC-002: 14 days); the digest pins the exact image.
-ARG NODE_IMAGE=node:22.23.4-alpine3.24@sha256:0e1754758c2df4cfa3e68d59e2e1b7374bb7fd9ea6328eaaacf15cc934af8202
+# The official Docker Hub image through AWS's public mirror (same digest): Render's shared build IPs hit Docker Hub's
+# anonymous pull limit.
+ARG NODE_IMAGE=public.ecr.aws/docker/library/node:22.23.4-alpine3.24@sha256:0e1754758c2df4cfa3e68d59e2e1b7374bb7fd9ea6328eaaacf15cc934af8202
 
 # --- build: install with the lockfile, compile, then keep only production dependencies -----------------
 FROM ${NODE_IMAGE} AS build

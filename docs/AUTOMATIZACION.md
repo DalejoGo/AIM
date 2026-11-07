@@ -72,6 +72,14 @@ Si todo está bien, la respuesta es `text/event-stream`:
 
 Comentarios `: ping` cada ~10 s para que la conexión no se corte.
 
+### Despertar al abrir la página
+
+Render Free duerme n8n sin tráfico y despertarlo tarda 1–2 minutos (0,1 CPU). Para que esa espera no la sufra el visitante, la página lo despierta **apenas se abre**:
+
+- `GET /api/automation/status` → `{ state: "ready" | "waking" | "disabled" }`. Hace **una** consulta a `/healthz/readiness` con 3 s de tiempo (una petición basta para que Render empiece a arrancar el servicio, aunque se corte) o, sin `AUTOMATION_N8N_URL`, responde `disabled` sin llamar a nada. Sin base de datos ni Turnstile; sin límite por IP, porque la URL de n8n es pública de todas formas y limitar esta ruta no protegería las horas de Render.
+- La página (`features/automation/wake.ts`) consulta al cargar y luego cada 5 s mientras diga `waking`; no consulta con la pestaña oculta; se detiene en `ready`, al primer error, a los 180 s o cuando empieza una ejecución. Muestra «Despertando n8n en el servidor gratuito… 0:23 — puedes ir llenando el formulario» y luego «n8n está listo: tu ejecución arrancará al instante».
+- Los 180 s son una constante de la página (`WAKE_GIVE_UP_MS`); si cambias `AUTOMATION_WAKE_TIMEOUT_SECONDS`, cámbiala también.
+
 ## 2. Edge → n8n
 
 `POST {AUTOMATION_N8N_URL}/webhook/{AUTOMATION_WEBHOOK_PATH}` con `Content-Type: application/json`:

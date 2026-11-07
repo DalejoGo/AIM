@@ -23,6 +23,8 @@ import {
 } from './lead'
 import { RunPanel } from './RunPanel'
 import { createAutomationRun, type StartRun } from './run'
+import { WakeNotice } from './WakeNotice'
+import { createWakeWatch, fetchStatus } from './wake'
 
 export interface AutomationDemoProps {
   /** The services of src/content/services, in their order: the lead's "service" options. */
@@ -62,6 +64,8 @@ export function AutomationDemo({
   workflowUrl,
 }: AutomationDemoProps) {
   const run = useMemo(() => createAutomationRun({ start }), [])
+  // Opening the page already wakes n8n up on Render, while the visitor reads and fills in the form.
+  const wake = useMemo(() => createWakeWatch({ check: (signal) => fetchStatus(signal) }), [])
   const form = useSignal<LeadForm>(EMPTY_FORM)
   const errors = useSignal<LeadErrors>({})
   /** How many examples were loaded: the button cycles through them. */
@@ -87,6 +91,17 @@ export function AutomationDemo({
   }, [phase])
 
   useEffect(() => () => run.stop(), [run])
+
+  useEffect(() => {
+    const onVisibility = () => void wake.setPageHidden(document.visibilityState === 'hidden')
+    onVisibility()
+    void wake.start()
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility)
+      wake.stop()
+    }
+  }, [wake])
 
   function update(field: LeadField, value: string) {
     form.value = { ...form.value, [field]: value }
@@ -139,6 +154,8 @@ export function AutomationDemo({
       focusSoon(TURNSTILE_ID)
       return
     }
+    // The run reports its own wait for n8n (`waking` events) from here on.
+    wake.stop()
     // Each Turnstile token is good for one run: ask for the next one now.
     token.value = null
     resetKey.value += 1
@@ -183,6 +200,8 @@ export function AutomationDemo({
             .
           </p>
         </div>
+
+        <WakeNotice watch={wake} />
 
         <div class="grid gap-2">
           <div>

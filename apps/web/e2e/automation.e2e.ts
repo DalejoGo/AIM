@@ -112,6 +112,35 @@ async function mockRuns(page: Page, reply: (n: number) => Reply): Promise<unknow
   return calls
 }
 
+/**
+ * Answers GET /api/automation/status with `reply(n)` for the n-th check (the page asks on load and every 5 s
+ * while n8n wakes up). Registered again in a test, it replaces the default of the setup.
+ */
+async function mockStatus(
+  page: Page,
+  reply: (n: number) => Reply | 'abort',
+): Promise<{ count: () => number }> {
+  let count = 0
+  await page.route('**/api/automation/status', async (route) => {
+    const answer = reply(++count)
+    if (answer === 'abort') return route.abort('connectionfailed')
+    await route.fulfill({
+      status: answer.status ?? 200,
+      contentType: 'application/json',
+      body: JSON.stringify(answer.json ?? {}),
+    })
+  })
+  return { count: () => count }
+}
+
+const WAKING_TEXT = 'Despertando n8n en el servidor gratuito…'
+const READY_TEXT = 'n8n está listo: tu ejecución arrancará al instante.'
+const wakeNotice = (page: Page) =>
+  page
+    .getByRole('region', { name: 'Solicitud de prueba' })
+    .getByRole('status')
+    .filter({ hasText: /Despertando n8n|n8n está listo/ })
+
 interface LiveStream {
   /** Waits until the page opened the stream. */
   opened(): Promise<void>
@@ -193,6 +222,61 @@ async function runSample(page: Page, n: number) {
 
 test.beforeEach(async ({ page }) => {
   await fakeTurnstile(page)
+  // The page asks whether n8n is awake as soon as it opens; by default it is.
+  await mockStatus(page, () => ({ json: { state: 'ready' } }))
+})
+
+test.describe('early wake-up of n8n', () => {
+  test('starts waking n8n when the page opens, counts the wait and says when it is ready', async ({
+    page,
+  }) => {
+    await page.clock.install()
+    const status = await mockStatus(page, (n) => ({ json: { state: n === 1 ? 'waking' : 'ready' } }))
+    await open(page)
+
+    await expect(wakeNotice(page)).toContainText(WAKING_TEXT)
+    await expect(wakeNotice(page)).toContainText('puedes ir llenando el formulario')
+    await expect(wakeNotice(page)).toContainText(/0:0\d/)
+    expect(status.count()).toBe(1)
+    await expectNoSeriousA11yIssues(page)
+
+    await page.clock.fastForward(5_000)
+    await expect(wakeNotice(page)).toHaveText(READY_TEXT)
+    expect(status.count()).toBe(2)
+    await page.clock.fastForward(30_000)
+    expect(status.count()).toBe(2)
+    await expectNoSeriousA11yIssues(page)
+  })
+
+  test('stops asking once a run starts: the run reports its own wait', async ({ page }) => {
+    await page.clock.install()
+    const status = await mockStatus(page, () => ({ json: { state: 'waking' } }))
+    await mockRuns(page, () => ({ sse: accepted() }))
+    await open(page)
+    await expect(wakeNotice(page)).toContainText(WAKING_TEXT)
+
+    await runSample(page, 1)
+    await expect(wakeNotice(page)).toHaveCount(0)
+    const asked = status.count()
+    await page.clock.fastForward(30_000)
+    expect(status.count()).toBe(asked)
+  })
+
+  for (const [name, reply] of [
+    ['the demo is disabled', { json: { state: 'disabled' } }],
+    ['the API fails', { status: 500, json: { error: 'internal', message: 'Algo falló.' } }],
+    ['there is no connection', 'abort'],
+  ] as const) {
+    test(`shows nothing when ${name}`, async ({ page }) => {
+      const status = await mockStatus(page, () => reply)
+      await open(page)
+      await expect.poll(() => status.count()).toBe(1)
+      await expect(page.getByText(WAKING_TEXT)).toHaveCount(0)
+      await expect(page.getByText(READY_TEXT)).toHaveCount(0)
+      await expect(wakeNotice(page)).toHaveCount(0)
+      await expectNoSeriousA11yIssues(page)
+    })
+  }
 })
 
 test('presents the demo: what it proves, the test-data notice, the flow on GitHub and the seven steps', async ({

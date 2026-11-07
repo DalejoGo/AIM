@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
+  AUTOMATION_STATUS_STATES,
   AUTOMATION_STEPS,
   AutomationDoneEvent,
   AutomationErrorEvent,
   AutomationLead,
   AutomationRunRequest,
+  AutomationStatus,
   AutomationStepEvent,
   AutomationStepReport,
   AutomationStreamEvents,
@@ -219,5 +221,16 @@ describe('AutomationWebhookPayload', () => {
     expect(AutomationWebhookPayload.parse(payload)).toEqual(payload)
     const { serviceTitle: _, ...withoutTitle } = payload.lead
     expect(AutomationWebhookPayload.safeParse({ ...payload, lead: withoutTitle }).success).toBe(false)
+  })
+})
+
+describe('AutomationStatus', () => {
+  it('is ready, waking or disabled', () => {
+    expect([...AUTOMATION_STATUS_STATES]).toEqual(['ready', 'waking', 'disabled'])
+    for (const state of AUTOMATION_STATUS_STATES) {
+      expect(AutomationStatus.parse({ state })).toEqual({ state })
+    }
+    expect(AutomationStatus.safeParse({ state: 'asleep' }).success).toBe(false)
+    expect(AutomationStatus.safeParse({}).success).toBe(false)
   })
 })

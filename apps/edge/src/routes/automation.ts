@@ -1,4 +1,4 @@
-import { AutomationRunRequest, AutomationStepReport } from '@aim/contracts'
+import { AutomationRunRequest, type AutomationStatus, AutomationStepReport } from '@aim/contracts'
 import { Hono, type MiddlewareHandler } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
 import { streamSSE } from 'hono/streaming'
@@ -12,6 +12,7 @@ import { log } from '../lib/log'
 
 /**
  * Lab demo "Automatización en vivo" (docs/AUTOMATIZACION.md):
+ * - GET /api/automation/status: is n8n awake? The page asks when it opens, which starts waking it up.
  * - POST /api/automation/runs: the visitor's test lead. Turnstile, limits, then the run as Server-Sent Events.
  * - POST /api/automation/runs/:runId/events: n8n reports each step, authenticated only by the run's token.
  */
@@ -40,6 +41,25 @@ const requireN8n: MiddlewareHandler<AppEnv> = async (c, next) => {
   if (c.var.deps.n8n) return next()
   return fail(c, 503, 'automation_unavailable', UNAVAILABLE)
 }
+
+/**
+ * How long GET /status waits for n8n: plenty for an awake one, short enough to answer `waking` quickly. Cutting
+ * the request does not stop the wake-up: once it reaches Render, Render boots the service anyway.
+ */
+export const STATUS_TIMEOUT_MS = 3_000
+
+/**
+ * GET /api/automation/status: one readiness check (one subrequest), no database and no Turnstile: a safe GET
+ * the page sends on load and every few seconds while n8n wakes up, so the run starts at once when the visitor
+ * sends the form. No rate limit on purpose: n8n's URL is public, so limiting this route would not protect
+ * Render's free hours, and each call costs one subrequest and no database connection.
+ */
+automationRoutes.get('/status', async (c) => {
+  const { n8n } = c.var.deps
+  if (!n8n) return c.json<AutomationStatus>({ state: 'disabled' })
+  const ready = await n8n.healthy(AbortSignal.timeout(STATUS_TIMEOUT_MS))
+  return c.json<AutomationStatus>({ state: ready ? 'ready' : 'waking' })
+})
 
 const minutes = (seconds: number) => {
   const n = Math.max(1, Math.ceil(seconds / 60))

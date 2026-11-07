@@ -41,3 +41,9 @@ export const AUTOMATION_STEPS = [
 
 /** Codes of the SSE `error` event of POST /api/automation/runs. */
 export const AUTOMATION_ERROR_CODES = ['n8n_unreachable', 'timeout', 'internal'] as const
+
+/**
+ * GET /api/automation/status: `ready` when n8n can take a run now, `waking` while Render boots it (the check
+ * itself wakes it up) and `disabled` when the demo is off.
+ */
+export const AUTOMATION_STATUS_STATES = ['ready', 'waking', 'disabled'] as const

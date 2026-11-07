@@ -3,6 +3,7 @@ import {
   AUTOMATION_BUDGETS,
   AUTOMATION_ERROR_CODES,
   AUTOMATION_LEAD_LIMITS,
+  AUTOMATION_STATUS_STATES,
   AUTOMATION_STEPS,
   AUTOMATION_TIMELINES,
 } from './limits'
@@ -225,6 +226,15 @@ export const AutomationStreamEvents = {
   error: AutomationErrorEvent,
 } as const
 export type AutomationStreamEventName = keyof typeof AutomationStreamEvents
+
+// --- GET /api/automation/status ------------------------------------------------------------------
+
+export const AutomationStatusState = z.enum(AUTOMATION_STATUS_STATES)
+export type AutomationStatusState = z.infer<typeof AutomationStatusState>
+
+/** Asked when the page opens, so n8n wakes up while the visitor fills in the form. */
+export const AutomationStatus = z.object({ state: AutomationStatusState })
+export type AutomationStatus = z.infer<typeof AutomationStatus>
 
 // --- Edge → n8n ---------------------------------------------------------------------------------
 

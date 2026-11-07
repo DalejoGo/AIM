@@ -17,6 +17,7 @@ import { MAX_HEALTH_CHECKS, SUBREQUEST_BUDGET } from '../src/automation/run'
 import { CALLBACK_AUDIENCE, issueCallbackToken } from '../src/automation/token'
 import { automationEvents, automationRuns, automationUsage } from '../src/db/schema'
 import { SERVICE_LABELS } from '../src/leads/notify'
+import { STATUS_TIMEOUT_MS } from '../src/routes/automation'
 import { createTestContext, type TestContext, type TestOverrides, testEnv } from './helpers'
 
 const ROOT = join(import.meta.dirname, '../../..')
@@ -93,8 +94,8 @@ interface FetchCall {
 type Answer = Response | 'network_error'
 
 interface FakeN8nOptions {
-  /** Answer to the n-th GET /healthz/readiness (from 1). Default: 200 JSON. */
-  health?: (n: number) => Answer
+  /** Answer to the n-th GET /healthz/readiness (from 1), which may wait on the request's signal. Default: 200 JSON. */
+  health?: (n: number, signal: AbortSignal) => Answer | Promise<Answer>
   /** Answer to the webhook, after the flow ran. Default: 202. */
   webhook?: () => Answer | Promise<Answer>
   /**
@@ -137,7 +138,8 @@ async function automationContext(
     calls.push({ url, method: init.method ?? 'GET', body })
     if (url === HEALTH_URL) {
       options.onHealth?.()
-      const answer = options.health?.(++healthChecks) ?? json(200, { status: 'ok' })
+      const signal = init.signal ?? new AbortController().signal
+      const answer = (await options.health?.(++healthChecks, signal)) ?? json(200, { status: 'ok' })
       if (answer === 'network_error') throw new TypeError('fetch failed')
       return answer
     }
@@ -598,6 +600,65 @@ describe('POST /api/automation/runs', () => {
       }
       expect(calls).toEqual([])
     })
+  })
+})
+
+describe('GET /api/automation/status', () => {
+  const status = (t: TestContext) => t.request('/api/automation/status', { origin: null })
+
+  it('says disabled without AUTOMATION_N8N_URL, without calling anything', async () => {
+    const t = await createTestContext()
+    const res = await status(t)
+    expect(res.status).toBe(200)
+    expect(res.headers.get('cache-control')).toBe('no-store')
+    expect(await res.json()).toEqual({ state: 'disabled' })
+  })
+
+  it('says ready after exactly one readiness check, with no Origin, Turnstile or limit', async () => {
+    const { t, calls } = await automationContext({}, { captcha: fixedCaptcha(false) })
+    for (let i = 0; i < 5; i++) {
+      const res = await status(t)
+      expect(res.status).toBe(200)
+      expect(res.headers.get('cache-control')).toBe('no-store')
+      expect(await res.json()).toEqual({ state: 'ready' })
+    }
+    expect(calls.map((c) => `${c.method} ${c.url}`)).toEqual(Array(5).fill(`GET ${HEALTH_URL}`))
+    expect(await t.db.select().from(automationUsage)).toEqual([])
+  })
+
+  it.each([
+    ['answers 503', () => json(503, { status: 'error' })],
+    [
+      'shows the HTML page Render serves while it boots',
+      () =>
+        new Response('<html>Service waking up</html>', {
+          status: 200,
+          headers: { 'content-type': 'text/html' },
+        }),
+    ],
+    ['answers 404', () => new Response('not found', { status: 404 })],
+    ['cannot be reached', () => 'network_error' as const],
+  ])('says waking when n8n %s', async (_, health) => {
+    const { t, calls } = await automationContext({ health })
+    expect(await (await status(t)).json()).toEqual({ state: 'waking' })
+    expect(calls).toHaveLength(1)
+  })
+
+  it(`says waking when the check hangs, after about ${STATUS_TIMEOUT_MS} ms`, async () => {
+    const { t, calls } = await automationContext({
+      // A sleeping Render service holds the request while it boots: only the timeout ends it.
+      health: (_, signal) =>
+        new Promise<Answer>((_resolve, reject) => {
+          signal.addEventListener('abort', () => reject(signal.reason), { once: true })
+        }),
+    })
+    const started = performance.now()
+    const res = await status(t)
+    const took = performance.now() - started
+    expect(await res.json()).toEqual({ state: 'waking' })
+    expect(took).toBeGreaterThanOrEqual(STATUS_TIMEOUT_MS - 100)
+    expect(took).toBeLessThan(STATUS_TIMEOUT_MS + 1500)
+    expect(calls).toHaveLength(1)
   })
 })
 
