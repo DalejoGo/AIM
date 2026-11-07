@@ -1,1 +1,6 @@
-{ "extends": "@aim/config/tsconfig.base.json", "include": ["src"] }
+{
+  "extends": "@aim/config/tsconfig.base.json",
+  // Explicit: otherwise TypeScript also picks up @types from folders above the repo, which CI does not have.
+  "compilerOptions": { "types": ["node"] },
+  "include": ["src"]
+}
