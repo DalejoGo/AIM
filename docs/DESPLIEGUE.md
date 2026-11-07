@@ -153,7 +153,7 @@ La imagen usa `node:22.23.4-alpine3.24` fijada por digest (descargada del espejo
 
 El n8n de la demo **Automatización en vivo** (DEC-021) corre en **Render, plan gratuito**, como el servicio `aimweb-n8n` de `render.yaml`. El protocolo entre el sitio y n8n está en `docs/AUTOMATIZACION.md`; cómo editar el flujo, en `automations/README.md`.
 
-- **URL esperada:** https://aimweb-n8n.onrender.com (si Render agrega un sufijo, cambia `AUTOMATION_N8N_URL` en `apps/web/wrangler.jsonc` y vuelve a publicar el sitio).
+- **URL:** https://aimweb-n8n.onrender.com (servicio `aimweb-n8n`, creado por el Blueprint `AIMWEB`; en vivo desde el 2026-11-07, verificado: `/healthz/readiness`, webhook `202`, rutas de administración `404`). Si cambia, actualiza `AUTOMATION_N8N_URL` en `apps/web/wrangler.jsonc` y vuelve a publicar el sitio.
 - **Sin estado y sin secretos:** la imagen ya trae el flujo importado y publicado, y el webhook registrado (`automations/scripts/prepare-image.sh`). Al arrancar solo corre `n8n start`. El editor, el registro del dueño y la API pública quedan cerrados desde internet; solo responden `/healthz`, `/healthz/readiness` y `POST /webhook/aim-lead-demo`.
 - **El build prueba el flujo:** al construir la imagen se ejecuta el flujo completo contra un sitio de mentira; si los siete pasos no llegan en orden, el build falla y Render no publica.
 - **Única variable:** `AIM_SITE_ORIGIN` (a dónde reporta cada paso). Render pone `PORT` y `RENDER_EXTERNAL_URL`.
@@ -183,7 +183,7 @@ Los servicios `aimweb-n8n` y `aimweb-pylab` ya están en `render.yaml`. Si Rende
 
 El motor de Python del Migrador de datos (`services/py-lab`, DEC-022) corre en **Render, plan gratuito**, como el API Playground. El sitio lo llama desde el navegador (CORS) solo cuando el visitante elige «En el servidor (Python + FastAPI)». Todo está en `render.yaml` (servicio `aimweb-pylab`) y `services/py-lab/Dockerfile`.
 
-- **URL esperada:** https://aimweb-pylab.onrender.com (si Render agrega un sufijo al nombre, cambia `PUBLIC_PYLAB_API_URL` en `scripts/deploy-web.sh` y vuelve a publicar).
+- **URL:** https://aimweb-pylab.onrender.com (servicio `aimweb-pylab`, creado por el Blueprint `AIMWEB`; en vivo desde el 2026-11-07, verificado: `/health`, CORS del sitio y una migración real). Si cambia, actualiza `PUBLIC_PYLAB_API_URL` en `scripts/deploy-web.sh` y vuelve a publicar.
 - **Documentación:** `<URL>/docs` (Swagger UI). **Salud y límites:** `<URL>/health`.
 - **Sin secretos ni disco:** cada archivo se procesa en memoria y se descarta. Las variables (CORS, límite por IP, proxies) están en `render.yaml`; los demás límites tienen valores por defecto (`services/py-lab/README.md`).
 - **Despierta en ~10 s** (la imagen es pequeña); la página muestra el tiempo mientras espera.
@@ -213,3 +213,4 @@ curl http://localhost:8000/health          # y http://localhost:8000/docs en el 
 
 - 2026-11-06: primer despliegue. Wrangler 4.152 envía `pages project create` a Workers por defecto, y los Workers quedan bajo el subdominio de la cuenta (`*.workers.dev`), que deja ver el nombre del cliente de la agencia. Se borraron esos dos Workers y el proyecto se creó como Pages clásico (una sola vez con `--force`; las publicaciones siguientes no lo necesitan).
 - 2026-11-07: el primer build de `aimweb-n8n` en Render falló con `429 Too Many Requests`: Render construye desde IP compartidas que agotan el límite de descargas anónimas de Docker Hub. Las imágenes base ahora salen de registros sin ese límite y con **el mismo digest**: n8n de `ghcr.io/n8n-io/n8n`, Python y Node de `public.ecr.aws/docker/library/…`; además se quitó `# syntax=docker/dockerfile:1`, que también se descargaba de Docker Hub (BuildKit ya trae `RUN --mount`). Si vuelve a pasar con otra imagen, usa su copia en uno de esos registros o en `mirror.gcr.io`.
+- 2026-11-07: se reescribió el historial de Git (`git filter-repo --replace-text`) para quitar el subdominio de Workers que dejaba ver el nombre de un cliente, y se hizo push forzado (`main` pasó de `f4dce7c` a `a169f1c`). GitHub conserva un tiempo el commit viejo `d36fda5` si se abre por su código exacto; borrarlo del todo requiere pedirlo a GitHub Support. Otra copia local del repo debe clonarse de nuevo o hacer `git fetch` + `git reset --hard origin/main`.
