@@ -155,6 +155,7 @@ Desde el 2026-11-07 (DEC-023) el flujo de la demo **Automatización en vivo** co
 
 - **Sin variables ni base de datos propias:** usa la llave de Turnstile del sitio y nada más. La migración 0005 borró sus tablas de Neon.
 - **Cambiar las reglas:** editarlas en n8n, exportar (`bash automations/scripts/editor-sync.sh export`), hacer commit y volver a publicar el sitio.
+- **Verificado en producción (2026-11-07):** la API responde en ~40 ms con la verificación de Turnstile incluida; `GET /api/automation/status` da 404 y la vieja ruta de reportes de n8n, 403; la migración 0005 se aplicó en Neon y ya no hay tablas de la automatización.
 
 ### Lo que hace David (una vez): borrar el n8n de Render
 
